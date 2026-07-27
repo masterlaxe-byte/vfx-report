@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V10</title>
+  <title>VFX Set Report V11</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -43,6 +43,54 @@
       background:rgba(238,241,244,.92);
       backdrop-filter:blur(14px);
       padding:10px 0 14px;
+      transition:padding .18s ease, box-shadow .18s ease;
+    }
+    .compact-scroll-bar{
+      display:none;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      min-height:38px;
+      padding:4px 2px 7px;
+    }
+    .compact-scroll-bar > div{min-width:0}
+    .compact-scroll-bar strong,
+    .compact-scroll-bar small{
+      display:block;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .compact-scroll-bar strong{font-size:14px}
+    .compact-scroll-bar small{font-size:10px;color:var(--muted)}
+    .compact-scroll-bar button{
+      min-height:34px;
+      padding:5px 9px;
+      font-size:12px;
+      box-shadow:none;
+      border:1px solid var(--line);
+    }
+    .topbar.is-compact{
+      padding:3px 0 4px;
+      box-shadow:0 5px 18px rgba(15,23,42,.16);
+    }
+    .topbar.is-compact .brand,
+    .topbar.is-compact .toolbar,
+    .topbar.is-compact .status,
+    .topbar.is-compact .active-page-bar,
+    .topbar.is-compact .essential-summary{
+      display:none!important;
+    }
+    .topbar.is-compact .compact-scroll-bar{display:flex}
+    .topbar.is-compact .tabs{
+      padding:1px 0 2px;
+      gap:5px;
+    }
+    .topbar.is-compact .tab{
+      min-height:32px;
+      padding:6px 9px;
+      font-size:12px;
+      border-radius:8px;
     }
     .brand{
       display:flex;
@@ -509,6 +557,11 @@
       .summary-cell.hero{grid-column:1/-1}
     }
     @media(max-width:520px){
+      .app{padding:8px}
+      .topbar{padding-top:5px}
+      .topbar.is-compact{margin:0 -2px}
+      .compact-scroll-bar strong{font-size:13px}
+      .compact-scroll-bar small{font-size:9px}
       .active-page-bar{align-items:stretch}
       .active-page-bar button{flex:0 0 auto}
       .report-item{align-items:flex-start;flex-wrap:wrap}
@@ -679,7 +732,7 @@
     <div class="brand">
       <div>
         <h1>VFX Set Report</h1>
-        <small>Rapport plateau hors ligne — iPad / Safari · suppression fiable sur iPad · retour automatique à la page précédente</small>
+        <small>Rapport plateau hors ligne — iPad / Safari · en-tête intelligent · se compacte automatiquement pendant le défilement</small>
       </div>
       <div id="reportBadge"><strong>Nouveau rapport</strong></div>
     </div>
@@ -711,6 +764,14 @@
       <div class="summary-cell"><span>CAMÉRA / RIG</span><strong id="sumCamera">—</strong><small id="sumRig">—</small></div>
       <div class="summary-cell"><span>OPTIQUE</span><strong id="sumLens">—</strong><small id="sumTstop">—</small></div>
       <div class="summary-cell"><span>EXPO</span><strong id="sumExposure">—</strong><small id="sumFps">—</small></div>
+    </div>
+
+    <div class="compact-scroll-bar no-print" id="compactScrollBar">
+      <div>
+        <strong id="compactShotTitle">SC — · SH — · TK —</strong>
+        <small id="compactClipTitle">Aucun clip</small>
+      </div>
+      <button type="button" id="expandHeaderBtn" title="Afficher les commandes">⌄ Menu</button>
     </div>
 
     <div class="tabs no-print" id="tabs">
@@ -1296,6 +1357,16 @@
     document.getElementById("sumTstop").textContent = `T ${val("tStop")}`;
     document.getElementById("sumExposure").textContent = `ISO ${val("iso")} · ${val("shutter")}`;
     document.getElementById("sumFps").textContent = `${val("fps")} fps · ${val("colorTemp")} K`;
+    const compactShot = document.getElementById("compactShotTitle");
+    const compactClip = document.getElementById("compactClipTitle");
+    if(compactShot){
+      const takeStart = val("take");
+      const takeEnd = val("takeEnd");
+      compactShot.textContent = `SC ${val("scene")} · SH ${val("shot")} · TK ${takeStart}${takeEnd !== "—" && takeEnd !== takeStart ? "–" + takeEnd : ""}`;
+    }
+    if(compactClip){
+      compactClip.textContent = val("cardClipRange") !== "—" ? val("cardClipRange") : "Aucun clip";
+    }
   }
 
   function condenseCameraUI(){
@@ -1962,6 +2033,37 @@
   switchTab("essential");
   updateEssentialSummary();
 })();
+
+  const topbar = document.querySelector(".topbar");
+  const expandHeaderBtn = document.getElementById("expandHeaderBtn");
+  let headerManuallyExpanded = false;
+  let compactTicking = false;
+
+  function updateCompactHeader(){
+    const shouldCompact = window.scrollY > 115 && !headerManuallyExpanded;
+    topbar.classList.toggle("is-compact", shouldCompact);
+    if(window.scrollY < 45){
+      headerManuallyExpanded = false;
+      topbar.classList.remove("is-compact");
+    }
+    compactTicking = false;
+  }
+
+  window.addEventListener("scroll", () => {
+    if(!compactTicking){
+      compactTicking = true;
+      requestAnimationFrame(updateCompactHeader);
+    }
+  }, {passive:true});
+
+  expandHeaderBtn.addEventListener("click", () => {
+    headerManuallyExpanded = true;
+    topbar.classList.remove("is-compact");
+    setStatus("Menu développé.");
+  });
+
+  updateCompactHeader();
+
 </script>
 </body>
 </html>
