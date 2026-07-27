@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V29.9</title>
+  <title>VFX Set Report V29.10</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -1888,47 +1888,35 @@
       }
 
 
-      .print-report{
-        min-height:282mm;
-        padding-bottom:10mm;
-        align-content:start;
-      }
+      /* Footer iOS/Chrome : reste dans le flux normal.
+         Il suit le dernier contenu de la page logique sans créer de feuille supplémentaire. */
       .print-page-footer{
-        position:absolute;
-        left:2.2mm;
-        right:0;
-        bottom:0;
-        z-index:5;
+        grid-column:1/-1;
+        order:120;
         display:flex;
         align-items:center;
-        justify-content:space-between;
-        gap:4mm;
-        min-height:7mm;
-        padding:1.2mm 2mm;
+        justify-content:flex-end;
+        margin-top:2mm;
+        padding:1.2mm 2mm 0;
         border-top:1.5px solid var(--page-accent,#2563eb);
         background:#fff;
         color:#222;
         font-size:6.5pt;
         line-height:1;
-      }
-      .print-page-footer strong{
-        font-size:7.4pt;
-        letter-spacing:.05em;
-      }
-      .print-page-footer .footer-shot{
-        min-width:0;
-        flex:1;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        white-space:nowrap;
+        break-inside:avoid;
+        page-break-inside:avoid;
+        position:static!important;
+        inset:auto!important;
       }
       .print-page-footer .footer-number{
         flex:0 0 auto;
-        padding:1mm 1.8mm;
+        padding:1mm 1.9mm;
         border-radius:999px;
         background:#111;
         color:#fff;
+        font-size:7pt;
         font-weight:950;
+        letter-spacing:.05em;
         white-space:nowrap;
       }
       body.print-dark .print-page-footer{
@@ -3586,11 +3574,9 @@
       const footer = document.createElement("footer");
       footer.className = "print-page-footer";
       const exportSequence = selected.length !== all.length
-        ? ` · Export ${index + 1} / ${selected.length}`
+        ? ` · EXPORT ${index + 1}/${selected.length}`
         : "";
-      footer.innerHTML = `
-        <span class="footer-shot"><strong>${escapeHtml(r.project || "VFX Set Report")}</strong> · SC ${escapeHtml(currentScene)} · SH ${escapeHtml(r.shot || "—")}</span>
-        <span class="footer-number">PAGE ${reportPageIndex} / ${all.length}${exportSequence}</span>`;
+      footer.innerHTML = `<span class="footer-number">PAGE RAPPORT ${reportPageIndex}/${all.length}${exportSequence}</span>`;
       page.appendChild(footer);
 
       compactPrintPage(page);
