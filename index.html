@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V27</title>
+  <title>VFX Set Report V29.9</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -244,6 +244,202 @@
       display:flex;
       flex-wrap:wrap;
       gap:8px;
+    }
+
+    .toolbar-modern{
+      align-items:stretch;
+      gap:10px;
+      padding:10px;
+      border:1px solid rgba(148,163,184,.42);
+      border-radius:18px;
+      background:rgba(255,255,255,.72);
+      box-shadow:0 8px 28px rgba(15,23,42,.07);
+      backdrop-filter:blur(12px);
+    }
+    .toolbar-group{
+      position:relative;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:6px;
+      padding:20px 7px 7px;
+      border-radius:13px;
+      background:rgba(241,245,249,.88);
+      border:1px solid rgba(148,163,184,.28);
+    }
+    .toolbar-group-main{background:rgba(219,234,254,.72)}
+    .toolbar-group-create{flex:1 1 520px}
+    .toolbar-group-tools{flex:0 0 auto}
+    .toolbar-label{
+      position:absolute;
+      top:5px;
+      left:10px;
+      font-size:9px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    .action-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      min-height:38px;
+      padding:8px 11px;
+      border-radius:10px;
+      box-shadow:none;
+      border:1px solid rgba(148,163,184,.38);
+      background:#fff;
+      font-size:13px;
+      white-space:nowrap;
+    }
+    .action-btn:hover{
+      border-color:rgba(31,111,235,.48);
+      box-shadow:0 4px 12px rgba(15,23,42,.08);
+    }
+    .action-icon{font-size:15px}
+    .action-save{
+      background:#0f172a;
+      color:#fff;
+      border-color:#0f172a;
+    }
+    .action-export{
+      background:var(--ok);
+      color:#fff;
+      border-color:var(--ok);
+    }
+
+    .action-pages{
+      background:#0f172a;
+      color:#fff;
+      border-color:#0f172a;
+    }
+    .action-pages:hover{
+      border-color:var(--accent);
+      box-shadow:0 4px 14px rgba(31,111,235,.22);
+    }
+    body.dark-theme .action-pages{
+      background:#dbeafe;
+      color:#172554;
+      border-color:#93c5fd;
+    }
+
+    .action-shot{
+      background:var(--accent);
+      color:#fff;
+      border-color:var(--accent);
+    }
+    .action-technical{
+      background:#ede9fe;
+      color:#5b21b6;
+      border-color:#c4b5fd;
+    }
+    .action-secondary{
+      background:rgba(255,255,255,.72);
+      color:var(--muted);
+    }
+    .action-icon-only{
+      width:40px;
+      padding:8px;
+      font-size:17px;
+    }
+
+    .theme-switch{
+      flex:0 0 auto;
+      align-self:center;
+      display:flex;
+      align-items:center;
+      gap:7px;
+      min-height:40px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:#111827;
+      color:#fff;
+      box-shadow:none;
+      border:1px solid #111827;
+    }
+    .theme-switch-track{
+      position:relative;
+      width:34px;
+      height:19px;
+      border-radius:999px;
+      background:rgba(255,255,255,.25);
+    }
+    .theme-switch-thumb{
+      position:absolute;
+      top:3px;
+      left:3px;
+      width:13px;
+      height:13px;
+      border-radius:50%;
+      background:#fff;
+      transition:transform .18s ease;
+    }
+    .theme-switch[aria-pressed="true"] .theme-switch-thumb{
+      transform:translateX(15px);
+    }
+    .theme-switch-label{
+      font-size:12px;
+      font-weight:800;
+    }
+
+    body.dark-theme .toolbar-modern{
+      background:rgba(20,27,38,.84);
+      border-color:#334155;
+    }
+    body.dark-theme .toolbar-group{
+      background:rgba(30,41,59,.72);
+      border-color:#3b4759;
+    }
+    body.dark-theme .toolbar-group-main{
+      background:rgba(30,58,92,.72);
+    }
+    body.dark-theme .action-btn{
+      background:#253041;
+      color:#e7edf5;
+      border-color:#425066;
+    }
+    body.dark-theme .action-save{
+      background:#e7edf5;
+      color:#111827;
+      border-color:#e7edf5;
+    }
+    body.dark-theme .action-export{
+      background:var(--ok);
+      color:#fff;
+      border-color:var(--ok);
+    }
+    body.dark-theme .action-shot{
+      background:var(--accent2);
+      color:#fff;
+      border-color:var(--accent2);
+    }
+    body.dark-theme .action-technical{
+      background:#3b2f62;
+      color:#ddd6fe;
+      border-color:#6d5aa7;
+    }
+    body.dark-theme .theme-switch{
+      background:#f8fafc;
+      color:#111827;
+      border-color:#f8fafc;
+    }
+    body.dark-theme .theme-switch-track{
+      background:#cbd5e1;
+    }
+    body.dark-theme .theme-switch-thumb{
+      background:#111827;
+    }
+
+    @media(max-width:760px){
+      .toolbar-modern{padding:8px}
+      .toolbar-group{width:100%}
+      .toolbar-group-create{flex-basis:100%}
+      .action-btn{flex:1 1 auto}
+      .toolbar-group-tools{width:auto}
+      .theme-switch{margin-left:auto}
     }
     button,.button{
       appearance:none;
@@ -727,6 +923,439 @@
       .checkgrid{grid-template-columns:1fr 1fr}
       .tc-pair{grid-template-columns:1fr}
     }
+
+
+    .pages-heading-actions{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:7px;
+    }
+    .pages-back-button{
+      min-height:36px;
+      padding:7px 11px;
+      background:var(--ink);
+      color:var(--panel);
+      border:1px solid var(--ink);
+      box-shadow:none;
+      font-size:12px;
+    }
+    body.dark-theme .pages-back-button{
+      background:#e7edf5;
+      color:#111827;
+      border-color:#e7edf5;
+    }
+    @media(max-width:620px){
+      .pages-heading{display:block}
+      .pages-heading-actions{justify-content:flex-start;margin-top:10px}
+    }
+
+    /* V29 — navigation et navigateur de pages */
+    .active-page-copy{min-width:0;flex:1}
+    .active-page-actions{display:flex;align-items:center;gap:8px}
+    .page-nav-button{
+      flex:0 0 44px;
+      width:44px;
+      min-height:44px;
+      padding:0;
+      border-radius:50%;
+      font-size:30px;
+      line-height:1;
+      box-shadow:none;
+    }
+    .page-browser-button{white-space:nowrap}
+    .page-nav-button:disabled{opacity:.32;cursor:not-allowed;transform:none;box-shadow:none}
+
+    .pages-browser{padding:16px}
+    .pages-heading{align-items:flex-start}
+    .pages-heading h2{margin-bottom:2px}
+    .pages-heading-hint{margin:2px 0 0}
+    .pages-commandbar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      position:sticky;
+      top:8px;
+      z-index:12;
+      margin:0 0 10px;
+      padding:8px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:color-mix(in srgb, var(--panel) 92%, transparent);
+      backdrop-filter:blur(14px);
+      box-shadow:0 7px 22px rgba(15,23,42,.09);
+    }
+    .pages-search-wrap{
+      min-width:220px;
+      flex:1;
+      display:flex;
+      align-items:center;
+      gap:7px;
+      padding-left:10px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:var(--panel);
+    }
+    .pages-search-wrap input{
+      border:0;
+      min-height:42px;
+      padding:8px 2px;
+      background:transparent;
+      box-shadow:none;
+    }
+    .pages-search-wrap input:focus{outline:0}
+    .pages-clear-search{
+      min-width:36px;
+      min-height:36px;
+      padding:0;
+      border-radius:50%;
+      background:transparent;
+      box-shadow:none;
+      font-size:20px;
+    }
+    .pages-nav-cluster{display:flex;align-items:center;gap:6px}
+    .pages-nav-cluster button{min-height:42px;padding:8px 11px}
+    #pagesPosition{
+      min-width:60px;
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:850;
+    }
+    .pages-selectionbar{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:7px;
+      margin-bottom:14px;
+    }
+    .pages-selectionbar button,.pages-import-button{
+      min-height:38px;
+      padding:8px 10px;
+      font-size:12px;
+    }
+    .pages-spacer{flex:1}
+
+    .report-groups{display:block}
+    .report-group{
+      margin:0 0 13px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      background:color-mix(in srgb, var(--soft) 65%, var(--panel));
+    }
+    .report-group[open] > .report-group-heading{border-bottom:1px solid var(--line)}
+    .report-group-heading{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:11px 13px;
+      cursor:pointer;
+      list-style:none;
+      user-select:none;
+      background:var(--soft);
+    }
+    .report-group-heading::-webkit-details-marker{display:none}
+    .report-group-heading::before{
+      content:"›";
+      width:18px;
+      font-size:21px;
+      font-weight:900;
+      transform:rotate(0);
+      transition:transform .14s ease;
+    }
+    .report-group[open] > .report-group-heading::before{transform:rotate(90deg)}
+    .report-group-heading strong{font-size:14px}
+    .report-group-heading small{margin-left:auto;color:var(--muted)}
+    .report-group-list{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(245px,1fr));
+      gap:9px;
+      padding:9px;
+    }
+    .report-item{
+      position:relative;
+      display:grid;
+      grid-template-columns:76px minmax(0,1fr);
+      gap:10px;
+      align-items:stretch;
+      min-height:112px;
+      padding:8px;
+      background:var(--panel);
+      cursor:pointer;
+      touch-action:pan-y;
+    }
+    .report-item[draggable="true"]{cursor:grab}
+    .report-item.dragging{opacity:.35;cursor:grabbing}
+    .report-item.drag-over{
+      outline:3px solid var(--accent);
+      outline-offset:2px;
+    }
+    .report-item.active-page{
+      border:2px solid var(--accent);
+      background:color-mix(in srgb, var(--accent) 9%, var(--panel));
+      box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+    .report-item.active-page::before{
+      content:"ACTIVE";
+      position:absolute;
+      z-index:3;
+      top:7px;
+      left:7px;
+      padding:3px 6px;
+    }
+    .report-thumb{
+      position:relative;
+      width:76px;
+      height:96px;
+      overflow:hidden;
+      border-radius:11px;
+      background:linear-gradient(145deg,#dbe4f0,#f3f6fa);
+      border:1px solid var(--line);
+    }
+    .report-thumb img{width:100%;height:100%;display:block;object-fit:cover}
+    .report-thumb-placeholder{
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:27px;
+      opacity:.55;
+    }
+    .report-page-index{
+      position:absolute;
+      right:5px;
+      bottom:5px;
+      min-width:25px;
+      padding:2px 6px;
+      border-radius:999px;
+      background:rgba(17,24,39,.86);
+      color:#fff;
+      text-align:center;
+      font-size:10px;
+      font-weight:900;
+    }
+    .report-card-main{display:flex;flex-direction:column;min-width:0}
+    .report-card-title{
+      display:block;
+      padding-right:54px;
+      font-size:16px;
+      line-height:1.12;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .report-card-take{margin-top:3px;font-size:12px;font-weight:800;color:var(--accent)}
+    .report-card-meta{
+      display:block;
+      margin-top:4px;
+      font-size:11px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      color:var(--muted);
+    }
+    .report-card-badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px;
+      margin-top:auto;
+      padding-top:6px;
+    }
+    .page-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:3px;
+      min-height:22px;
+      padding:3px 6px;
+      border-radius:999px;
+      background:var(--soft);
+      border:1px solid var(--line);
+      font-size:10px;
+      font-weight:800;
+    }
+    .page-badge.good{background:#e8f7ef;border-color:#a8ddbf;color:#17603b}
+    .page-badge.warn{background:#fff7d6;border-color:#ead98d;color:#775d00}
+    body.dark-theme .page-badge.good{background:#173b2a;border-color:#376c50;color:#b7f0cf}
+    body.dark-theme .page-badge.warn{background:#433a17;border-color:#76652a;color:#f7e59b}
+    .page-select{
+      position:absolute;
+      top:7px;
+      right:7px;
+      z-index:4;
+      margin:0;
+      padding:4px 6px;
+      border-radius:999px;
+      background:color-mix(in srgb, var(--panel) 88%, transparent);
+      backdrop-filter:blur(8px);
+      font-size:9px;
+    }
+    .page-select input{width:16px;height:16px;min-height:16px}
+    .report-card-actions{
+      position:absolute;
+      right:6px;
+      bottom:6px;
+      display:flex;
+      gap:4px;
+    }
+    .report-card-actions button{
+      min-width:31px;
+      width:31px;
+      min-height:31px;
+      height:31px;
+      padding:0;
+      border-radius:9px;
+      font-size:12px;
+    }
+    .pages-empty{
+      padding:36px 15px;
+      text-align:center;
+      color:var(--muted);
+      border:1px dashed var(--line);
+      border-radius:16px;
+    }
+    .swipe-toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      z-index:200;
+      transform:translate(-50%,20px);
+      padding:9px 13px;
+      border-radius:999px;
+      background:rgba(17,24,39,.9);
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      opacity:0;
+      pointer-events:none;
+      transition:.18s ease;
+    }
+    .swipe-toast.show{opacity:1;transform:translate(-50%,0)}
+
+    @media(max-width:720px){
+      .active-page-bar{gap:7px;padding:8px}
+      .page-browser-button{font-size:0;width:42px;padding:0}
+      .page-browser-button::after{content:"📚";font-size:17px}
+      .pages-commandbar{position:static;display:block}
+      .pages-nav-cluster{margin-top:7px;justify-content:space-between}
+      .pages-nav-cluster button{flex:1}
+      .pages-selectionbar{align-items:stretch}
+      .pages-spacer{display:none}
+      .report-group-list{grid-template-columns:1fr}
+    }
+
+
+    /* V29.1 — lisibilité des numéros et actions des vignettes */
+    .report-page-index{
+      top:6px;
+      right:auto;
+      bottom:auto;
+      left:6px;
+      min-width:32px;
+      padding:4px 8px;
+      border:2px solid rgba(255,255,255,.92);
+      background:#111827;
+      color:#fff;
+      font-size:12px;
+      line-height:1;
+      box-shadow:0 3px 10px rgba(0,0,0,.3);
+    }
+    .report-page-index::before{
+      content:"P";
+      margin-right:2px;
+      opacity:.72;
+      font-size:9px;
+    }
+    .report-card-title{
+      padding-top:2px;
+    }
+    .report-card-actions{
+      padding:3px;
+      border:1px solid var(--line);
+      border-radius:11px;
+      background:color-mix(in srgb, var(--panel) 90%, transparent);
+      box-shadow:0 3px 10px rgba(15,23,42,.12);
+      backdrop-filter:blur(8px);
+    }
+    .report-card-actions button{
+      border:1.5px solid var(--line)!important;
+      background:var(--panel)!important;
+      color:var(--ink)!important;
+      box-shadow:none!important;
+    }
+    .report-card-actions button:hover{
+      border-color:var(--accent)!important;
+    }
+    .report-card-actions button.danger{
+      border-color:var(--danger)!important;
+      background:color-mix(in srgb, var(--danger) 12%, var(--panel))!important;
+      color:var(--danger)!important;
+    }
+    body.dark-theme .report-card-actions{
+      background:rgba(17,24,39,.86);
+    }
+
+
+    /* V29.4 — onglets actifs lisibles en mode sombre */
+    body.dark-theme .tab.active,
+    body.dark-theme .floating-tabs button.active,
+    body.dark-theme [data-floating-tab].active{
+      background:#f8fafc!important;
+      color:#111827!important;
+      border-color:#f8fafc!important;
+    }
+    body.dark-theme .tab.active *,
+    body.dark-theme .floating-tabs button.active *{
+      color:#111827!important;
+    }
+
+    /* Compteurs de pages */
+    .active-page-count{
+      display:inline-flex;
+      align-items:center;
+      margin-left:7px;
+      padding:3px 8px;
+      border-radius:999px;
+      background:var(--accent);
+      color:#fff;
+      font-size:11px;
+      font-weight:900;
+      vertical-align:middle;
+    }
+    .pages-overview{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:8px;
+      margin:0 0 12px;
+    }
+    .pages-overview-card{
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:13px;
+      background:var(--soft);
+    }
+    .pages-overview-card span{
+      display:block;
+      color:var(--muted);
+      font-size:9px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .pages-overview-card strong{
+      display:block;
+      margin-top:3px;
+      font-size:18px;
+      line-height:1;
+    }
+    .pages-current-card{
+      border-color:color-mix(in srgb,var(--accent) 55%,var(--line));
+      background:color-mix(in srgb,var(--accent) 9%,var(--panel));
+    }
+    @media(max-width:560px){
+      .pages-overview{grid-template-columns:1fr}
+    }
+
     @media print{
       @page{size:A4 portrait;margin:7mm}
 
@@ -1258,6 +1887,60 @@
         padding-bottom:.5mm!important;
       }
 
+
+      .print-report{
+        min-height:282mm;
+        padding-bottom:10mm;
+        align-content:start;
+      }
+      .print-page-footer{
+        position:absolute;
+        left:2.2mm;
+        right:0;
+        bottom:0;
+        z-index:5;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:4mm;
+        min-height:7mm;
+        padding:1.2mm 2mm;
+        border-top:1.5px solid var(--page-accent,#2563eb);
+        background:#fff;
+        color:#222;
+        font-size:6.5pt;
+        line-height:1;
+      }
+      .print-page-footer strong{
+        font-size:7.4pt;
+        letter-spacing:.05em;
+      }
+      .print-page-footer .footer-shot{
+        min-width:0;
+        flex:1;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+      }
+      .print-page-footer .footer-number{
+        flex:0 0 auto;
+        padding:1mm 1.8mm;
+        border-radius:999px;
+        background:#111;
+        color:#fff;
+        font-weight:950;
+        white-space:nowrap;
+      }
+      body.print-dark .print-page-footer{
+        background:#e7e9ec!important;
+        color:#111!important;
+        border-color:var(--page-accent)!important;
+      }
+      body.print-dark .print-page-footer .footer-number{
+        background:#3a3f45!important;
+        color:#fff!important;
+      }
+
       /* Softer print-dark theme: light grey page, readable dark text. */
       body.print-dark .print-report{
         border-left-color:#2f3338;
@@ -1340,31 +2023,52 @@
     <div class="brand">
       <div>
         <h1>VFX Set Report</h1>
-        <small>Rapport plateau hors ligne — iPad / Safari · Essentiel restauré · caméra et tracking compacts · champs groupés</small>
+        <small>Rapport plateau hors ligne — iPad / Safari · navigation rapide · pages groupées · swipe · glisser-déposer</small>
       </div>
       <div id="reportBadge"><strong>Nouveau rapport</strong></div>
     </div>
 
-    <div class="toolbar no-print">
-      <button class="primary" id="saveBtn">💾 Sauvegarder</button>
-      <button id="newShotBtn">🎬 Nouveau Shot</button>
-      <button id="newSetupBtn">🎥 Nouveau Setup</button>
-      <button id="newBtn">📄 Nouvelle Page</button>
-      <button id="duplicateBtn">⧉ Dupliquer</button>
-      <button class="ok" id="printBtn">📄 Exporter les pages</button>
-      <button id="gpsBtn">📍 GPS</button>
-      <button id="nowBtn">🕒 Heure actuelle</button>
-      <button id="themeBtn" type="button" aria-pressed="false" title="Le même thème est utilisé dans l’application et le PDF">🌙 Thème sombre</button>
+    <div class="toolbar toolbar-modern no-print">
+      <div class="toolbar-group toolbar-group-main">
+        <span class="toolbar-label">Rapport</span>
+        <button class="action-btn action-save" id="saveBtn"><span class="action-icon">💾</span><span>Sauvegarder</span></button>
+        <button class="action-btn action-export" id="printBtn"><span class="action-icon">↗</span><span>Exporter PDF</span></button>
+      </div>
+
+      <div class="toolbar-group toolbar-group-create">
+        <span class="toolbar-label">Créer</span>
+        <button class="action-btn action-pages" id="toolbarPagesBtn" title="Ouvrir le navigateur de pages"><span class="action-icon">📚</span><span>Voir les pages</span></button>
+        <button class="action-btn action-shot" id="newShotBtn" title="Conserve le setup technique et crée le plan suivant"><span class="action-icon">🎬</span><span>Plan suivant</span></button>
+        <button class="action-btn" id="newSetupBtn"><span class="action-icon">🎥</span><span>Nouveau setup</span></button>
+        <button class="action-btn action-secondary" id="duplicateBtn" title="Duplique absolument toutes les données de la page"><span class="action-icon">⧉</span><span>Dupliquer</span></button>
+        <button class="action-btn action-secondary" id="newBtn"><span class="action-icon">＋</span><span>Page vide</span></button>
+      </div>
+
+      <div class="toolbar-group toolbar-group-tools">
+        <span class="toolbar-label">Outils</span>
+        <button class="action-btn action-icon-only" id="gpsBtn" title="Relever la position GPS" aria-label="GPS">📍</button>
+        <button class="action-btn action-icon-only" id="nowBtn" title="Insérer la date et l’heure actuelles" aria-label="Heure actuelle">🕒</button>
+      </div>
+
+      <button class="theme-switch" id="themeBtn" type="button" aria-pressed="false" title="Le même thème est utilisé dans l’application et le PDF">
+        <span class="theme-switch-icon" aria-hidden="true">☀️</span>
+        <span class="theme-switch-track"><span class="theme-switch-thumb"></span></span>
+        <span class="theme-switch-label">Clair</span>
+      </button>
     </div>
     <div class="status" id="status"></div>
 
     <div class="active-page-bar no-print" id="activePageBar">
-      <div>
+      <button type="button" class="page-nav-button" id="prevPageBtn" aria-label="Page précédente" title="Page précédente">‹</button>
+      <div class="active-page-copy">
         <span class="active-page-kicker">PAGE ACTIVE</span>
-        <strong id="activePageTitle">Page —</strong>
+        <strong id="activePageTitle">Page —</strong><span class="active-page-count" id="activePageCount">— / —</span>
         <small id="activePageMeta">Sélectionne une page dans l’onglet Pages</small>
       </div>
-      <button type="button" id="goToPagesBtn">📚 Changer de page</button>
+      <div class="active-page-actions">
+        <button type="button" class="page-browser-button" id="goToPagesBtn">📚 Pages</button>
+        <button type="button" class="page-nav-button" id="nextPageBtn" aria-label="Page suivante" title="Page suivante">›</button>
+      </div>
     </div>
 
     <div class="essential-summary no-print" id="essentialSummary">
@@ -1380,7 +2084,6 @@
       <button class="tab" data-target="tracking">Tracking</button>
       <button class="tab" data-target="photos">Photos</button>
       <button class="tab" data-target="advanced">Avancé</button>
-      <button class="tab" data-target="reports">Pages</button>
     </div>
   </div>
 
@@ -1395,7 +2098,6 @@
         <button type="button" data-floating-tab="tracking">Tracking</button>
         <button type="button" data-floating-tab="photos">Photos</button>
         <button type="button" data-floating-tab="advanced">Avancé</button>
-        <button type="button" data-floating-tab="reports">Pages</button>
       </div>
       <button type="button" class="floating-menu-btn" id="expandHeaderBtn">⌃ Haut</button>
     </div>
@@ -1502,20 +2204,12 @@
         <div class="field w3"><label>Codec / Format</label><input name="codec" /></div>
         <div class="field w12"><label>Card / plage de clips</label><input name="cardClipRange" readonly placeholder="D001C001 – C021" /></div>
       </div>
-
-      <h3>Timecode caméra</h3>
-      <div class="grid">
-        <div class="field w3"><label>TC Start</label><input name="cameraTcStart" placeholder="01:12:32:10" /></div>
-        <div class="field w3"><label>TC End</label><input name="cameraTcEnd" placeholder="01:12:58:03" /></div>
-        <div class="field w3"><label>TC Source</label><input name="cameraTcSource" placeholder="Tentacle / Lockit / Jam sync" /></div>
-        <div class="field w3"><label>Drop frame</label>
-          <select name="dropFrame"><option value=""></option><option>Non</option><option>Oui</option></select>
-        </div>
-      </div>
     </section>
 
     <section id="tracking">
       <div class="section-heading"><h2>Tracking caméra 3D / Virtual Production</h2><button type="button" class="reset-section-btn no-print" data-reset-section="tracking">🧹 Vider Tracking</button></div>
+
+      <h3>Système et enregistrement</h3>
       <div class="grid">
         <div class="field w4"><label>Système de tracking</label>
           <select name="trackingSystem">
@@ -1529,36 +2223,64 @@
         <div class="field w3"><label>Tracking enregistré</label>
           <select name="trackingRecorded"><option value=""></option><option>Oui</option><option>Non</option><option>Partiel</option></select>
         </div>
-        <div class="field w3"><label>Genlock</label>
-          <select name="genlock"><option value=""></option><option>Oui</option><option>Non</option></select>
-        </div>
         <div class="field w3"><label>Framerate tracking</label><input name="trackingFps" /></div>
         <div class="field w3"><label>Unité</label>
           <select name="trackingUnit"><option value=""></option><option>m</option><option>cm</option><option>mm</option><option>ft</option></select>
         </div>
-
-        <div class="field w3"><label>TC tracking start</label><input name="trackingTcStart" placeholder="01:12:32:10" /></div>
-        <div class="field w3"><label>TC tracking end</label><input name="trackingTcEnd" placeholder="01:12:58:03" /></div>
-        <div class="field w3"><label>Offset TC caméra / tracking</label><input name="trackingTcOffset" placeholder="+00:00:00:02" /></div>
-        <div class="field w3"><label>Sync vérifiée</label>
-          <select name="syncChecked"><option value=""></option><option>Oui</option><option>Non</option></select>
-        </div>
-
-        <div class="field w3"><label>Sync source</label><input name="syncSource" placeholder="Lockit / PTP / house sync" /></div>
-        <div class="field w3"><label>Phase offset</label><input name="phaseOffset" /></div>
-        <div class="field w3"><label>Sensor start / readout</label><input name="sensorReadout" placeholder="Rolling shutter / ms" /></div>
-        <div class="field w3"><label>PTP timestamp</label><input name="ptpTimestamp" /></div>
-        <div class="field w3"><label>Sync pulse / edge</label><input name="syncPulse" /></div>
-        <div class="field w3"><label>Genlock status détaillé</label><input name="genlockStatus" /></div>
-        <div class="field w3"><label>Timecode par frame</label><select name="tcPerFrame"><option value=""></option><option>Disponible</option><option>Non disponible</option></select></div>
-        <div class="field w3"><label>Audio TC / sound roll</label><input name="audioTcRoll" /></div>
-
-        <div class="field w6"><label>Nom du fichier tracking</label><input name="trackingFile" placeholder="SC011_SH020_T03_CAM_A.fbx" /></div>
         <div class="field w3"><label>Format</label>
           <select name="trackingFormat"><option value=""></option><option>FBX</option><option>Alembic</option><option>CSV</option><option>USD</option><option>FreeD</option><option>Autre</option></select>
         </div>
-        <div class="field w3"><label>Stockage / dossier</label><input name="trackingPath" /></div>
+
+        <div class="field w6"><label>Nom du fichier tracking</label><input name="trackingFile" placeholder="SC011_SH020_T03_CAM_A.fbx" /></div>
+        <div class="field w6"><label>Stockage / dossier</label><input name="trackingPath" /></div>
       </div>
+
+      <details class="more-fields sync-details">
+        <summary>⏱ Synchronisation caméra / tracking</summary>
+        <p class="hint">À renseigner lorsqu’un tracking, une witness camera, une mocap ou un autre flux doit être recalé précisément avec la caméra principale.</p>
+
+        <h3>Timecodes caméra et tracking</h3>
+        <div class="grid">
+          <div class="field w3"><label>TC caméra start</label><input name="cameraTcStart" placeholder="01:12:32:10" /></div>
+          <div class="field w3"><label>TC caméra end</label><input name="cameraTcEnd" placeholder="01:12:58:03" /></div>
+          <div class="field w3"><label>TC tracking start</label><input name="trackingTcStart" placeholder="01:12:32:10" /></div>
+          <div class="field w3"><label>TC tracking end</label><input name="trackingTcEnd" placeholder="01:12:58:03" /></div>
+
+          <div class="field w3"><label>Offset caméra / tracking</label><input name="trackingTcOffset" placeholder="+00:00:00:02" /></div>
+          <div class="field w3"><label>Source TC caméra</label><input name="cameraTcSource" placeholder="Tentacle / Lockit / Jam sync" /></div>
+          <div class="field w3"><label>Source de synchronisation</label><input name="syncSource" placeholder="Lockit / PTP / house sync" /></div>
+          <div class="field w3"><label>Drop frame</label>
+            <select name="dropFrame"><option value=""></option><option>Non</option><option>Oui</option></select>
+          </div>
+        </div>
+
+        <h3>Genlock et contrôle</h3>
+        <div class="grid">
+          <div class="field w3"><label>Genlock</label>
+            <select name="genlock"><option value=""></option><option>Oui</option><option>Non</option></select>
+          </div>
+          <div class="field w3"><label>Statut genlock détaillé</label><input name="genlockStatus" /></div>
+          <div class="field w3"><label>Sync vérifiée</label>
+            <select name="syncChecked"><option value=""></option><option>Oui</option><option>Non</option></select>
+          </div>
+          <div class="field w3"><label>Timecode par frame</label>
+            <select name="tcPerFrame"><option value=""></option><option>Disponible</option><option>Non disponible</option></select>
+          </div>
+
+          <div class="field w3"><label>Phase offset</label><input name="phaseOffset" /></div>
+          <div class="field w3"><label>Sensor start / readout</label><input name="sensorReadout" placeholder="Rolling shutter / ms" /></div>
+          <div class="field w3"><label>PTP timestamp</label><input name="ptpTimestamp" /></div>
+          <div class="field w3"><label>Sync pulse / edge</label><input name="syncPulse" /></div>
+          <div class="field w4"><label>Audio TC / sound roll</label><input name="audioTcRoll" /></div>
+        </div>
+
+        <h3>Événement de correspondance</h3>
+        <div class="grid">
+          <div class="field w4"><label>Slate / événement de sync</label><input name="syncEvent" placeholder="Clap, flash, LED frame…" /></div>
+          <div class="field w4"><label>Image frame de référence</label><input name="syncFrame" /></div>
+          <div class="field w4"><label>Tracking frame correspondante</label><input name="trackingFrame" /></div>
+        </div>
+      </details>
 
       <h3>Données enregistrées</h3>
       <div class="checkgrid">
@@ -1572,11 +2294,8 @@
         <label class="check"><input type="checkbox" name="track_nodal">Nodal offset</label>
       </div>
 
-      <h3>Contrôle de cohérence</h3>
+      <h3>Capteurs et remarques</h3>
       <div class="grid">
-        <div class="field w4"><label>Slate / événement de sync</label><input name="syncEvent" placeholder="Clap, flash, LED frame…" /></div>
-        <div class="field w4"><label>Image frame de référence</label><input name="syncFrame" /></div>
-        <div class="field w4"><label>Tracking frame correspondante</label><input name="trackingFrame" /></div>
         <div class="field w3"><label>IMU fichier</label><input name="imuFile" /></div>
         <div class="field w3"><label>Axes / orientation</label><input name="imuAxes" placeholder="XYZ, pitch/yaw/roll" /></div>
         <div class="field w3"><label>Depth source</label><input name="depthSource" placeholder="On-camera lidar / range finder / depth cam" /></div>
@@ -1741,28 +2460,57 @@
       </div>
     </section>
 
-    <section id="reports">
-      <div class="section-heading">
-        <h2>Pages du rapport</h2>
-        <button type="button" class="reset-section-btn no-print" id="resetWholePageBtn">🗑 Vider toute la page</button>
+    <section id="reports" class="pages-browser">
+      <div class="section-heading pages-heading">
+        <div>
+          <h2>Pages du rapport</h2>
+          <p class="hint pages-heading-hint">Touchez une carte pour changer de page. Glissez une carte pour réorganiser le rapport et le PDF.</p>
+        </div>
+        <div class="pages-heading-actions no-print">
+          <button type="button" class="pages-back-button" id="closePagesBtn">← Retour au rapport</button>
+          <button type="button" class="reset-section-btn" id="resetWholePageBtn">🗑 Vider la page active</button>
+        </div>
       </div>
-      <p class="hint">Touchez n’importe où sur une carte pour la rendre active. Dans le PDF, chaque shot commence par un grand bandeau Scène / Shot / Take / Clip. L’identifiant du shot est répété au-dessus des sections qui continuent sur une autre feuille, et un séparateur pleine page apparaît lors d’un changement de scène.</p>
-      <div class="toolbar no-print" style="margin:12px 0">
+
+      <div class="pages-overview no-print">
+        <div class="pages-overview-card pages-current-card">
+          <span>Page en cours</span>
+          <strong id="pagesCurrentSummary">— / —</strong>
+        </div>
+        <div class="pages-overview-card">
+          <span>Total du rapport</span>
+          <strong id="pagesTotalSummary">0 pages</strong>
+        </div>
+        <div class="pages-overview-card">
+          <span>Sélection PDF</span>
+          <strong id="pagesSelectedSummary">0 / 0</strong>
+        </div>
+      </div>
+
+      <div class="pages-commandbar no-print">
+        <div class="pages-search-wrap">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchReports" aria-label="Rechercher une page" placeholder="Rechercher scène, shot, setup, lieu, caméra…" />
+          <button type="button" class="pages-clear-search" id="clearPagesSearchBtn" title="Effacer la recherche" aria-label="Effacer la recherche">×</button>
+        </div>
+        <div class="pages-nav-cluster">
+          <button type="button" id="pagesPrevBtn">‹ Précédente</button>
+          <span id="pagesPosition">— / —</span>
+          <button type="button" id="pagesNextBtn">Suivante ›</button>
+        </div>
+      </div>
+
+      <div class="pages-selectionbar no-print">
         <button type="button" id="selectAllBtn">Tout sélectionner</button>
         <button type="button" id="selectNoneBtn">Tout désélectionner</button>
-        <button type="button" class="ok" id="exportSelectedBtn">📄 Exporter la sélection</button>
-      </div>
-      <div class="inline no-print">
-        <div>
-          <label>Recherche</label>
-          <input id="searchReports" placeholder="Scène, shot, clip, date…" />
-        </div>
+        <button type="button" class="ok" id="exportSelectedBtn">↗ Exporter la sélection</button>
+        <span class="pages-spacer"></span>
         <button type="button" id="exportJsonBtn">Exporter JSON</button>
-        <label class="button" for="importJsonInput">Importer JSON</label>
+        <label class="button pages-import-button" for="importJsonInput">Importer JSON</label>
         <input id="importJsonInput" type="file" accept=".json,application/json" class="hidden" />
       </div>
-      <div class="divider"></div>
-      <div id="reportList" class="report-list"></div>
+
+      <div id="reportList" class="report-list report-groups"></div>
     </section>
   </form>
 </div>
@@ -1835,6 +2583,7 @@
     updateRanges();
     updateBadge();
     updateEssentialSummary();
+    updateSyncDetailsState();
   }
 
   function saveReport(silent=false){
@@ -1866,6 +2615,69 @@
     switchTab("essential");
   }
 
+  function activePageIndex(){
+    return orderedReports().findIndex(r => r.id === activeId);
+  }
+
+  function navigatePage(direction, stayOnPages=false){
+    saveReport(true);
+    const reports = orderedReports();
+    if(!reports.length) return;
+    const current = Math.max(0, reports.findIndex(r => r.id === activeId));
+    const next = current + direction;
+    if(next < 0 || next >= reports.length) return;
+    loadReport(reports[next].id, stayOnPages);
+  }
+
+  function updatePagesPosition(){
+    const reports = orderedReports();
+    const index = reports.findIndex(r => r.id === activeId);
+    const currentText = reports.length && index >= 0 ? `${index + 1} / ${reports.length}` : `— / ${reports.length || "—"}`;
+    const selectedCount = reports.filter(r => r.selectedForExport !== false).length;
+
+    const position = document.getElementById("pagesPosition");
+    const activeCount = document.getElementById("activePageCount");
+    const currentSummary = document.getElementById("pagesCurrentSummary");
+    const totalSummary = document.getElementById("pagesTotalSummary");
+    const selectedSummary = document.getElementById("pagesSelectedSummary");
+
+    if(position) position.textContent = currentText;
+    if(activeCount) activeCount.textContent = currentText;
+    if(currentSummary) currentSummary.textContent = currentText;
+    if(totalSummary) totalSummary.textContent = `${reports.length} page${reports.length > 1 ? "s" : ""}`;
+    if(selectedSummary) selectedSummary.textContent = `${selectedCount} / ${reports.length}`;
+
+    ["prevPageBtn","pagesPrevBtn"].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.disabled = index <= 0;
+    });
+    ["nextPageBtn","pagesNextBtn"].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.disabled = index < 0 || index >= reports.length - 1;
+    });
+  }
+
+  function reorderReport(draggedId, targetId){
+    if(!draggedId || !targetId || draggedId === targetId) return;
+    saveReport(true);
+
+    const reports = orderedReports();
+    const from = reports.findIndex(r => r.id === draggedId);
+    const to = reports.findIndex(r => r.id === targetId);
+    if(from < 0 || to < 0) return;
+
+    const [moved] = reports.splice(from, 1);
+    reports.splice(to, 0, moved);
+
+    const store = getReports();
+    reports.forEach((report, index) => {
+      if(store[report.id]) store[report.id].pageOrder = index + 1;
+    });
+    setReports(store);
+    renderReportList();
+    setStatus("Ordre des pages mis à jour.");
+  }
+
   function updateActivePageBar(){
     const reports = orderedReports();
     const report = getReports()[activeId];
@@ -1878,12 +2690,14 @@
     if(!report){
       title.textContent = "Aucune page active";
       meta.textContent = "Sélectionne une page dans l’onglet Pages";
+      updatePagesPosition();
       return;
     }
 
     const takeRange = `${report.take || "—"}${report.takeEnd && report.takeEnd !== report.take ? "–" + report.takeEnd : ""}`;
     title.textContent = `Page ${index + 1} / ${reports.length} · ${report.scene || "SC —"} / ${report.shot || "SHOT —"}`;
     meta.textContent = `Take ${takeRange} · ${report.cardClipRange || "aucun clip"}`;
+    updatePagesPosition();
   }
 
   function loadReport(id, stayOnPages=false){
@@ -1950,6 +2764,24 @@
 
     renderReportList();
     updateActivePageBar();
+  }
+
+  function updateSyncDetailsState(){
+    const details = document.querySelector(".sync-details");
+    if(!details) return;
+
+    const hasSyncData = [
+      "cameraTcStart","cameraTcEnd","trackingTcStart","trackingTcEnd",
+      "trackingTcOffset","cameraTcSource","syncSource","dropFrame",
+      "genlock","genlockStatus","syncChecked","tcPerFrame","phaseOffset",
+      "sensorReadout","ptpTimestamp","syncPulse","audioTcRoll",
+      "syncEvent","syncFrame","trackingFrame"
+    ].some(name => {
+      const control = form.elements[name];
+      return control && String(control.value || "").trim() !== "";
+    });
+
+    if(hasSyncData) details.open = true;
   }
 
   function updateBadge(){
@@ -2065,50 +2897,146 @@
     });
   }
 
+  function resolvedReportContexts(reports){
+    let inheritedDayNumber = "";
+    let inheritedDate = "";
+    let inheritedSetup = "";
+
+    return reports.map(report => {
+      const ownDayNumber = String(report.dayNumber || "").trim();
+      const ownDate = String(report.date || "").trim();
+      const ownSetup = String(report.setupId || "").trim();
+
+      if(ownDayNumber) inheritedDayNumber = ownDayNumber;
+      if(ownDate) inheritedDate = ownDate;
+      if(ownSetup) inheritedSetup = ownSetup;
+
+      return {
+        report,
+        dayNumber: ownDayNumber || inheritedDayNumber,
+        date: ownDate || inheritedDate,
+        setup: ownSetup || inheritedSetup
+      };
+    });
+  }
+
+  function reportContextKey(context){
+    const day = (context.dayNumber || context.date || "Sans jour").trim();
+    const setup = (context.setup || "Sans setup").trim();
+    return `${day}|||${setup}`;
+  }
+
+  function reportContextLabel(context){
+    const day = context.dayNumber ? `Jour ${context.dayNumber}` : (context.date || "Sans date");
+    const setup = context.setup ? `Setup ${context.setup}` : "Sans setup";
+    return `${day} · ${setup}`;
+  }
+
+  function hasReportNotes(report){
+    return [report.description, report.generalNotes, report.postWarnings, report.trackingNotes, report.dataIssues]
+      .some(value => String(value || "").trim());
+  }
+
+  function hasTrackingData(report){
+    return [report.trackingSystem, report.trackingFile, report.trackingRecorded, report.trackingRig]
+      .some(value => String(value || "").trim()) ||
+      ["track_position","track_rotation","track_focal","track_focus","track_iris","track_zoom","track_distortion","track_nodal"]
+        .some(name => !!report[name]);
+  }
+
   function renderReportList(){
     const reports = orderedReports();
-    const q = (document.getElementById("searchReports").value || "").trim().toLowerCase();
+    const search = document.getElementById("searchReports");
+    const q = (search?.value || "").trim().toLowerCase();
     const filtered = reports.filter(r => JSON.stringify(r).toLowerCase().includes(q));
 
     reportList.innerHTML = "";
     if(!filtered.length){
-      reportList.innerHTML = '<div class="hint">Aucune page sauvegardée.</div>';
+      reportList.innerHTML = `<div class="pages-empty">${q ? "Aucune page ne correspond à cette recherche." : "Aucune page sauvegardée."}</div>`;
       updateActivePageBar();
+      updatePagesPosition();
       return;
     }
 
-    filtered.forEach(r => {
-      const absoluteIndex = reports.findIndex(x => x.id === r.id) + 1;
-      const item = document.createElement("div");
-      item.className = "report-item" + (r.id === activeId ? " active-page" : "");
-      item.dataset.activatePage = r.id;
-      item.setAttribute("role", "button");
-      item.setAttribute("tabindex", "0");
-      item.setAttribute("aria-label", `Ouvrir la page ${absoluteIndex}`);
+    const filteredIds = new Set(filtered.map(report => report.id));
+    const contextualReports = resolvedReportContexts(reports)
+      .filter(context => filteredIds.has(context.report.id));
 
-      const date = r.updatedAt ? new Date(r.updatedAt).toLocaleString("fr-FR") : "";
-      const photosCount = Array.isArray(r.photos) ? r.photos.length : 0;
-      const cameraInfo = [r.cameraType, r.cameraRig, r.lens].filter(Boolean).join(" · ");
-      const takeRange = `${r.take || "—"}${r.takeEnd && r.takeEnd !== r.take ? "–" + r.takeEnd : ""}`;
+    const groups = [];
+    contextualReports.forEach(context => {
+      const key = reportContextKey(context);
+      let group = groups.find(g => g.key === key);
+      if(!group){
+        group = {key, label:reportContextLabel(context), reports:[]};
+        groups.push(group);
+      }
+      group.reports.push(context.report);
+    });
 
-      item.innerHTML = `
-        <label class="page-select no-print" title="Inclure cette page dans le PDF">
-          <input type="checkbox" data-select-page="${r.id}" ${r.selectedForExport !== false ? "checked" : ""}>
-          PDF
-        </label>
-        <div class="report-card-main">
-          <strong><span class="page-number">${absoluteIndex}</span>${escapeHtml(r.scene || "SC —")} / ${escapeHtml(r.shot || "SHOT —")} / Take ${escapeHtml(takeRange)}</strong>
-          <small>${escapeHtml(r.cardClipRange || ((r.card || "") + (r.clip || "")) || "Aucun clip")} ${cameraInfo ? " · " + escapeHtml(cameraInfo) : ""} · 📷 ${photosCount}</small>
-          <small>${escapeHtml(r.project || "")}${date ? " · Modifiée " + date : ""}</small>
-        </div>
-        <div class="report-card-actions no-print">
-          <button type="button" data-duplicate-page="${r.id}" title="Dupliquer cette page">⧉</button>
-          <button type="button" class="danger" data-delete="${r.id}" title="Supprimer cette page">🗑</button>
-        </div>`;
-      reportList.appendChild(item);
+    groups.forEach(group => {
+      const details = document.createElement("details");
+      details.className = "report-group";
+      details.open = group.reports.some(r => r.id === activeId) || !!q;
+
+      const summary = document.createElement("summary");
+      summary.className = "report-group-heading";
+      summary.innerHTML = `<strong>${escapeHtml(group.label)}</strong><small>${group.reports.length} page${group.reports.length > 1 ? "s" : ""}</small>`;
+
+      const list = document.createElement("div");
+      list.className = "report-group-list";
+
+      group.reports.forEach(r => {
+        const absoluteIndex = reports.findIndex(x => x.id === r.id) + 1;
+        const item = document.createElement("article");
+        item.className = "report-item" + (r.id === activeId ? " active-page" : "");
+        item.dataset.activatePage = r.id;
+        item.dataset.reportId = r.id;
+        item.draggable = true;
+        item.setAttribute("role", "button");
+        item.setAttribute("tabindex", "0");
+        item.setAttribute("aria-label", `Ouvrir la page ${absoluteIndex}`);
+
+        const photosCount = Array.isArray(r.photos) ? r.photos.length : 0;
+        const firstPhoto = photosCount && r.photos[0]?.data ? r.photos[0].data : "";
+        const takeRange = `${r.take || "—"}${r.takeEnd && r.takeEnd !== r.take ? "–" + r.takeEnd : ""}`;
+        const cameraInfo = [r.cameraType, r.cameraRig, r.lens].filter(Boolean).join(" · ") || "Technique non renseignée";
+        const clip = r.cardClipRange || ((r.card || "") + (r.clip || "")) || "Aucun clip";
+        const tracking = hasTrackingData(r);
+        const notes = hasReportNotes(r);
+
+        item.innerHTML = `
+          <label class="page-select no-print" title="Inclure cette page dans le PDF">
+            <input type="checkbox" data-select-page="${r.id}" ${r.selectedForExport !== false ? "checked" : ""}>
+            PDF
+          </label>
+          <div class="report-thumb">
+            ${firstPhoto ? `<img src="${firstPhoto}" alt="">` : `<div class="report-thumb-placeholder">🎬</div>`}
+            <span class="report-page-index" title="Page ${absoluteIndex}">${absoluteIndex}</span>
+          </div>
+          <div class="report-card-main">
+            <strong class="report-card-title">${escapeHtml(r.scene || "SC —")} · ${escapeHtml(r.shot || "SHOT —")}</strong>
+            <span class="report-card-take">Take ${escapeHtml(takeRange)}</span>
+            <small class="report-card-meta">${escapeHtml(clip)}</small>
+            <small class="report-card-meta">${escapeHtml(cameraInfo)}</small>
+            <div class="report-card-badges">
+              <span class="page-badge ${photosCount ? "good" : ""}">📷 ${photosCount}</span>
+              ${tracking ? `<span class="page-badge good">🎯 Track</span>` : `<span class="page-badge">🎯 —</span>`}
+              ${notes ? `<span class="page-badge good">📝 Notes</span>` : `<span class="page-badge">📝 —</span>`}
+            </div>
+          </div>
+          <div class="report-card-actions no-print">
+            <button type="button" data-duplicate-page="${r.id}" title="Dupliquer">⧉</button>
+            <button type="button" class="danger" data-delete="${r.id}" title="Supprimer">🗑</button>
+          </div>`;
+        list.appendChild(item);
+      });
+
+      details.append(summary, list);
+      reportList.appendChild(details);
     });
 
     updateActivePageBar();
+    updatePagesPosition();
   }
 
   function setAllPageSelection(value){
@@ -2378,10 +3306,17 @@
           {label:"Unité", value:report.trackingUnit, width:16}
         ],
         [
-          {label:"TC Start", value:report.trackingTcStart, width:27},
-          {label:"TC End", value:report.trackingTcEnd, width:27},
-          {label:"Offset TC", value:report.trackingTcOffset, width:27},
-          {label:"Sync vérifiée", value:report.syncChecked, width:24}
+          {label:"TC caméra start", value:report.cameraTcStart, width:26},
+          {label:"TC caméra end", value:report.cameraTcEnd, width:26},
+          {label:"TC tracking start", value:report.trackingTcStart, width:27},
+          {label:"TC tracking end", value:report.trackingTcEnd, width:27}
+        ],
+        [
+          {label:"Offset TC", value:report.trackingTcOffset, width:24},
+          {label:"Source TC", value:report.cameraTcSource, width:25},
+          {label:"Source sync", value:report.syncSource, width:27},
+          {label:"Genlock", value:report.genlock, width:17},
+          {label:"Sync vérifiée", value:report.syncChecked, width:21}
         ],
         [
           {label:"Fichier tracking", value:report.trackingFile, width:43},
@@ -2545,6 +3480,7 @@
     let lastContext = {};
 
     selected.forEach((r, index) => {
+      const reportPageIndex = all.findIndex(pageReport => pageReport.id === r.id) + 1;
       const currentScene = String(r.scene || "—").trim() || "—";
       const page = document.createElement("article");
       const accentClasses = ["accent-blue","accent-red","accent-green","accent-violet"];
@@ -2585,7 +3521,7 @@
         <div>
           <span>Take(s)</span>
           <strong>${escapeHtml(takeRange)}</strong>
-          <small>${index + 1} / ${selected.length}</small>
+          <small>${escapeHtml(r.cardClipRange || "")}</small>
         </div>
         <div>
           <span>Card / Clip(s)</span>
@@ -2646,6 +3582,16 @@
           meta.appendChild(captionBlock);
         }
       });
+
+      const footer = document.createElement("footer");
+      footer.className = "print-page-footer";
+      const exportSequence = selected.length !== all.length
+        ? ` · Export ${index + 1} / ${selected.length}`
+        : "";
+      footer.innerHTML = `
+        <span class="footer-shot"><strong>${escapeHtml(r.project || "VFX Set Report")}</strong> · SC ${escapeHtml(currentScene)} · SH ${escapeHtml(r.shot || "—")}</span>
+        <span class="footer-number">PAGE ${reportPageIndex} / ${all.length}${exportSequence}</span>`;
+      page.appendChild(footer);
 
       compactPrintPage(page);
       printBook.appendChild(page);
@@ -2759,6 +3705,8 @@
     const visible = TAB_GROUPS[id] || [id];
     document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.target === id));
     document.querySelectorAll("section").forEach(s => s.classList.toggle("active", visible.includes(s.id)));
+    if(id === "reports") renderReportList();
+    updatePagesPosition();
     window.scrollTo({top:0,behavior:"smooth"});
   }
 
@@ -2791,6 +3739,7 @@
     updateRanges();
     updateBadge();
     updateEssentialSummary();
+    updateSyncDetailsState();
     saveReport(true);
   }
 
@@ -2826,6 +3775,7 @@
     updateRanges();
     updateBadge();
     updateEssentialSummary();
+    updateSyncDetailsState();
     saveReport(true);
     setStatus("Page actuelle entièrement vidée.");
     switchTab("essential");
@@ -2857,29 +3807,36 @@
     const current = formToObject();
 
     const preserve = [
-      "project","showId","production","vfxSup","date","dayNumber","unit","sequenceEpisode",
-      "location","intExt","dayNight","weather",
-      "cameraType","cameraId","cameraSerial","cameraRig","sensorMode","resolution","aspectRatio",
-      "frameGuide","colorSpace","lutCdl","nativeIso","standardPad",
-      "lensManufacturer","lensModel","lensSerial","lensType","lens","tStop","iso","shutter","fps",
-      "colorTemp","filter","lensEncoder","lensMetadataFile","lensCalibrationId","lensCharacteristics",
-      "codec","cameraTcSource","dropFrame",
-      "trackingSystem","trackingRig","trackingOperator","trackingFps","trackingUnit",
-      "syncSource","genlock","dataWrangler","dataWranglerFull","ditName"
+      "project","showId","production","vfxSup","date","dayNumber","unit",
+      "sequenceEpisode","setupId","location","intExt","dayNight","weather",
+      "cameraType","cameraId","cameraSerial","cameraRig","sensorMode","resolution",
+      "aspectRatio","frameGuide","colorSpace","lutCdl","nativeIso","standardPad",
+      "lensManufacturer","lensModel","lensSerial","lensType","lens","tStop","iso",
+      "shutter","fps","colorTemp","filter","lensEncoder","lensMetadataFile",
+      "lensCalibrationId","lensCharacteristics","codec","cameraTcSource","dropFrame",
+      "trackingSystem","trackingRig","trackingOperator","trackingRecorded",
+      "trackingFps","trackingUnit","trackingFormat","trackingPath",
+      "trackingTcOffset","syncSource","genlock","genlockStatus","phaseOffset",
+      "sensorReadout","tcPerFrame",
+      "lightingSetupId","gafferDmxOperator","lightingDiagramFile",
+      "dataWrangler","dataWranglerFull","ditName"
     ];
 
-    const next = {date:localDate, photos:[]};
+    const next = {date:current.date || localDate, photos:[]};
     preserve.forEach(name => {
       if(current[name] !== undefined) next[name] = current[name];
     });
 
-    // Keep recurring VFX/reference requirements, but reset what was actually captured.
-    ["vfx_matchmove","vfx_cleanup","vfx_roto","vfx_paint","vfx_setext","vfx_dmp","vfx_cg","vfx_fx"]
-      .forEach(name => next[name] = !!current[name]);
+    [
+      "vfx_matchmove","vfx_cleanup","vfx_roto","vfx_paint",
+      "vfx_setext","vfx_dmp","vfx_cg","vfx_fx",
+      "track_position","track_rotation","track_focal","track_focus",
+      "track_iris","track_zoom","track_distortion","track_nodal"
+    ].forEach(name => next[name] = Boolean(current[name]));
 
     newReport(next);
     form.elements.shot?.focus();
-    setStatus("Nouveau shot créé : caméra et réglages conservés, takes/clips/photos réinitialisés.");
+    setStatus("Plan suivant créé : setup technique conservé, plan/takes/clips/notes/photos réinitialisés.");
   }
 
   document.getElementById("saveBtn").addEventListener("click", () => saveReport());
@@ -2887,6 +3844,18 @@
   document.getElementById("newSetupBtn").addEventListener("click", createNewSetupFromCurrent);
   document.getElementById("resetWholePageBtn").addEventListener("click", resetWholeCurrentPage);
   document.getElementById("goToPagesBtn").addEventListener("click", () => switchTab("reports"));
+  document.getElementById("toolbarPagesBtn").addEventListener("click", () => switchTab("reports"));
+  document.getElementById("closePagesBtn").addEventListener("click", () => switchTab("essential"));
+  document.getElementById("prevPageBtn").addEventListener("click", () => navigatePage(-1, false));
+  document.getElementById("nextPageBtn").addEventListener("click", () => navigatePage(1, false));
+  document.getElementById("pagesPrevBtn").addEventListener("click", () => navigatePage(-1, true));
+  document.getElementById("pagesNextBtn").addEventListener("click", () => navigatePage(1, true));
+  document.getElementById("clearPagesSearchBtn").addEventListener("click", () => {
+    const search = document.getElementById("searchReports");
+    search.value = "";
+    search.focus();
+    renderReportList();
+  });
 
   document.addEventListener("click", e => {
     const button = e.target.closest("[data-reset-section]");
@@ -3039,6 +4008,75 @@
 
   document.getElementById("searchReports").addEventListener("input", renderReportList);
 
+  let draggedReportId = "";
+  reportList.addEventListener("dragstart", e => {
+    const card = e.target.closest("[data-report-id]");
+    if(!card) return;
+    draggedReportId = card.dataset.reportId;
+    card.classList.add("dragging");
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", draggedReportId);
+  });
+  reportList.addEventListener("dragend", e => {
+    e.target.closest("[data-report-id]")?.classList.remove("dragging");
+    reportList.querySelectorAll(".drag-over").forEach(el => el.classList.remove("drag-over"));
+    draggedReportId = "";
+  });
+  reportList.addEventListener("dragover", e => {
+    const card = e.target.closest("[data-report-id]");
+    if(!card || card.dataset.reportId === draggedReportId) return;
+    e.preventDefault();
+    reportList.querySelectorAll(".drag-over").forEach(el => el.classList.remove("drag-over"));
+    card.classList.add("drag-over");
+    e.dataTransfer.dropEffect = "move";
+  });
+  reportList.addEventListener("drop", e => {
+    const card = e.target.closest("[data-report-id]");
+    if(!card) return;
+    e.preventDefault();
+    reorderReport(draggedReportId || e.dataTransfer.getData("text/plain"), card.dataset.reportId);
+  });
+
+  document.addEventListener("keydown", e => {
+    const tag = document.activeElement?.tagName;
+    const editing = ["INPUT","TEXTAREA","SELECT"].includes(tag) || document.activeElement?.isContentEditable;
+    if(editing || e.metaKey || e.ctrlKey || e.altKey) return;
+    if(e.key === "ArrowLeft"){ e.preventDefault(); navigatePage(-1, false); }
+    if(e.key === "ArrowRight"){ e.preventDefault(); navigatePage(1, false); }
+  });
+
+  const swipeToast = document.createElement("div");
+  swipeToast.className = "swipe-toast";
+  document.body.appendChild(swipeToast);
+  let swipeStartX = 0, swipeStartY = 0, swipeStartedAt = 0;
+
+  document.addEventListener("touchstart", e => {
+    if(e.touches.length !== 1) return;
+    const target = e.target;
+    if(target.closest("input, textarea, select, button, label, .photos, #reports")) return;
+    swipeStartX = e.touches[0].clientX;
+    swipeStartY = e.touches[0].clientY;
+    swipeStartedAt = Date.now();
+  }, {passive:true});
+
+  document.addEventListener("touchend", e => {
+    if(!swipeStartedAt || !e.changedTouches.length) return;
+    const dx = e.changedTouches[0].clientX - swipeStartX;
+    const dy = e.changedTouches[0].clientY - swipeStartY;
+    const elapsed = Date.now() - swipeStartedAt;
+    swipeStartedAt = 0;
+    if(elapsed > 700 || Math.abs(dx) < 75 || Math.abs(dx) < Math.abs(dy) * 1.35) return;
+
+    const direction = dx < 0 ? 1 : -1;
+    const before = activePageIndex();
+    navigatePage(direction, false);
+    if(activePageIndex() !== before){
+      swipeToast.textContent = direction > 0 ? "Page suivante" : "Page précédente";
+      swipeToast.classList.add("show");
+      setTimeout(() => swipeToast.classList.remove("show"), 700);
+    }
+  }, {passive:true});
+
   document.getElementById("exportJsonBtn").addEventListener("click", () => {
     saveReport(true);
     const blob = new Blob([JSON.stringify(getReports(), null, 2)], {type:"application/json"});
@@ -3069,6 +4107,7 @@
     updateRanges();
     updateBadge();
     updateEssentialSummary();
+    updateSyncDetailsState();
     clearTimeout(window.__autoSaveTimer);
     window.__autoSaveTimer = setTimeout(() => saveReport(true), 500);
   });
@@ -3115,8 +4154,11 @@
     const dark = theme === "dark";
     document.body.classList.toggle("dark-theme", dark);
     document.body.classList.toggle("print-dark", dark);
-    themeBtn.textContent = dark ? "☀️ Thème clair" : "🌙 Thème sombre";
     themeBtn.setAttribute("aria-pressed", dark ? "true" : "false");
+    const icon = themeBtn.querySelector(".theme-switch-icon");
+    const label = themeBtn.querySelector(".theme-switch-label");
+    if(icon) icon.textContent = dark ? "🌙" : "☀️";
+    if(label) label.textContent = dark ? "Sombre" : "Clair";
   }
 
   const savedTheme = localStorage.getItem(THEME_KEY) || "light";
