@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V11</title>
+  <title>VFX Set Report V15</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -22,6 +22,75 @@
       --radius:14px;
       --shadow:0 8px 24px rgba(15,23,42,.08);
     }
+
+    body.dark-theme{
+      --bg:#11151c;
+      --panel:#1b222c;
+      --ink:#f3f6fa;
+      --muted:#aab4c2;
+      --line:#394453;
+      --accent:#6aa8ff;
+      --accent2:#3f82df;
+      --ok:#37b875;
+      --danger:#ef6b5d;
+      --soft:#222b36;
+      --shadow:0 8px 24px rgba(0,0,0,.34);
+    }
+    body.dark-theme .topbar{background:transparent}
+    body.dark-theme section,
+    body.dark-theme .summary-cell,
+    body.dark-theme .photo-card,
+    body.dark-theme .report-item,
+    body.dark-theme .reset-actions,
+    body.dark-theme details.more-fields{
+      background:var(--panel);
+      color:var(--ink);
+    }
+    body.dark-theme input,
+    body.dark-theme select,
+    body.dark-theme textarea{
+      background:#121821;
+      color:var(--ink);
+      border-color:var(--line);
+    }
+    body.dark-theme input::placeholder,
+    body.dark-theme textarea::placeholder{color:#778394}
+    body.dark-theme button{
+      background:#263140;
+      color:var(--ink);
+      border-color:#465365;
+    }
+    body.dark-theme button.primary{background:var(--accent2);color:#fff}
+    body.dark-theme button.ok{background:var(--ok);color:#fff}
+    body.dark-theme button.danger,
+    body.dark-theme .report-card-actions button.danger{background:#b63b31;color:#fff}
+    body.dark-theme .active-page-bar{
+      background:#17283e;
+      border-color:#416a99;
+    }
+    body.dark-theme .report-item.active-page{
+      background:#17304d;
+      border-color:var(--accent);
+    }
+    body.dark-theme .summary-cell.hero{
+      background:#080c12;
+      border-color:#080c12;
+    }
+    body.dark-theme .floating-compact-header{
+      background:rgba(20,26,35,.96);
+    }
+    body.dark-theme .reset-section-btn{
+      background:#271b1c;
+      color:#ff8a7e;
+      border-color:#74413e;
+    }
+    body.dark-theme .reset-section-btn:active{background:#382123}
+    body.dark-theme details.more-fields summary{color:#d7e0ec}
+    body.dark-theme .empty-export-note{
+      background:#3a3215;
+      color:#f5df80;
+    }
+
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{
@@ -37,60 +106,70 @@
       padding:16px;
     }
     .topbar{
-      position:sticky;
-      top:0;
-      z-index:50;
-      background:rgba(238,241,244,.92);
-      backdrop-filter:blur(14px);
+      position:relative;
+      z-index:20;
+      background:transparent;
       padding:10px 0 14px;
-      transition:padding .18s ease, box-shadow .18s ease;
     }
-    .compact-scroll-bar{
-      display:none;
+    .compact-scroll-bar{display:none}
+
+    .floating-compact-header{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      z-index:100;
+      display:flex;
+      justify-content:center;
+      padding:6px 10px;
+      background:rgba(238,241,244,.96);
+      backdrop-filter:blur(14px);
+      box-shadow:0 5px 18px rgba(15,23,42,.16);
+      transform:translateY(-120%);
+      opacity:0;
+      pointer-events:none;
+      transition:transform .16s ease, opacity .16s ease;
+    }
+    body.show-floating-header .floating-compact-header{
+      transform:translateY(0);
+      opacity:1;
+      pointer-events:auto;
+    }
+    .floating-compact-inner{
+      width:min(1100px,100%);
+      display:flex;
       align-items:center;
-      justify-content:space-between;
       gap:10px;
-      min-height:38px;
-      padding:4px 2px 7px;
     }
-    .compact-scroll-bar > div{min-width:0}
-    .compact-scroll-bar strong,
-    .compact-scroll-bar small{
+    .floating-shot-info{
+      min-width:0;
+      flex:1;
+    }
+    .floating-shot-info strong,
+    .floating-shot-info small{
       display:block;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
-    .compact-scroll-bar strong{font-size:14px}
-    .compact-scroll-bar small{font-size:10px;color:var(--muted)}
-    .compact-scroll-bar button{
-      min-height:34px;
-      padding:5px 9px;
-      font-size:12px;
-      box-shadow:none;
-      border:1px solid var(--line);
-    }
-    .topbar.is-compact{
-      padding:3px 0 4px;
-      box-shadow:0 5px 18px rgba(15,23,42,.16);
-    }
-    .topbar.is-compact .brand,
-    .topbar.is-compact .toolbar,
-    .topbar.is-compact .status,
-    .topbar.is-compact .active-page-bar,
-    .topbar.is-compact .essential-summary{
-      display:none!important;
-    }
-    .topbar.is-compact .compact-scroll-bar{display:flex}
-    .topbar.is-compact .tabs{
-      padding:1px 0 2px;
+    .floating-shot-info strong{font-size:14px}
+    .floating-shot-info small{font-size:10px;color:var(--muted)}
+    .floating-tabs{
+      display:flex;
       gap:5px;
+      flex-wrap:nowrap;
+      overflow-x:auto;
+      scrollbar-width:none;
     }
-    .topbar.is-compact .tab{
-      min-height:32px;
+    .floating-tabs::-webkit-scrollbar{display:none}
+    .floating-tabs button,
+    .floating-menu-btn{
+      min-height:34px;
       padding:6px 9px;
       font-size:12px;
+      white-space:nowrap;
       border-radius:8px;
+      box-shadow:none;
     }
     .brand{
       display:flex;
@@ -559,9 +638,14 @@
     @media(max-width:520px){
       .app{padding:8px}
       .topbar{padding-top:5px}
-      .topbar.is-compact{margin:0 -2px}
-      .compact-scroll-bar strong{font-size:13px}
-      .compact-scroll-bar small{font-size:9px}
+      .floating-compact-header{padding:5px 6px}
+      .floating-compact-inner{gap:6px}
+      .floating-shot-info{max-width:34vw}
+      .floating-shot-info strong{font-size:12px}
+      .floating-shot-info small{font-size:9px}
+      .floating-tabs{flex:1}
+      .floating-tabs button,
+      .floating-menu-btn{min-height:32px;padding:5px 8px;font-size:11px}
       .active-page-bar{align-items:stretch}
       .active-page-bar button{flex:0 0 auto}
       .report-item{align-items:flex-start;flex-wrap:wrap}
@@ -588,141 +672,243 @@
       .tc-pair{grid-template-columns:1fr}
     }
     @media print{
-      @page{size:A4 portrait;margin:8mm}
-      body{background:#fff;font-size:8.8pt}
+      @page{size:A4 portrait;margin:6mm}
+
+      body,
+      body.dark-theme{
+        background:#fff!important;
+        color:#000!important;
+        font-size:7.7pt;
+        --bg:#fff;
+        --panel:#fff;
+        --ink:#000;
+        --muted:#555;
+        --line:#999;
+        --soft:#fff;
+      }
+
+      body.print-dark,
+      body.print-dark.dark-theme{
+        background:#111!important;
+        color:#f5f5f5!important;
+        --bg:#111;
+        --panel:#1b1b1b;
+        --ink:#f5f5f5;
+        --muted:#bbb;
+        --line:#666;
+        --soft:#1b1b1b;
+      }
+
+      html, body, #printBook, .print-report, .print-report *{
+        -webkit-print-color-adjust:exact!important;
+        print-color-adjust:exact!important;
+      }
+
       .app{display:none!important}
       #printBook{display:block!important}
 
-      .print-scene-divider{
-        break-before:page;
-        page-break-before:always;
-        min-height:255mm;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        text-align:center;
-        border:5px solid #111;
-      }
-      .print-scene-divider:first-child{
-        break-before:auto;
-        page-break-before:auto;
-      }
-      .print-scene-divider .scene-kicker{
-        font-size:12pt;
-        font-weight:900;
-        letter-spacing:.25em;
-      }
-      .print-scene-divider .scene-number{
-        font-size:54pt;
-        line-height:1;
-        font-weight:950;
-        margin:10mm 0 4mm;
-      }
-      .print-scene-divider .scene-project{
-        font-size:14pt;
-        font-weight:800;
-      }
-
       .print-report{
         position:relative;
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:2mm;
+        align-items:start;
         break-after:page;
         page-break-after:always;
-        border-left:5px solid #111;
-        padding-left:4mm;
+        border-left:3px solid #111;
+        padding-left:2.5mm;
       }
       .print-report:last-child{
         break-after:auto;
         page-break-after:auto;
       }
 
+      .print-scene-ribbon{
+        grid-column:1/-1;
+        order:0;
+        padding:1.4mm 2.5mm;
+        background:#111;
+        color:#fff;
+        font-size:9pt;
+        font-weight:950;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+      }
+
       .print-shot-banner{
+        grid-column:1/-1;
+        order:1;
         display:grid;
-        grid-template-columns:1.15fr 1fr 1fr;
-        border:3px solid #111;
-        margin:0 0 4mm;
+        grid-template-columns:1.2fr .75fr 1fr;
+        border:2px solid #111;
+        margin:0 0 1mm;
         background:#fff;
       }
       .print-shot-banner > div{
-        padding:3mm;
-        border-right:2px solid #111;
+        padding:1.8mm 2.2mm;
+        border-right:1.5px solid #111;
       }
       .print-shot-banner > div:last-child{border-right:0}
       .print-shot-banner span{
         display:block;
-        font-size:7pt;
+        font-size:5.8pt;
         font-weight:900;
-        letter-spacing:.12em;
+        letter-spacing:.1em;
         text-transform:uppercase;
       }
       .print-shot-banner strong{
         display:block;
-        margin-top:1mm;
-        font-size:18pt;
-        line-height:1.05;
+        margin-top:.5mm;
+        font-size:13.5pt;
+        line-height:1;
       }
       .print-shot-banner small{
         display:block;
-        margin-top:1mm;
-        font-size:8pt;
+        margin-top:.6mm;
+        font-size:6.5pt;
       }
 
       .print-report section{
         display:block!important;
         position:relative;
+        order:10;
         box-shadow:none;
         border:1px solid #777;
         border-radius:0;
-        padding:3mm;
-        margin:0 0 3mm;
-        break-inside:auto;
-        page-break-inside:auto;
+        padding:1.8mm;
+        margin:0;
+        break-inside:avoid;
+        page-break-inside:avoid;
+        background:#fff;
+        color:#000;
       }
 
-      /* Every continuation section repeats the current shot identity. */
-      .print-report section:not(#shot)::before{
-        content:attr(data-print-shot);
-        display:block;
-        margin:-3mm -3mm 3mm;
-        padding:1.5mm 2.5mm;
-        background:#222;
-        color:#fff;
-        font-size:8pt;
-        font-weight:900;
-        letter-spacing:.04em;
+      .print-report section#shot,
+      .print-report section#tracking{
+        grid-column:1/-1;
+      }
+
+      /* Photos always come last, below every information block. */
+      .print-report section#photos{
+        grid-column:1/-1;
+        order:99;
       }
 
       .print-report .no-print{display:none!important}
       .print-header{display:none!important}
 
       input,select,textarea{
-        border:0;
-        padding:1px 0;
-        min-height:auto;
-        background:transparent;
-        color:#000;
-        font-size:8.5pt;
+        border:0!important;
+        padding:0!important;
+        min-height:auto!important;
+        background:transparent!important;
+        color:inherit!important;
+        font-size:7.4pt!important;
+        line-height:1.12!important;
       }
-      textarea{min-height:24px}
-      .grid{gap:2mm 3mm}
+      textarea{
+        min-height:12px!important;
+        height:auto!important;
+        overflow:visible!important;
+      }
+
+      .grid{
+        gap:1mm 2mm!important;
+        grid-template-columns:repeat(4,minmax(0,1fr))!important;
+      }
       .field{
         border-bottom:1px solid #aaa;
-        padding-bottom:1.5mm;
+        padding:0 0 .7mm!important;
+        min-width:0;
       }
-      .field label{font-size:6.8pt}
-      .checkgrid{grid-template-columns:repeat(5,1fr);gap:1mm 2mm}
-      .check{background:#fff;padding:1mm 0;border:0;min-height:auto;font-size:8pt}
-      .photos{grid-template-columns:repeat(4,1fr);gap:3mm}
-      .photo-card{border:1px solid #777}
-      .photo-card button{display:none}
-      .photo-card textarea{border:0;min-height:18px}
-      .photo-card img{aspect-ratio:4/3}
-      h2{font-size:11pt;margin:0 0 2.5mm}
-      h3{font-size:9pt;margin:2mm 0}
-      .divider{margin:2.5mm 0}
-      details.more-fields{padding:2mm;border:1px solid #aaa}
-      details.more-fields summary{display:none}
-      .section-heading{margin-bottom:2.5mm;padding-bottom:1.5mm}
+      .field label{
+        font-size:5.5pt!important;
+        line-height:1!important;
+        margin-bottom:.4mm!important;
+      }
+      .span-2{grid-column:span 2}
+      .span-3{grid-column:span 3}
+      .span-4{grid-column:1/-1}
+
+      .checkgrid{
+        grid-template-columns:repeat(6,1fr)!important;
+        gap:.5mm 1.5mm!important;
+      }
+      .check{
+        background:transparent!important;
+        padding:0!important;
+        border:0!important;
+        min-height:auto!important;
+        font-size:6.8pt!important;
+      }
+
+      .photos{
+        display:grid!important;
+        grid-template-columns:repeat(4,42mm)!important;
+        justify-content:start!important;
+        align-items:start!important;
+        gap:2mm!important;
+      }
+      .photo-card{
+        border:1px solid #777!important;
+        background:#fff!important;
+      }
+      .photo-card button{display:none!important}
+      .photo-card textarea{border:0!important;min-height:10px!important}
+      .photo-card img{aspect-ratio:4/3!important}
+      .print-photo-caption{
+        padding:1.2mm;
+        font-size:6.8pt;
+        line-height:1.15;
+        border-top:1px solid #777;
+        white-space:pre-wrap;
+      }
+
+      h2{
+        font-size:9pt!important;
+        margin:0 0 1.2mm!important;
+        padding:0 0 .8mm!important;
+      }
+      h3{
+        font-size:7.2pt!important;
+        margin:1mm 0!important;
+      }
+      .divider{margin:1mm 0!important}
+      details.more-fields{
+        padding:1mm!important;
+        margin:0!important;
+        border:0!important;
+      }
+      details.more-fields summary{display:none!important}
+      .section-heading{
+        margin-bottom:1.2mm!important;
+        padding-bottom:.8mm!important;
+      }
+
+      /* Dark PDF mode */
+      body.print-dark .print-report{
+        border-left-color:#eee;
+      }
+      body.print-dark .print-scene-ribbon{
+        background:#eee;
+        color:#111;
+      }
+      body.print-dark .print-shot-banner,
+      body.print-dark .print-report section,
+      body.print-dark .photo-card{
+        background:#1b1b1b!important;
+        color:#f5f5f5!important;
+        border-color:#777!important;
+      }
+      body.print-dark .print-shot-banner > div{
+        border-color:#777!important;
+      }
+      body.print-dark .field{
+        border-color:#666!important;
+      }
+      body.print-dark .print-photo-caption{
+        border-color:#777!important;
+      }
     }
   </style>
 </head>
@@ -732,7 +918,7 @@
     <div class="brand">
       <div>
         <h1>VFX Set Report</h1>
-        <small>Rapport plateau hors ligne — iPad / Safari · en-tête intelligent · se compacte automatiquement pendant le défilement</small>
+        <small>Rapport plateau hors ligne — iPad / Safari · thème unifié application / PDF · photos toujours en bas à gauche</small>
       </div>
       <div id="reportBadge"><strong>Nouveau rapport</strong></div>
     </div>
@@ -746,6 +932,7 @@
       <button class="ok" id="printBtn">📄 Exporter les pages</button>
       <button id="gpsBtn">📍 GPS</button>
       <button id="nowBtn">🕒 Heure actuelle</button>
+      <button id="themeBtn" type="button" aria-pressed="false" title="Le même thème est utilisé dans l’application et le PDF">🌙 Thème sombre</button>
     </div>
     <div class="status" id="status"></div>
 
@@ -766,20 +953,29 @@
       <div class="summary-cell"><span>EXPO</span><strong id="sumExposure">—</strong><small id="sumFps">—</small></div>
     </div>
 
-    <div class="compact-scroll-bar no-print" id="compactScrollBar">
-      <div>
-        <strong id="compactShotTitle">SC — · SH — · TK —</strong>
-        <small id="compactClipTitle">Aucun clip</small>
-      </div>
-      <button type="button" id="expandHeaderBtn" title="Afficher les commandes">⌄ Menu</button>
-    </div>
-
     <div class="tabs no-print" id="tabs">
       <button class="tab active" data-target="essential">★ Essentiel</button>
       <button class="tab" data-target="tracking">Tracking</button>
       <button class="tab" data-target="photos">Photos</button>
       <button class="tab" data-target="advanced">Avancé</button>
       <button class="tab" data-target="reports">Pages</button>
+    </div>
+  </div>
+
+  <div class="floating-compact-header no-print" id="floatingCompactHeader">
+    <div class="floating-compact-inner">
+      <div class="floating-shot-info">
+        <strong id="compactShotTitle">SC — · SH — · TK —</strong>
+        <small id="compactClipTitle">Aucun clip</small>
+      </div>
+      <div class="floating-tabs" id="floatingTabs">
+        <button type="button" data-floating-tab="essential">★ Essentiel</button>
+        <button type="button" data-floating-tab="tracking">Tracking</button>
+        <button type="button" data-floating-tab="photos">Photos</button>
+        <button type="button" data-floating-tab="advanced">Avancé</button>
+        <button type="button" data-floating-tab="reports">Pages</button>
+      </div>
+      <button type="button" class="floating-menu-btn" id="expandHeaderBtn">⌃ Haut</button>
     </div>
   </div>
 
@@ -1570,25 +1766,19 @@
 
     selected.forEach((r, index) => {
       const currentScene = String(r.scene || "—").trim() || "—";
-
-      // Insert a full visual divider only when the scene changes.
-      if(previousScene !== null && currentScene !== previousScene){
-        const divider = document.createElement("article");
-        divider.className = "print-scene-divider";
-        divider.innerHTML = `
-          <div class="scene-kicker">CHANGEMENT DE SCÈNE</div>
-          <div class="scene-number">${escapeHtml(currentScene)}</div>
-          <div class="scene-project">${escapeHtml(r.project || "VFX SET REPORT")}</div>`;
-        printBook.appendChild(divider);
-      }
-      previousScene = currentScene;
-
       const page = document.createElement("article");
       page.className = "print-report";
 
+      if(previousScene !== null && currentScene !== previousScene){
+        const ribbon = document.createElement("div");
+        ribbon.className = "print-scene-ribbon";
+        ribbon.textContent = `Changement de scène · Scène ${currentScene}`;
+        page.appendChild(ribbon);
+      }
+      previousScene = currentScene;
+
       const takeRange = `${r.take || "—"}${r.takeEnd && r.takeEnd !== r.take ? "–" + r.takeEnd : ""}`;
       const clipRange = r.cardClipRange || ((r.card || "") + (r.clip || "")) || "Aucun clip";
-      const shotIdentity = `SCÈNE ${currentScene}  ·  SHOT ${r.shot || "—"}  ·  TAKE ${takeRange}  ·  ${clipRange}`;
 
       const banner = document.createElement("div");
       banner.className = "print-shot-banner";
@@ -1601,7 +1791,7 @@
         <div>
           <span>Take(s)</span>
           <strong>${escapeHtml(takeRange)}</strong>
-          <small>Page ${index + 1} / ${selected.length}</small>
+          <small>${index + 1} / ${selected.length}</small>
         </div>
         <div>
           <span>Card / Clip(s)</span>
@@ -1611,20 +1801,73 @@
       page.appendChild(banner);
 
       const alwaysPrint = new Set(["shot"]);
-      const exportOrder = ["shot","camera","references","notes","tracking","photos","lighting","capture","vpdata"];
+      const exportOrder = ["shot","camera","references","notes","tracking","lighting","capture","vpdata","photos"];
 
       exportOrder.forEach(id => {
         if(!alwaysPrint.has(id) && !sectionHasContent(r, id)) return;
         const source = document.getElementById(id);
         const clone = source.cloneNode(true);
-        clone.dataset.printShot = shotIdentity;
         page.appendChild(clone);
       });
 
       fillCloneWithReport(page, r);
+
+      page.querySelectorAll(".photo-card").forEach(card => {
+        const textarea = card.querySelector("textarea[data-caption]");
+        const caption = (textarea?.value || textarea?.textContent || "").trim();
+        const meta = card.querySelector(".photo-meta");
+
+        if(!caption){
+          if(meta) meta.remove();
+        }else if(meta){
+          meta.innerHTML = "";
+          const captionBlock = document.createElement("div");
+          captionBlock.className = "print-photo-caption";
+          captionBlock.textContent = caption;
+          meta.appendChild(captionBlock);
+        }
+      });
+
+      compactPrintPage(page);
       printBook.appendChild(page);
     });
     return true;
+  }
+
+  function compactPrintPage(page){
+    // Remove every individual empty field instead of keeping the entire blank form.
+    page.querySelectorAll(".field").forEach(field => {
+      const controls = [...field.querySelectorAll("input, select, textarea")];
+      const hasValue = controls.some(control => {
+        if(control.type === "checkbox" || control.type === "radio") return control.checked;
+        return String(control.value || control.textContent || "").trim() !== "";
+      });
+      if(!hasValue) field.remove();
+    });
+
+    // Unchecked options do not need to occupy PDF space.
+    page.querySelectorAll(".check").forEach(check => {
+      const input = check.querySelector('input[type="checkbox"], input[type="radio"]');
+      if(input && !input.checked) check.remove();
+    });
+
+    // Remove containers and headings left empty after pruning.
+    page.querySelectorAll(".grid, .checkgrid, details.more-fields").forEach(container => {
+      const meaningful = container.querySelector(".field, .check, input, select, textarea, img");
+      if(!meaningful) container.remove();
+    });
+
+    page.querySelectorAll("h3, .divider").forEach(element => {
+      let next = element.nextElementSibling;
+      if(!next || (!next.querySelector?.(".field, .check, input, select, textarea, img") && !next.matches?.(".field, .check"))){
+        element.remove();
+      }
+    });
+
+    page.querySelectorAll("section").forEach(section => {
+      const meaningful = section.querySelector(".field, .check, input, select, textarea, img, .photo-card");
+      if(!meaningful && section.id !== "shot") section.remove();
+    });
   }
 
   function exportSelectedPages(){
@@ -1645,8 +1888,7 @@
       card.innerHTML = `
         <img src="${p.data}" alt="Photo VFX ${index+1}" />
         <div class="photo-meta">
-          <label>Légende</label>
-          <textarea data-caption="${index}" placeholder="Combo, caméra, HDRI, markers…">${escapeHtml(p.caption || "")}</textarea>
+          <textarea aria-label="Légende de la photo" data-caption="${index}" placeholder="Ajouter une légende…">${escapeHtml(p.caption || "")}</textarea>
           <div class="photo-buttons no-print">
             <button type="button" data-up="${index}">↑</button>
             <button type="button" data-down="${index}">↓</button>
@@ -2034,35 +2276,71 @@
   updateEssentialSummary();
 })();
 
-  const topbar = document.querySelector(".topbar");
-  const expandHeaderBtn = document.getElementById("expandHeaderBtn");
-  let headerManuallyExpanded = false;
-  let compactTicking = false;
+  const THEME_KEY = "vfxSetReportTheme";
+  const themeBtn = document.getElementById("themeBtn");
 
-  function updateCompactHeader(){
-    const shouldCompact = window.scrollY > 115 && !headerManuallyExpanded;
-    topbar.classList.toggle("is-compact", shouldCompact);
-    if(window.scrollY < 45){
-      headerManuallyExpanded = false;
-      topbar.classList.remove("is-compact");
+  function applyTheme(theme){
+    const dark = theme === "dark";
+    document.body.classList.toggle("dark-theme", dark);
+    document.body.classList.toggle("print-dark", dark);
+    themeBtn.textContent = dark ? "☀️ Thème clair" : "🌙 Thème sombre";
+    themeBtn.setAttribute("aria-pressed", dark ? "true" : "false");
+  }
+
+  const savedTheme = localStorage.getItem(THEME_KEY) || "light";
+  applyTheme(savedTheme);
+
+  themeBtn.addEventListener("click", () => {
+    const nextTheme = document.body.classList.contains("dark-theme") ? "light" : "dark";
+    localStorage.setItem(THEME_KEY, nextTheme);
+    applyTheme(nextTheme);
+
+    if(nextTheme === "dark"){
+      setStatus("Thème sombre activé pour l’application et le PDF. Dans la fenêtre d’impression, active « Graphiques d’arrière-plan » pour conserver le fond sombre.");
+    }else{
+      setStatus("Thème clair activé pour l’application et le PDF.");
     }
-    compactTicking = false;
+  });
+
+  // Barre flottante indépendante du document :
+  // aucune hauteur de contenu ne change pendant le scroll.
+  // Les seuils différents évitent l'effet de va-et-vient.
+  const expandHeaderBtn = document.getElementById("expandHeaderBtn");
+  let floatingHeaderVisible = false;
+  let scrollTicking = false;
+
+  function updateFloatingHeader(){
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+
+    if(!floatingHeaderVisible && y > 280){
+      floatingHeaderVisible = true;
+      document.body.classList.add("show-floating-header");
+    }else if(floatingHeaderVisible && y < 100){
+      floatingHeaderVisible = false;
+      document.body.classList.remove("show-floating-header");
+    }
+
+    scrollTicking = false;
   }
 
   window.addEventListener("scroll", () => {
-    if(!compactTicking){
-      compactTicking = true;
-      requestAnimationFrame(updateCompactHeader);
+    if(!scrollTicking){
+      scrollTicking = true;
+      requestAnimationFrame(updateFloatingHeader);
     }
   }, {passive:true});
 
   expandHeaderBtn.addEventListener("click", () => {
-    headerManuallyExpanded = true;
-    topbar.classList.remove("is-compact");
-    setStatus("Menu développé.");
+    window.scrollTo({top:0, behavior:"smooth"});
   });
 
-  updateCompactHeader();
+  document.getElementById("floatingTabs").addEventListener("click", e => {
+    const button = e.target.closest("[data-floating-tab]");
+    if(!button) return;
+    switchTab(button.dataset.floatingTab);
+  });
+
+  updateFloatingHeader();
 
 </script>
 </body>
