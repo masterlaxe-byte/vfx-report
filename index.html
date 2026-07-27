@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V21</title>
+  <title>VFX Set Report V25</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -994,8 +994,62 @@
         grid-template-columns:repeat(5,minmax(0,1fr))!important;
       }
       #shot .grid{
-        grid-template-columns:repeat(6,minmax(0,1fr))!important;
+        grid-template-columns:repeat(12,minmax(0,1fr))!important;
+        grid-auto-flow:row!important;
+        column-gap:1mm!important;
+        row-gap:.75mm!important;
       }
+
+      /* Lignes compactes réellement horizontales dans le PDF.
+         Flex est utilisé ici pour éviter les différences de rendu du moteur d'impression. */
+      #shot .print-shot-grid{
+        display:block!important;
+        width:100%!important;
+      }
+      #shot .print-shot-row{
+        display:flex!important;
+        flex-flow:row nowrap!important;
+        justify-content:flex-start!important;
+        align-items:flex-end!important;
+        gap:1mm!important;
+        width:100%!important;
+        margin:0 0 .8mm!important;
+      }
+      #shot .print-shot-row > .field{
+        display:block!important;
+        grid-column:auto!important;
+        width:auto!important;
+        min-width:0!important;
+        margin:0!important;
+      }
+
+      #shot .print-shot-row-primary > .field:nth-child(1){flex:0 0 20mm!important}
+      #shot .print-shot-row-primary > .field:nth-child(2){flex:0 0 18mm!important}
+      #shot .print-shot-row-primary > .field:nth-child(3){flex:0 0 18mm!important}
+      #shot .print-shot-row-primary > .field:nth-child(4){flex:0 0 20mm!important}
+      #shot .print-shot-row-primary > .field:nth-child(5){flex:0 0 20mm!important}
+
+      #shot .print-shot-row-environment > .field:nth-child(1){flex:0 0 23mm!important}
+      #shot .print-shot-row-environment > .field:nth-child(2){flex:0 0 23mm!important}
+      #shot .print-shot-row-environment > .field:nth-child(3){flex:0 0 30mm!important}
+      #shot .print-shot-row-environment > .field:nth-child(4){flex:0 0 22mm!important}
+
+      #shot .print-shot-row-gps > .field{flex:0 0 34mm!important}
+
+      #shot .print-shot-description{
+        display:block!important;
+        width:100%!important;
+        grid-column:auto!important;
+        margin:0 0 .8mm!important;
+      }
+
+      .print-report select{
+        display:block!important;
+        width:100%!important;
+        max-width:100%!important;
+        padding-right:1mm!important;
+      }
+
       .field{
         border-bottom:1px solid #aaa;
         padding:0 0 .5mm!important;
@@ -1127,7 +1181,7 @@
     <div class="brand">
       <div>
         <h1>VFX Set Report</h1>
-        <small>Rapport plateau hors ligne — iPad / Safari · contexte intelligent hérité · changements signalés · export PDF réparé</small>
+        <small>Rapport plateau hors ligne — iPad / Safari · champs PDF réellement horizontaux · photothèque et appareil photo séparés</small>
       </div>
       <div id="reportBadge"><strong>Nouveau rapport</strong></div>
     </div>
@@ -1465,11 +1519,15 @@
     <section id="photos">
       <div class="section-heading"><h2>Photos</h2><button type="button" class="reset-section-btn no-print" data-reset-section="photos">🧹 Vider Photos</button></div>
       <div class="photo-actions no-print">
-        <label class="button primary" for="photoInput">📷 Prendre / ajouter une photo</label>
-        <input id="photoInput" type="file" accept="image/*" capture="environment" multiple class="hidden" />
+        <label class="button primary" for="photoLibraryInput">🖼️ Choisir une image</label>
+        <input id="photoLibraryInput" type="file" accept="image/*" multiple class="hidden" />
+
+        <label class="button" for="photoCameraInput">📷 Prendre une photo</label>
+        <input id="photoCameraInput" type="file" accept="image/*" capture="environment" class="hidden" />
+
         <button type="button" id="clearPhotosBtn" class="danger">Supprimer toutes les photos</button>
       </div>
-      <p class="hint no-print">Sur iPad, le bouton peut ouvrir directement l’appareil photo. Les images restent sauvegardées localement dans le navigateur.</p>
+      <p class="hint no-print">« Choisir une image » ouvre la photothèque ou les fichiers. « Prendre une photo » ouvre directement l’appareil photo arrière lorsque le navigateur le permet.</p>
       <div id="photosGrid" class="photos"></div>
     </section>
 
@@ -1559,7 +1617,8 @@
   const statusEl = document.getElementById("status");
   const badge = document.getElementById("reportBadge");
   const photosGrid = document.getElementById("photosGrid");
-  const photoInput = document.getElementById("photoInput");
+  const photoLibraryInput = document.getElementById("photoLibraryInput");
+  const photoCameraInput = document.getElementById("photoCameraInput");
   const reportList = document.getElementById("reportList");
   let activeId = localStorage.getItem(ACTIVE_KEY) || crypto.randomUUID();
   let photos = [];
@@ -2061,6 +2120,60 @@
     page.appendChild(header);
   }
 
+  function rebuildShotPrintLayout(section){
+    const originalGrid = section.querySelector(":scope > .grid");
+    if(!originalGrid) return;
+
+    const getField = name => {
+      const control = originalGrid.querySelector(`[name="${name}"]`);
+      return control ? control.closest(".field") : null;
+    };
+
+    const makeRow = (className, names) => {
+      const row = document.createElement("div");
+      row.className = `print-shot-row ${className}`;
+      names.forEach(name => {
+        const field = getField(name);
+        if(field) row.appendChild(field);
+      });
+      return row.children.length ? row : null;
+    };
+
+    const rebuilt = document.createElement("div");
+    rebuilt.className = "print-shot-grid";
+
+    const primary = makeRow(
+      "print-shot-row-primary",
+      ["timeOfDay", "scene", "shot", "take", "takeEnd"]
+    );
+    if(primary) rebuilt.appendChild(primary);
+
+    const description = getField("description");
+    if(description){
+      description.classList.add("print-shot-description");
+      rebuilt.appendChild(description);
+    }
+
+    const environment = makeRow(
+      "print-shot-row-environment",
+      ["intExt", "dayNight", "weather", "slate"]
+    );
+    if(environment) rebuilt.appendChild(environment);
+
+    const gps = makeRow(
+      "print-shot-row-gps",
+      ["gpsLat", "gpsLong", "gpsExtra"]
+    );
+    if(gps) rebuilt.appendChild(gps);
+
+    // Preserve any future/unclassified fields instead of losing them.
+    Array.from(originalGrid.querySelectorAll(":scope > .field")).forEach(field => {
+      rebuilt.appendChild(field);
+    });
+
+    originalGrid.replaceWith(rebuilt);
+  }
+
   function buildPrintBook(){
     saveReport(true);
     const all = orderedReports();
@@ -2131,6 +2244,7 @@
       const shotClone = shotSource.cloneNode(true);
       shotClone.classList.add("print-essential");
       removeRepeatedProductionFields(shotClone);
+      rebuildShotPrintLayout(shotClone);
       page.appendChild(shotClone);
 
       // Optional information: only filled sections, arranged below Essential.
@@ -2447,23 +2561,32 @@
     }, err => setStatus("GPS refusé ou indisponible : " + err.message), {enableHighAccuracy:true,timeout:12000});
   });
 
-  photoInput.addEventListener("change", async e => {
-    const files = [...e.target.files];
+  async function importPhotoFiles(input){
+    const files = [...(input.files || [])];
     if(!files.length) return;
-    setStatus(`Traitement de ${files.length} photo(s)…`,0);
+
+    setStatus(`Traitement de ${files.length} image(s)…`,0);
+    let added = 0;
+
     for(const file of files){
+      if(!file.type.startsWith("image/")) continue;
       try{
         const data = await fileToCompressedDataURL(file);
         photos.push({data,caption:""});
+        added++;
       }catch(err){
         console.error(err);
       }
     }
-    photoInput.value = "";
+
+    input.value = "";
     renderPhotos();
     saveReport(true);
-    setStatus("Photo(s) ajoutée(s).");
-  });
+    setStatus(added ? `${added} image(s) ajoutée(s).` : "Aucune image valide ajoutée.");
+  }
+
+  photoLibraryInput.addEventListener("change", () => importPhotoFiles(photoLibraryInput));
+  photoCameraInput.addEventListener("change", () => importPhotoFiles(photoCameraInput));
 
   photosGrid.addEventListener("input", e => {
     if(e.target.dataset.caption !== undefined){
