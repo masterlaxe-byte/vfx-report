@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#111827" />
+  <title>VFX Set Report V10</title>
+  <style>
+    :root{
+      --bg:#eef1f4;
+      --panel:#ffffff;
+      --ink:#111827;
+      --muted:#6b7280;
+      --line:#c7ccd4;
+      --accent:#1f6feb;
+      --accent2:#0f4ea8;
+      --ok:#0f9d58;
+      --danger:#c0392b;
+      --soft:#f5f7fa;
+      --radius:14px;
+      --shadow:0 8px 24px rgba(15,23,42,.08);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      line-height:1.35;
+    }
+    .app{
+      max-width:1180px;
+      margin:0 auto;
+      padding:16px;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(238,241,244,.92);
+      backdrop-filter:blur(14px);
+      padding:10px 0 14px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .brand h1{
+      margin:0;
+      font-size:clamp(22px,3.5vw,34px);
+      letter-spacing:.02em;
+    }
+    .brand small{color:var(--muted)}
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    button,.button{
+      appearance:none;
+      border:0;
+      border-radius:10px;
+      padding:11px 14px;
+      min-height:44px;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+      background:#fff;
+      color:var(--ink);
+      box-shadow:0 1px 3px rgba(0,0,0,.12);
+    }
+    button.primary{background:var(--accent);color:#fff}
+    button.primary:active{background:var(--accent2)}
+    button.ok{background:var(--ok);color:#fff}
+    button.danger{background:var(--danger);color:#fff}
+    button.ghost{background:transparent;box-shadow:none;border:1px solid var(--line)}
+    .status{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:13px;
+      min-height:18px;
+    }
+    .tabs{
+      display:flex;
+      gap:8px;
+      overflow:auto;
+      padding:4px 0 8px;
+      scrollbar-width:none;
+    }
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{
+      flex:0 0 auto;
+      border:1px solid var(--line);
+      background:#fff;
+      box-shadow:none;
+      padding:9px 12px;
+      min-height:38px;
+      font-weight:650;
+    }
+    .tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+    section{
+      display:none;
+      background:var(--panel);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+      margin:0 0 16px;
+    }
+    section.active{display:block}
+    h2{
+      margin:0 0 14px;
+      font-size:21px;
+      border-bottom:2px solid var(--ink);
+      padding-bottom:8px;
+    }
+    h3{
+      margin:18px 0 10px;
+      font-size:16px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:12px;
+    }
+    .field{grid-column:span 3}
+    .field.w2{grid-column:span 2}
+    .field.w4{grid-column:span 4}
+    .field.w6{grid-column:span 6}
+    .field.w8{grid-column:span 8}
+    .field.w12{grid-column:span 12}
+    label{
+      display:block;
+      font-size:12px;
+      font-weight:800;
+      color:#374151;
+      margin:0 0 5px;
+      text-transform:uppercase;
+      letter-spacing:.035em;
+    }
+    input,select,textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:9px;
+      background:#fff;
+      color:var(--ink);
+      padding:11px 12px;
+      font:inherit;
+      min-height:44px;
+    }
+    input:focus,select:focus,textarea:focus{
+      outline:3px solid rgba(31,111,235,.17);
+      border-color:var(--accent);
+    }
+    textarea{min-height:110px;resize:vertical}
+    .checkgrid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:8px;
+    }
+    .check{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-height:42px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:9px;
+      background:var(--soft);
+      font-weight:650;
+    }
+    .check input{
+      width:20px;
+      min-height:20px;
+      height:20px;
+      margin:0;
+      flex:0 0 auto;
+    }
+    .photo-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .photos{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+    }
+    .photo-card{
+      border:1px solid var(--line);
+      border-radius:12px;
+      overflow:hidden;
+      background:#fff;
+      break-inside:avoid;
+    }
+    .photo-card img{
+      display:block;
+      width:100%;
+      aspect-ratio:4/3;
+      object-fit:cover;
+      background:#e5e7eb;
+    }
+    .photo-card .photo-meta{padding:9px}
+    .photo-card textarea{min-height:64px}
+    .photo-card .photo-buttons{
+      display:flex;
+      gap:6px;
+      margin-top:8px;
+    }
+    .photo-card button{padding:7px 9px;min-height:34px;font-size:12px}
+    .report-list{
+      display:grid;
+      gap:8px;
+    }
+    .report-item{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:var(--soft);
+      cursor:pointer;
+      transition:transform .12s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .report-item:hover{
+      border-color:#8aa7ce;
+      box-shadow:0 3px 12px rgba(15,23,42,.08);
+    }
+    .report-item:active{
+      transform:scale(.995);
+    }
+    .report-item strong{display:block}
+    .report-item small{color:var(--muted)}
+    .report-item.active-page{
+      border:2px solid var(--accent);
+      background:#eaf3ff;
+      box-shadow:0 0 0 3px rgba(42,111,187,.12);
+    }
+    .report-item.active-page::before{
+      content:"EN COURS";
+      align-self:flex-start;
+      padding:4px 7px;
+      border-radius:999px;
+      background:var(--accent);
+      color:#fff;
+      font-size:9px;
+      font-weight:900;
+      letter-spacing:.06em;
+      white-space:nowrap;
+    }
+    .report-card-main{
+      flex:1;
+      min-width:0;
+    }
+    .report-card-main strong,
+    .report-card-main small{
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .report-card-actions{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .report-card-actions{
+      position:relative;
+      z-index:5;
+    }
+    .report-card-actions button{
+      position:relative;
+      z-index:6;
+      min-height:40px;
+      min-width:42px;
+      padding:7px 9px;
+      font-size:12px;
+      touch-action:manipulation;
+      -webkit-tap-highlight-color:rgba(0,0,0,.08);
+    }
+    .report-card-actions button.danger{
+      background:#b42318;
+      color:#fff;
+      border-color:#b42318;
+    }
+    .active-page-bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin:10px 0;
+      padding:10px 12px;
+      border:1px solid #9eb8d9;
+      border-left:5px solid var(--accent);
+      border-radius:12px;
+      background:#eef5ff;
+    }
+    .active-page-bar > div{
+      min-width:0;
+    }
+    .active-page-bar strong,
+    .active-page-bar small{
+      display:block;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .active-page-bar strong{
+      margin-top:2px;
+      font-size:16px;
+    }
+    .active-page-bar small{
+      margin-top:2px;
+      color:var(--muted);
+    }
+    .active-page-kicker{
+      display:block;
+      font-size:9px;
+      font-weight:900;
+      letter-spacing:.09em;
+      color:var(--accent);
+    }
+    .page-select{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-right:8px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .page-select input{
+      width:20px;
+      height:20px;
+      min-height:20px;
+    }
+    .page-number{
+      display:inline-block;
+      min-width:32px;
+      padding:3px 7px;
+      margin-right:6px;
+      border-radius:999px;
+      background:var(--ink);
+      color:#fff;
+      text-align:center;
+      font-size:12px;
+    }
+    #printBook{display:none}
+    .inline{
+      display:flex;
+      gap:8px;
+      align-items:end;
+    }
+    .inline > *{flex:1}
+    .hint{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:6px;
+    }
+    .divider{
+      height:1px;
+      background:var(--line);
+      margin:18px 0;
+    }
+    .hidden{display:none!important}
+    .print-header{display:none}
+    .tc-pair{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .essential-summary{
+      display:grid;
+      grid-template-columns:1.2fr 1.2fr 1.4fr 1fr 1fr;
+      gap:8px;
+      margin:10px 0 8px;
+    }
+    .summary-cell{
+      min-height:76px;
+      padding:10px 12px;
+      border:1px solid #b9c2cf;
+      border-radius:12px;
+      background:#fff;
+      box-shadow:0 2px 8px rgba(15,23,42,.06);
+      overflow:hidden;
+    }
+    .summary-cell.hero{
+      background:#111827;
+      color:#fff;
+      border-color:#111827;
+    }
+    .summary-cell span{
+      display:block;
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.08em;
+      opacity:.68;
+      margin-bottom:5px;
+    }
+    .summary-cell strong{
+      display:block;
+      font-size:17px;
+      line-height:1.12;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .summary-cell small{
+      display:block;
+      margin-top:4px;
+      opacity:.75;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .essential-section{
+      border-left:5px solid var(--accent);
+    }
+    .essential-section h2{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    details.more-fields{
+      grid-column:1/-1;
+      margin-top:4px;
+      padding:10px;
+      border:1px dashed #aeb7c4;
+      border-radius:10px;
+      background:#fafbfc;
+    }
+    details.more-fields summary{
+      cursor:pointer;
+      font-weight:850;
+      color:#334155;
+      min-height:36px;
+      display:flex;
+      align-items:center;
+    }
+    details.more-fields .grid{margin-top:10px}
+    .quick-checks .check{
+      min-height:46px;
+      font-size:14px;
+    }
+    .tab[data-target="essential"]{font-weight:900}
+    .empty-export-note{
+      padding:8px 10px;
+      border-radius:8px;
+      background:#fff7d6;
+      color:#6b5200;
+      font-size:13px;
+      margin:8px 0;
+    }
+
+    .section-heading{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:2px solid var(--ink);
+      padding-bottom:8px;
+      margin:0 0 14px;
+    }
+    .section-heading h2{
+      margin:0;
+      padding:0;
+      border:0;
+    }
+    .reset-section-btn{
+      flex:0 0 auto;
+      min-height:36px;
+      padding:7px 10px;
+      font-size:12px;
+      background:#fff;
+      color:var(--danger);
+      border:1px solid #e6aaa3;
+      box-shadow:none;
+    }
+    .reset-section-btn:active{
+      background:#fff0ee;
+    }
+    .reset-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin:0 0 14px;
+      padding:10px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#fafbfc;
+    }
+    .reset-actions strong{
+      width:100%;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      color:var(--muted);
+    }
+    @media(max-width:800px){
+      .essential-summary{grid-template-columns:1fr 1fr}
+      .summary-cell.hero{grid-column:1/-1}
+    }
+    @media(max-width:520px){
+      .active-page-bar{align-items:stretch}
+      .active-page-bar button{flex:0 0 auto}
+      .report-item{align-items:flex-start;flex-wrap:wrap}
+      .report-card-main{order:2;flex-basis:calc(100% - 70px)}
+      .report-card-actions{order:3;width:100%}
+      .page-select{order:1}
+      .essential-summary{grid-template-columns:1fr 1fr}
+      .summary-cell{min-height:68px;padding:9px}
+      .summary-cell strong{font-size:15px}
+    }
+
+    @media (max-width:800px){
+      .field,.field.w2,.field.w4{grid-column:span 6}
+      .field.w6,.field.w8{grid-column:span 12}
+      .checkgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .photos{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media (max-width:520px){
+      .app{padding:10px}
+      section{padding:14px}
+      .field,.field.w2,.field.w4,.field.w6,.field.w8{grid-column:span 12}
+      .photos{grid-template-columns:1fr}
+      .checkgrid{grid-template-columns:1fr 1fr}
+      .tc-pair{grid-template-columns:1fr}
+    }
+    @media print{
+      @page{size:A4 portrait;margin:8mm}
+      body{background:#fff;font-size:8.8pt}
+      .app{display:none!important}
+      #printBook{display:block!important}
+
+      .print-scene-divider{
+        break-before:page;
+        page-break-before:always;
+        min-height:255mm;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        text-align:center;
+        border:5px solid #111;
+      }
+      .print-scene-divider:first-child{
+        break-before:auto;
+        page-break-before:auto;
+      }
+      .print-scene-divider .scene-kicker{
+        font-size:12pt;
+        font-weight:900;
+        letter-spacing:.25em;
+      }
+      .print-scene-divider .scene-number{
+        font-size:54pt;
+        line-height:1;
+        font-weight:950;
+        margin:10mm 0 4mm;
+      }
+      .print-scene-divider .scene-project{
+        font-size:14pt;
+        font-weight:800;
+      }
+
+      .print-report{
+        position:relative;
+        break-after:page;
+        page-break-after:always;
+        border-left:5px solid #111;
+        padding-left:4mm;
+      }
+      .print-report:last-child{
+        break-after:auto;
+        page-break-after:auto;
+      }
+
+      .print-shot-banner{
+        display:grid;
+        grid-template-columns:1.15fr 1fr 1fr;
+        border:3px solid #111;
+        margin:0 0 4mm;
+        background:#fff;
+      }
+      .print-shot-banner > div{
+        padding:3mm;
+        border-right:2px solid #111;
+      }
+      .print-shot-banner > div:last-child{border-right:0}
+      .print-shot-banner span{
+        display:block;
+        font-size:7pt;
+        font-weight:900;
+        letter-spacing:.12em;
+        text-transform:uppercase;
+      }
+      .print-shot-banner strong{
+        display:block;
+        margin-top:1mm;
+        font-size:18pt;
+        line-height:1.05;
+      }
+      .print-shot-banner small{
+        display:block;
+        margin-top:1mm;
+        font-size:8pt;
+      }
+
+      .print-report section{
+        display:block!important;
+        position:relative;
+        box-shadow:none;
+        border:1px solid #777;
+        border-radius:0;
+        padding:3mm;
+        margin:0 0 3mm;
+        break-inside:auto;
+        page-break-inside:auto;
+      }
+
+      /* Every continuation section repeats the current shot identity. */
+      .print-report section:not(#shot)::before{
+        content:attr(data-print-shot);
+        display:block;
+        margin:-3mm -3mm 3mm;
+        padding:1.5mm 2.5mm;
+        background:#222;
+        color:#fff;
+        font-size:8pt;
+        font-weight:900;
+        letter-spacing:.04em;
+      }
+
+      .print-report .no-print{display:none!important}
+      .print-header{display:none!important}
+
+      input,select,textarea{
+        border:0;
+        padding:1px 0;
+        min-height:auto;
+        background:transparent;
+        color:#000;
+        font-size:8.5pt;
+      }
+      textarea{min-height:24px}
+      .grid{gap:2mm 3mm}
+      .field{
+        border-bottom:1px solid #aaa;
+        padding-bottom:1.5mm;
+      }
+      .field label{font-size:6.8pt}
+      .checkgrid{grid-template-columns:repeat(5,1fr);gap:1mm 2mm}
+      .check{background:#fff;padding:1mm 0;border:0;min-height:auto;font-size:8pt}
+      .photos{grid-template-columns:repeat(4,1fr);gap:3mm}
+      .photo-card{border:1px solid #777}
+      .photo-card button{display:none}
+      .photo-card textarea{border:0;min-height:18px}
+      .photo-card img{aspect-ratio:4/3}
+      h2{font-size:11pt;margin:0 0 2.5mm}
+      h3{font-size:9pt;margin:2mm 0}
+      .divider{margin:2.5mm 0}
+      details.more-fields{padding:2mm;border:1px solid #aaa}
+      details.more-fields summary{display:none}
+      .section-heading{margin-bottom:2.5mm;padding-bottom:1.5mm}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div>
+        <h1>VFX Set Report</h1>
+        <small>Rapport plateau hors ligne — iPad / Safari · suppression fiable sur iPad · retour automatique à la page précédente</small>
+      </div>
+      <div id="reportBadge"><strong>Nouveau rapport</strong></div>
+    </div>
+
+    <div class="toolbar no-print">
+      <button class="primary" id="saveBtn">💾 Sauvegarder</button>
+      <button id="newShotBtn">🎬 Nouveau Shot</button>
+      <button id="newSetupBtn">🎥 Nouveau Setup</button>
+      <button id="newBtn">📄 Nouvelle Page</button>
+      <button id="duplicateBtn">⧉ Dupliquer</button>
+      <button class="ok" id="printBtn">📄 Exporter les pages</button>
+      <button id="gpsBtn">📍 GPS</button>
+      <button id="nowBtn">🕒 Heure actuelle</button>
+    </div>
+    <div class="status" id="status"></div>
+
+    <div class="active-page-bar no-print" id="activePageBar">
+      <div>
+        <span class="active-page-kicker">PAGE ACTIVE</span>
+        <strong id="activePageTitle">Page —</strong>
+        <small id="activePageMeta">Sélectionne une page dans l’onglet Pages</small>
+      </div>
+      <button type="button" id="goToPagesBtn">📚 Changer de page</button>
+    </div>
+
+    <div class="essential-summary no-print" id="essentialSummary">
+      <div class="summary-cell hero"><span>PLAN</span><strong id="sumShot">SC — · SH —</strong><small id="sumTake">Take —</small></div>
+      <div class="summary-cell"><span>CLIPS</span><strong id="sumClip">—</strong></div>
+      <div class="summary-cell"><span>CAMÉRA / RIG</span><strong id="sumCamera">—</strong><small id="sumRig">—</small></div>
+      <div class="summary-cell"><span>OPTIQUE</span><strong id="sumLens">—</strong><small id="sumTstop">—</small></div>
+      <div class="summary-cell"><span>EXPO</span><strong id="sumExposure">—</strong><small id="sumFps">—</small></div>
+    </div>
+
+    <div class="tabs no-print" id="tabs">
+      <button class="tab active" data-target="essential">★ Essentiel</button>
+      <button class="tab" data-target="tracking">Tracking</button>
+      <button class="tab" data-target="photos">Photos</button>
+      <button class="tab" data-target="advanced">Avancé</button>
+      <button class="tab" data-target="reports">Pages</button>
+    </div>
+  </div>
+
+  <div class="print-header">
+    <h1>VFX SET REPORT</h1>
+    <div id="printSummary"></div>
+  </div>
+
+  <form id="reportForm" autocomplete="off">
+    <section id="shot" class="active essential-section">
+      <div class="section-heading"><h2>01 · Plan, takes et clips</h2><button type="button" class="reset-section-btn no-print" data-reset-section="shot">🧹 Vider Plan</button></div>
+      <div class="grid">
+        <div class="field w3"><label>Projet</label><input name="project" /></div>
+        <div class="field w3"><label>Show ID</label><input name="showId" placeholder="SHOW01" /></div>
+        <div class="field w3"><label>Production</label><input name="production" /></div>
+        <div class="field w3"><label>VFX Supervisor</label><input name="vfxSup" /></div>
+
+        <div class="field w2"><label>Date</label><input type="date" name="date" /></div>
+        <div class="field w2"><label>Jour #</label><input name="dayNumber" placeholder="01R" /></div>
+        <div class="field w2"><label>Unité</label><input name="unit" placeholder="Main / 2nd Unit" /></div>
+        <div class="field w2"><label>Heure / TOD</label><input type="time" name="timeOfDay" /></div>
+        <div class="field w2"><label>Séquence / Épisode</label><input name="sequenceEpisode" /></div>
+        <div class="field w2"><label>Setup</label><input name="setupId" /></div>
+        <div class="field w2"><label>Scène</label><input name="scene" /></div>
+        <div class="field w2"><label>Shot</label><input name="shot" /></div>
+        <div class="field w2"><label>Take début</label><input name="take" placeholder="1" /></div>
+        <div class="field w2"><label>Take fin</label><input name="takeEnd" placeholder="21" /></div>
+
+        <div class="field w6"><label>Description</label><textarea name="description" placeholder="Action du plan, éléments VFX, contraintes…"></textarea></div>
+        <div class="field w6"><label>Lieu</label><textarea name="location" placeholder="Décor, étage, orientation, position caméra…"></textarea></div>
+
+        <div class="field w3"><label>Int / Ext</label>
+          <select name="intExt"><option value=""></option><option>Intérieur</option><option>Extérieur</option><option>Intérieur / Extérieur</option></select>
+        </div>
+        <div class="field w3"><label>Jour / Nuit</label>
+          <select name="dayNight"><option value=""></option><option>Jour</option><option>Nuit</option><option>Aube</option><option>Crépuscule</option></select>
+        </div>
+        <div class="field w3"><label>Météo</label><input name="weather" placeholder="Soleil, couvert, pluie…" /></div>
+        <div class="field w3"><label>Slate</label><input name="slate" /></div>
+
+        <div class="field w4"><label>GPS latitude</label><input name="gpsLat" inputmode="decimal" /></div>
+        <div class="field w4"><label>GPS longitude</label><input name="gpsLong" inputmode="decimal" /></div>
+        <div class="field w4"><label>Altitude / précision</label><input name="gpsExtra" /></div>
+      </div>
+
+      <h3>Type de travail VFX</h3>
+      <div class="checkgrid">
+        <label class="check"><input type="checkbox" name="vfx_matchmove">Matchmove</label>
+        <label class="check"><input type="checkbox" name="vfx_cleanup">Cleanup</label>
+        <label class="check"><input type="checkbox" name="vfx_roto">Roto</label>
+        <label class="check"><input type="checkbox" name="vfx_paint">Paint</label>
+        <label class="check"><input type="checkbox" name="vfx_setext">Set extension</label>
+        <label class="check"><input type="checkbox" name="vfx_dmp">DMP</label>
+        <label class="check"><input type="checkbox" name="vfx_cg">CG</label>
+        <label class="check"><input type="checkbox" name="vfx_fx">FX</label>
+      </div>
+    </section>
+
+    <section id="camera" class="essential-section">
+      <div class="section-heading"><h2>02 · Caméra, rig et optique</h2><button type="button" class="reset-section-btn no-print" data-reset-section="camera">🧹 Vider Caméra</button></div>
+      <div class="grid">
+        <div class="field w4"><label>Caméra / modèle</label><input name="cameraType" placeholder="ARRI Alexa 35, Venice 2…" /></div>
+        <div class="field w2"><label>Camera ID</label><input name="cameraId" placeholder="A" /></div>
+        <div class="field w3"><label>Numéro de série</label><input name="cameraSerial" /></div>
+        <div class="field w3"><label>Camera Rig</label><input name="cameraRig" placeholder="Dolly, crane, gimbal…" /></div>
+
+        <div class="field w3"><label>Sensor mode / taille</label><input name="sensorMode" placeholder="Open Gate 4.6K / 27.99 × 19.22 mm" /></div>
+        <div class="field w3"><label>Résolution</label><input name="resolution" placeholder="4608 × 3164" /></div>
+        <div class="field w3"><label>Aspect ratio</label><input name="aspectRatio" placeholder="1.85 / 2.39" /></div>
+        <div class="field w3"><label>Frame guide / graticule</label><input name="frameGuide" /></div>
+
+        <div class="field w3"><label>Colour space / Gamma</label><input name="colorSpace" placeholder="ARRI Wide Gamut 4 / LogC4" /></div>
+        <div class="field w3"><label>LUT / CDL</label><input name="lutCdl" /></div>
+        <div class="field w3"><label>Native ISO</label><input name="nativeIso" /></div>
+        <div class="field w3"><label>Standard pad / overscan</label><input name="standardPad" placeholder="5 % / full sensor" /></div>
+
+        <div class="field w2"><label>Focale</label><input name="lens" placeholder="18 mm" /></div>
+        <div class="field w2"><label>Lens manufacturer</label><input name="lensManufacturer" placeholder="Cooke" /></div>
+        <div class="field w2"><label>Lens model</label><input name="lensModel" placeholder="S4 /i" /></div>
+        <div class="field w2"><label>Lens serial</label><input name="lensSerial" /></div>
+        <div class="field w2"><label>Type</label><select name="lensType"><option value=""></option><option>Sphérique</option><option>Anamorphique</option><option>Zoom</option><option>Probe</option><option>Autre</option></select></div>
+        <div class="field w2"><label>T-Stop</label><input name="tStop" /></div>
+        <div class="field w2"><label>ISO</label><input name="iso" inputmode="numeric" /></div>
+        <div class="field w2"><label>Shutter</label><input name="shutter" placeholder="180°" /></div>
+        <div class="field w2"><label>FPS</label><input name="fps" inputmode="decimal" /></div>
+
+        <div class="field w2"><label>WB / C Temp</label><input name="colorTemp" placeholder="5600 K" /></div>
+        <div class="field w2"><label>Filtre</label><input name="filter" /></div>
+        <div class="field w2"><label>Focus distance</label><input name="focusDistance" /></div>
+        <div class="field w2"><label>Camera height</label><input name="cameraHeight" /></div>
+        <div class="field w2"><label>Tilt</label><input name="tilt" /></div>
+        <div class="field w2"><label>Roll</label><input name="roll" /></div>
+
+        <div class="field w3"><label>Lens encoder</label><select name="lensEncoder"><option value=""></option><option>Oui</option><option>Non</option><option>Partiel</option></select></div>
+        <div class="field w3"><label>Lens metadata file</label><input name="lensMetadataFile" /></div>
+        <div class="field w3"><label>Distortion / calibration ID</label><input name="lensCalibrationId" /></div>
+        <div class="field w3"><label>Caractéristiques optiques</label><input name="lensCharacteristics" placeholder="Flare, coating, aberration…" /></div>
+
+        <div class="field w3"><label>Card / Media</label><input name="card" placeholder="D001" /></div>
+        <div class="field w3"><label>Clip début</label><input name="clip" placeholder="C001" /></div>
+        <div class="field w3"><label>Clip fin</label><input name="clipEnd" placeholder="C021" /></div>
+        <div class="field w3"><label>Codec / Format</label><input name="codec" /></div>
+        <div class="field w12"><label>Card / plage de clips</label><input name="cardClipRange" readonly placeholder="D001C001 – C021" /></div>
+      </div>
+
+      <h3>Timecode caméra</h3>
+      <div class="grid">
+        <div class="field w3"><label>TC Start</label><input name="cameraTcStart" placeholder="01:12:32:10" /></div>
+        <div class="field w3"><label>TC End</label><input name="cameraTcEnd" placeholder="01:12:58:03" /></div>
+        <div class="field w3"><label>TC Source</label><input name="cameraTcSource" placeholder="Tentacle / Lockit / Jam sync" /></div>
+        <div class="field w3"><label>Drop frame</label>
+          <select name="dropFrame"><option value=""></option><option>Non</option><option>Oui</option></select>
+        </div>
+      </div>
+    </section>
+
+    <section id="tracking">
+      <div class="section-heading"><h2>Tracking caméra 3D / Virtual Production</h2><button type="button" class="reset-section-btn no-print" data-reset-section="tracking">🧹 Vider Tracking</button></div>
+      <div class="grid">
+        <div class="field w4"><label>Système de tracking</label>
+          <select name="trackingSystem">
+            <option value=""></option><option>Mo-Sys</option><option>Ncam</option><option>Stype</option>
+            <option>Vive Mars</option><option>OptiTrack</option><option>FreeD</option><option>Autre</option>
+          </select>
+        </div>
+        <div class="field w4"><label>Nom du rig</label><input name="trackingRig" /></div>
+        <div class="field w4"><label>Opérateur tracking</label><input name="trackingOperator" /></div>
+
+        <div class="field w3"><label>Tracking enregistré</label>
+          <select name="trackingRecorded"><option value=""></option><option>Oui</option><option>Non</option><option>Partiel</option></select>
+        </div>
+        <div class="field w3"><label>Genlock</label>
+          <select name="genlock"><option value=""></option><option>Oui</option><option>Non</option></select>
+        </div>
+        <div class="field w3"><label>Framerate tracking</label><input name="trackingFps" /></div>
+        <div class="field w3"><label>Unité</label>
+          <select name="trackingUnit"><option value=""></option><option>m</option><option>cm</option><option>mm</option><option>ft</option></select>
+        </div>
+
+        <div class="field w3"><label>TC tracking start</label><input name="trackingTcStart" placeholder="01:12:32:10" /></div>
+        <div class="field w3"><label>TC tracking end</label><input name="trackingTcEnd" placeholder="01:12:58:03" /></div>
+        <div class="field w3"><label>Offset TC caméra / tracking</label><input name="trackingTcOffset" placeholder="+00:00:00:02" /></div>
+        <div class="field w3"><label>Sync vérifiée</label>
+          <select name="syncChecked"><option value=""></option><option>Oui</option><option>Non</option></select>
+        </div>
+
+        <div class="field w3"><label>Sync source</label><input name="syncSource" placeholder="Lockit / PTP / house sync" /></div>
+        <div class="field w3"><label>Phase offset</label><input name="phaseOffset" /></div>
+        <div class="field w3"><label>Sensor start / readout</label><input name="sensorReadout" placeholder="Rolling shutter / ms" /></div>
+        <div class="field w3"><label>PTP timestamp</label><input name="ptpTimestamp" /></div>
+        <div class="field w3"><label>Sync pulse / edge</label><input name="syncPulse" /></div>
+        <div class="field w3"><label>Genlock status détaillé</label><input name="genlockStatus" /></div>
+        <div class="field w3"><label>Timecode par frame</label><select name="tcPerFrame"><option value=""></option><option>Disponible</option><option>Non disponible</option></select></div>
+        <div class="field w3"><label>Audio TC / sound roll</label><input name="audioTcRoll" /></div>
+
+        <div class="field w6"><label>Nom du fichier tracking</label><input name="trackingFile" placeholder="SC011_SH020_T03_CAM_A.fbx" /></div>
+        <div class="field w3"><label>Format</label>
+          <select name="trackingFormat"><option value=""></option><option>FBX</option><option>Alembic</option><option>CSV</option><option>USD</option><option>FreeD</option><option>Autre</option></select>
+        </div>
+        <div class="field w3"><label>Stockage / dossier</label><input name="trackingPath" /></div>
+      </div>
+
+      <h3>Données enregistrées</h3>
+      <div class="checkgrid">
+        <label class="check"><input type="checkbox" name="track_position">Position</label>
+        <label class="check"><input type="checkbox" name="track_rotation">Rotation</label>
+        <label class="check"><input type="checkbox" name="track_focal">Focale</label>
+        <label class="check"><input type="checkbox" name="track_focus">Focus</label>
+        <label class="check"><input type="checkbox" name="track_iris">Iris</label>
+        <label class="check"><input type="checkbox" name="track_zoom">Zoom</label>
+        <label class="check"><input type="checkbox" name="track_distortion">Distortion</label>
+        <label class="check"><input type="checkbox" name="track_nodal">Nodal offset</label>
+      </div>
+
+      <h3>Contrôle de cohérence</h3>
+      <div class="grid">
+        <div class="field w4"><label>Slate / événement de sync</label><input name="syncEvent" placeholder="Clap, flash, LED frame…" /></div>
+        <div class="field w4"><label>Image frame de référence</label><input name="syncFrame" /></div>
+        <div class="field w4"><label>Tracking frame correspondante</label><input name="trackingFrame" /></div>
+        <div class="field w3"><label>IMU fichier</label><input name="imuFile" /></div>
+        <div class="field w3"><label>Axes / orientation</label><input name="imuAxes" placeholder="XYZ, pitch/yaw/roll" /></div>
+        <div class="field w3"><label>Depth source</label><input name="depthSource" placeholder="On-camera lidar / range finder / depth cam" /></div>
+        <div class="field w3"><label>Depth fichier</label><input name="depthFile" /></div>
+        <div class="field w12"><label>Notes tracking</label><textarea name="trackingNotes" placeholder="Perte de tracking, occlusions, drift, changements de rig, calibration…"></textarea></div>
+      </div>
+    </section>
+
+
+    <section id="lighting">
+      <div class="section-heading"><h2>Couleur, éclairage et continuité</h2><button type="button" class="reset-section-btn no-print" data-reset-section="lighting">🧹 Vider Lumière</button></div>
+      <div class="grid">
+        <div class="field w4"><label>Lighting setup ID</label><input name="lightingSetupId" /></div>
+        <div class="field w4"><label>Gaffer / opérateur DMX</label><input name="gafferDmxOperator" /></div>
+        <div class="field w4"><label>Lighting diagram / fichier</label><input name="lightingDiagramFile" /></div>
+
+        <div class="field w4"><label>Sources principales</label><input name="mainLightSources" placeholder="HMI 18K, SkyPanel, soleil…" /></div>
+        <div class="field w4"><label>Températures couleur</label><input name="lightColorTemps" placeholder="5600 K / 3200 K" /></div>
+        <div class="field w4"><label>Intensité / distance</label><input name="lightIntensityDistance" /></div>
+
+        <div class="field w4"><label>DMX show / cue</label><input name="dmxCue" /></div>
+        <div class="field w4"><label>DMX metadata file</label><input name="dmxFile" /></div>
+        <div class="field w4"><label>Interactive lighting</label><select name="interactiveLighting"><option value=""></option><option>Oui</option><option>Non</option><option>Partiel</option></select></div>
+
+        <div class="field w4"><label>Shadow direction</label><input name="shadowDirection" /></div>
+        <div class="field w4"><label>Shadow softness / falloff</label><input name="shadowFalloff" /></div>
+        <div class="field w4"><label>Exposure / colour changes per take</label><input name="lightingTakeChanges" /></div>
+
+        <div class="field w6"><label>Référence matériau / prop</label><textarea name="materialLightingReference" placeholder="Métal, peau, tissu, fourrure, plastique…"></textarea></div>
+        <div class="field w6"><label>Notes continuité lumière</label><textarea name="lightingContinuityNotes"></textarea></div>
+      </div>
+    </section>
+
+    <section id="references" class="essential-section">
+      <div class="section-heading"><h2>03 · Références capturées</h2><button type="button" class="reset-section-btn no-print" data-reset-section="references">🧹 Vider Références</button></div>
+      <div class="checkgrid quick-checks">
+        <label class="check"><input type="checkbox" name="ref_hdri">HDRI</label>
+        <label class="check"><input type="checkbox" name="ref_mirror">Mirror ball</label>
+        <label class="check"><input type="checkbox" name="ref_gray">Gray ball</label>
+        <label class="check"><input type="checkbox" name="ref_macbeth">Color chart</label>
+        <label class="check"><input type="checkbox" name="ref_cleanplate">Clean plate</label>
+        <label class="check"><input type="checkbox" name="ref_tiles">Tiles</label>
+        <label class="check"><input type="checkbox" name="ref_texture">Textures</label>
+        <label class="check"><input type="checkbox" name="ref_lidar">Lidar</label>
+        <label class="check"><input type="checkbox" name="ref_photogrammetry">Photogrammetry</label>
+        <label class="check"><input type="checkbox" name="ref_survey">Set survey</label>
+        <label class="check"><input type="checkbox" name="ref_lighting">Lighting diagram</label>
+        <label class="check"><input type="checkbox" name="ref_witness">Witness cam</label>
+        <label class="check"><input type="checkbox" name="ref_lensgrid">Lens grid</label>
+        <label class="check"><input type="checkbox" name="ref_nodal">Nodal / entrance pupil</label>
+        <label class="check"><input type="checkbox" name="ref_drone">Drone</label>
+        <label class="check"><input type="checkbox" name="ref_nerf">NeRF / Gaussian Splat</label>
+        <label class="check"><input type="checkbox" name="ref_facebody">Face / Body scan</label>
+        <label class="check"><input type="checkbox" name="ref_tpose">T-pose / markers</label>
+        <label class="check"><input type="checkbox" name="ref_vehicle">Vehicle / Prop reference</label>
+        <label class="check"><input type="checkbox" name="ref_mudmap">Mudmap / blocking</label>
+        <label class="check"><input type="checkbox" name="ref_other">Autre</label>
+      </div>
+
+      <div class="divider"></div>
+      <div class="grid">
+        <div class="field w4"><label>HDRI / fichier</label><input name="hdriFile" /></div>
+        <div class="field w4"><label>Lidar / fichier</label><input name="lidarFile" /></div>
+        <div class="field w4"><label>Lens grid / fichier</label><input name="lensGridFile" /></div>
+        <div class="field w4"><label>Textures / dossier</label><input name="textureFolder" /></div>
+        <div class="field w4"><label>Witness cam / clip</label><input name="witnessClip" /></div>
+        <div class="field w4"><label>Data wrangler</label><input name="dataWrangler" /></div>
+      </div>
+    </section>
+
+
+    <section id="capture">
+      <div class="section-heading"><h2>Scans, photogrammétrie et assets physiques</h2><button type="button" class="reset-section-btn no-print" data-reset-section="capture">🧹 Vider Scans & Assets</button></div>
+      <div class="grid">
+        <div class="field w3"><label>Capture type</label><select name="captureType"><option value=""></option><option>Set Lidar</option><option>Photogrammetry</option><option>NeRF</option><option>Gaussian Splat</option><option>Prop Scan</option><option>Face Scan</option><option>Body Scan</option><option>Vehicle Reference</option><option>Costume Reference</option></select></div>
+        <div class="field w3"><label>Asset / Set ID</label><input name="captureAssetId" /></div>
+        <div class="field w3"><label>Capture vendor / opérateur</label><input name="captureVendor" /></div>
+        <div class="field w3"><label>Timestamp / TC capture</label><input name="captureTimestamp" /></div>
+
+        <div class="field w3"><label>Scanner / appareil</label><input name="captureDevice" /></div>
+        <div class="field w3"><label>Format</label><input name="captureFormat" placeholder="E57, LAS, OBJ, USD, RAW…" /></div>
+        <div class="field w3"><label>Scale / unités</label><input name="captureScaleUnits" placeholder="1 unit = 1 cm" /></div>
+        <div class="field w3"><label>Coordinate system</label><input name="captureCoordinates" placeholder="Y-up / Z-up / origin" /></div>
+
+        <div class="field w4"><label>Scan / dataset file</label><input name="captureFile" /></div>
+        <div class="field w4"><label>Texture folder</label><input name="captureTextureFolder" /></div>
+        <div class="field w4"><label>Calibration / colour chart</label><input name="captureCalibration" /></div>
+
+        <div class="field w3"><label>Mesures physiques prises</label><select name="physicalMeasurements"><option value=""></option><option>Oui</option><option>Non</option><option>Partiel</option></select></div>
+        <div class="field w3"><label>Surface mate / dulling spray</label><select name="dullingSpray"><option value=""></option><option>Oui</option><option>Non</option><option>N/A</option></select></div>
+        <div class="field w3"><label>Marker layout capturé</label><select name="markerLayoutCaptured"><option value=""></option><option>Oui</option><option>Non</option><option>N/A</option></select></div>
+        <div class="field w3"><label>T-pose / neutral pose</label><select name="neutralPoseCaptured"><option value=""></option><option>Oui</option><option>Non</option><option>N/A</option></select></div>
+
+        <div class="field w6"><label>Witness / BTS cameras</label><textarea name="witnessCameraDetails" placeholder="Camera IDs, positions, clips, sync, coverage head-to-toe…"></textarea></div>
+        <div class="field w6"><label>Notes capture / zones manquantes</label><textarea name="captureNotes"></textarea></div>
+      </div>
+    </section>
+
+    <section id="photos">
+      <div class="section-heading"><h2>Photos</h2><button type="button" class="reset-section-btn no-print" data-reset-section="photos">🧹 Vider Photos</button></div>
+      <div class="photo-actions no-print">
+        <label class="button primary" for="photoInput">📷 Prendre / ajouter une photo</label>
+        <input id="photoInput" type="file" accept="image/*" capture="environment" multiple class="hidden" />
+        <button type="button" id="clearPhotosBtn" class="danger">Supprimer toutes les photos</button>
+      </div>
+      <p class="hint no-print">Sur iPad, le bouton peut ouvrir directement l’appareil photo. Les images restent sauvegardées localement dans le navigateur.</p>
+      <div id="photosGrid" class="photos"></div>
+    </section>
+
+
+    <section id="vpdata">
+      <div class="section-heading"><h2>Virtual Production, livrables et data management</h2><button type="button" class="reset-section-btn no-print" data-reset-section="vpdata">🧹 Vider VP & Data</button></div>
+      <h3>Virtual Production / LED</h3>
+      <div class="grid">
+        <div class="field w3"><label>Stage / Volume ID</label><input name="vpStageId" /></div>
+        <div class="field w3"><label>Engine / version</label><input name="vpEngineVersion" placeholder="Unreal 5.x / project changelist" /></div>
+        <div class="field w3"><label>Scene / level version</label><input name="vpSceneVersion" /></div>
+        <div class="field w3"><label>Snapshot timestamp</label><input name="vpSnapshotTimestamp" /></div>
+
+        <div class="field w3"><label>LED layout / dimensions</label><input name="ledDimensions" /></div>
+        <div class="field w3"><label>Pixel pitch</label><input name="ledPixelPitch" /></div>
+        <div class="field w3"><label>Brightness / colour profile</label><input name="ledColorBrightness" /></div>
+        <div class="field w3"><label>Frustum calibration file</label><input name="frustumCalibrationFile" /></div>
+
+        <div class="field w3"><label>Camera-to-LED latency</label><input name="vpLatency" placeholder="ms / frames" /></div>
+        <div class="field w3"><label>Plate ou CG temps réel</label><select name="vpAssetType"><option value=""></option><option>Plate 2D / array</option><option>CG temps réel</option><option>Mixte</option></select></div>
+        <div class="field w3"><label>Plate / asset version</label><input name="vpAssetVersion" /></div>
+        <div class="field w3"><label>On-set adjustment log</label><input name="vpAdjustmentLog" /></div>
+
+        <div class="field w12"><label>Continuity / changements VP</label><textarea name="vpContinuityNotes" placeholder="Lighting, colour grade, projector mapping, scene changes, snapshots…"></textarea></div>
+      </div>
+
+      <h3>Data management et livrables</h3>
+      <div class="grid">
+        <div class="field w3"><label>Data Wrangler</label><input name="dataWranglerFull" /></div>
+        <div class="field w3"><label>DIT</label><input name="ditName" /></div>
+        <div class="field w3"><label>Dailies / Editorial ref</label><input name="editorialReference" /></div>
+        <div class="field w3"><label>Sound roll</label><input name="soundRoll" /></div>
+
+        <div class="field w4"><label>Naming convention</label><input name="namingConvention" placeholder="SHOW_SEQ_SHOT_TYPE_v0001" /></div>
+        <div class="field w4"><label>Directory / storage path</label><input name="dataStoragePath" /></div>
+        <div class="field w4"><label>Checksum / MHL</label><input name="checksumMhl" /></div>
+
+        <div class="field w3"><label>Original metadata</label><select name="originalMetadataDelivered"><option value=""></option><option>Oui</option><option>Non</option><option>À confirmer</option></select></div>
+        <div class="field w3"><label>Slate frame / burn-ins</label><select name="burninsDelivered"><option value=""></option><option>Oui</option><option>Non</option><option>À confirmer</option></select></div>
+        <div class="field w3"><label>Editorial movie</label><select name="editorialMovieDelivered"><option value=""></option><option>Oui</option><option>Non</option><option>À confirmer</option></select></div>
+        <div class="field w3"><label>EXR / plate status</label><input name="plateDeliveryStatus" /></div>
+
+        <div class="field w12"><label>Issues, missing data, hot-cost / additional photography notes</label><textarea name="dataIssues" placeholder="Données manquantes, pickup requis, dépassement imprévu, incompatibilité de format…"></textarea></div>
+      </div>
+    </section>
+
+    <section id="notes" class="essential-section">
+      <div class="section-heading"><h2>04 · Notes plateau</h2><button type="button" class="reset-section-btn no-print" data-reset-section="notes">🧹 Vider Notes</button></div>
+      <div class="grid">
+        <div class="field w12"><label>Notes plateau</label><textarea name="generalNotes" style="min-height:220px" placeholder="Markers, problèmes, éléments à retirer, changements entre les takes, détails utiles au compositing et au matchmove…"></textarea></div>
+        <div class="field w12"><label>Risques / points à vérifier en post</label><textarea name="postWarnings" placeholder="Reflets, motion blur, occlusion, manque de texture, TC incertain…"></textarea></div>
+      </div>
+    </section>
+
+    <section id="reports">
+      <div class="section-heading">
+        <h2>Pages du rapport</h2>
+        <button type="button" class="reset-section-btn no-print" id="resetWholePageBtn">🗑 Vider toute la page</button>
+      </div>
+      <p class="hint">Touchez n’importe où sur une carte pour la rendre active. Dans le PDF, chaque shot commence par un grand bandeau Scène / Shot / Take / Clip. L’identifiant du shot est répété au-dessus des sections qui continuent sur une autre feuille, et un séparateur pleine page apparaît lors d’un changement de scène.</p>
+      <div class="toolbar no-print" style="margin:12px 0">
+        <button type="button" id="selectAllBtn">Tout sélectionner</button>
+        <button type="button" id="selectNoneBtn">Tout désélectionner</button>
+        <button type="button" class="ok" id="exportSelectedBtn">📄 Exporter la sélection</button>
+      </div>
+      <div class="inline no-print">
+        <div>
+          <label>Recherche</label>
+          <input id="searchReports" placeholder="Scène, shot, clip, date…" />
+        </div>
+        <button type="button" id="exportJsonBtn">Exporter JSON</button>
+        <label class="button" for="importJsonInput">Importer JSON</label>
+        <input id="importJsonInput" type="file" accept=".json,application/json" class="hidden" />
+      </div>
+      <div class="divider"></div>
+      <div id="reportList" class="report-list"></div>
+    </section>
+  </form>
+</div>
+<div id="printBook"></div>
+
+<script>
+(() => {
+  const STORAGE_KEY = "vfx_set_reports_v1";
+  const ACTIVE_KEY = "vfx_set_active_report_v1";
+  const form = document.getElementById("reportForm");
+  const statusEl = document.getElementById("status");
+  const badge = document.getElementById("reportBadge");
+  const photosGrid = document.getElementById("photosGrid");
+  const photoInput = document.getElementById("photoInput");
+  const reportList = document.getElementById("reportList");
+  let activeId = localStorage.getItem(ACTIVE_KEY) || crypto.randomUUID();
+  let photos = [];
+
+  const today = new Date();
+  const localDate = new Date(today.getTime() - today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+
+  function setStatus(msg, timeout=2200){
+    statusEl.textContent = msg;
+    if(timeout) setTimeout(() => { if(statusEl.textContent === msg) statusEl.textContent = ""; }, timeout);
+  }
+
+  function getReports(){
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+    catch { return {}; }
+  }
+
+  function setReports(data){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function formToObject(){
+    updateRanges();
+    const fd = new FormData(form);
+    const obj = {};
+    for(const el of form.elements){
+      if(!el.name) continue;
+      if(el.type === "checkbox") obj[el.name] = el.checked;
+      else obj[el.name] = fd.get(el.name) ?? "";
+    }
+    obj.photos = photos;
+    obj.id = activeId;
+    const existing = getReports()[activeId] || {};
+    obj.createdAt = existing.createdAt || new Date().toISOString();
+    obj.pageOrder = existing.pageOrder ?? Date.now();
+    obj.selectedForExport = existing.selectedForExport !== false;
+    obj.updatedAt = new Date().toISOString();
+    return obj;
+  }
+
+  function objectToForm(obj={}){
+    form.reset();
+    for(const el of form.elements){
+      if(!el.name) continue;
+      if(el.type === "checkbox") el.checked = !!obj[el.name];
+      else if(obj[el.name] !== undefined) el.value = obj[el.name];
+    }
+    if(!obj.date) form.elements.date.value = localDate;
+    if(!obj.clipEnd && obj.cardClipRange){
+      const m = String(obj.cardClipRange).match(/[-–]\s*([A-Za-z]?\d+)\s*$/);
+      if(m && form.elements.clipEnd) form.elements.clipEnd.value = m[1];
+    }
+    photos = Array.isArray(obj.photos) ? obj.photos : [];
+    renderPhotos();
+    updateRanges();
+    updateBadge();
+    updateEssentialSummary();
+  }
+
+  function saveReport(silent=false){
+    const reports = getReports();
+    reports[activeId] = formToObject();
+    setReports(reports);
+    localStorage.setItem(ACTIVE_KEY, activeId);
+    updateBadge();
+    renderReportList();
+    updateActivePageBar();
+    if(!silent) setStatus("Page sauvegardée sur l’iPad.");
+  }
+
+  function newReport(copyFrom=null){
+    activeId = crypto.randomUUID();
+    localStorage.setItem(ACTIVE_KEY, activeId);
+    const existingPages = orderedReports();
+    const lastOrder = existingPages.length
+      ? Math.max(...existingPages.map(r => Number(r.pageOrder) || 0))
+      : 0;
+    const nextOrder = Math.max(Date.now(), lastOrder + 1);
+
+    const base = copyFrom
+      ? {...copyFrom, id:activeId, createdAt:new Date().toISOString(), pageOrder:nextOrder, selectedForExport:true, photos:[...(copyFrom.photos||[])]}
+      : {date:localDate, createdAt:new Date().toISOString(), pageOrder:nextOrder, selectedForExport:true, photos:[]};
+    objectToForm(base);
+    saveReport(true);
+    setStatus(copyFrom ? "Page dupliquée." : "Nouvelle page vide créée.");
+    switchTab("essential");
+  }
+
+  function updateActivePageBar(){
+    const reports = orderedReports();
+    const report = getReports()[activeId];
+    const index = reports.findIndex(r => r.id === activeId);
+
+    const title = document.getElementById("activePageTitle");
+    const meta = document.getElementById("activePageMeta");
+    if(!title || !meta) return;
+
+    if(!report){
+      title.textContent = "Aucune page active";
+      meta.textContent = "Sélectionne une page dans l’onglet Pages";
+      return;
+    }
+
+    const takeRange = `${report.take || "—"}${report.takeEnd && report.takeEnd !== report.take ? "–" + report.takeEnd : ""}`;
+    title.textContent = `Page ${index + 1} / ${reports.length} · ${report.scene || "SC —"} / ${report.shot || "SHOT —"}`;
+    meta.textContent = `Take ${takeRange} · ${report.cardClipRange || "aucun clip"}`;
+  }
+
+  function loadReport(id, stayOnPages=false){
+    const reports = getReports();
+    if(!reports[id]) return;
+
+    // Sécurise les changements saisis sur la page actuellement active.
+    if(activeId && reports[activeId] && activeId !== id){
+      reports[activeId] = formToObject();
+      setReports(reports);
+    }
+
+    activeId = id;
+    localStorage.setItem(ACTIVE_KEY, activeId);
+    objectToForm(getReports()[id]);
+    renderReportList();
+    updateActivePageBar();
+    setStatus("Page active changée. Toutes les modifications concernent maintenant cette page.");
+
+    if(!stayOnPages) switchTab("essential");
+  }
+
+  function duplicateSpecificReport(id){
+    const reports = getReports();
+    const source = reports[id];
+    if(!source) return;
+    if(activeId && reports[activeId]) saveReport(true);
+    newReport(source);
+    renderReportList();
+  }
+
+  function deleteReport(id){
+    const before = orderedReports();
+    const deletedIndex = before.findIndex(r => r.id === id);
+    const deletedWasActive = id === activeId;
+
+    if(!confirm("Supprimer définitivement cette page ?")) return;
+
+    const reports = getReports();
+    if(!reports[id]) return;
+
+    delete reports[id];
+    setReports(reports);
+
+    const remaining = orderedReports();
+
+    if(deletedWasActive){
+      if(remaining.length){
+        // Prefer the preceding page. If the first page was deleted,
+        // select the new first page instead.
+        const targetIndex = Math.max(0, deletedIndex - 1);
+        const target = remaining[Math.min(targetIndex, remaining.length - 1)];
+        activeId = target.id;
+        localStorage.setItem(ACTIVE_KEY, activeId);
+        objectToForm(target);
+        setStatus("Page supprimée. La page précédente est maintenant active.");
+      }else{
+        // Keep the application usable when the last page is deleted.
+        newReport();
+        setStatus("Dernière page supprimée. Une nouvelle page vide a été créée.");
+        return;
+      }
+    }
+
+    renderReportList();
+    updateActivePageBar();
+  }
+
+  function updateBadge(){
+    const sc = form.elements.scene?.value || "—";
+    const sh = form.elements.shot?.value || "—";
+    const tkStart = form.elements.take?.value || "—";
+    const tkEnd = form.elements.takeEnd?.value || "";
+    const tk = tkEnd && tkEnd !== tkStart ? `${tkStart}–${tkEnd}` : tkStart;
+    badge.innerHTML = `<strong>SC ${escapeHtml(sc)} · SH ${escapeHtml(sh)} · TK ${escapeHtml(tk)}</strong>`;
+  }
+
+  function val(name, fallback="—"){
+    const el = form.elements[name];
+    const v = el ? String(el.value || "").trim() : "";
+    return v || fallback;
+  }
+
+  function updateEssentialSummary(){
+    const takeStart = val("take");
+    const takeEndRaw = val("takeEnd", "");
+    const takeText = takeEndRaw && takeEndRaw !== takeStart ? `Take ${takeStart}–${takeEndRaw}` : `Take ${takeStart}`;
+    document.getElementById("sumShot").textContent = `SC ${val("scene")} · SH ${val("shot")}`;
+    document.getElementById("sumTake").textContent = takeText;
+    document.getElementById("sumClip").textContent = val("cardClipRange");
+    document.getElementById("sumCamera").textContent = val("cameraType");
+    document.getElementById("sumRig").textContent = val("cameraRig");
+    document.getElementById("sumLens").textContent = [val("lens",""), val("lensModel","")].filter(Boolean).join(" · ") || "—";
+    document.getElementById("sumTstop").textContent = `T ${val("tStop")}`;
+    document.getElementById("sumExposure").textContent = `ISO ${val("iso")} · ${val("shutter")}`;
+    document.getElementById("sumFps").textContent = `${val("fps")} fps · ${val("colorTemp")} K`;
+  }
+
+  function condenseCameraUI(){
+    const section = document.getElementById("camera");
+    const grid = section?.querySelector(":scope > .grid");
+    if(!grid || grid.dataset.condensed) return;
+    grid.dataset.condensed = "1";
+
+    const essentialNames = new Set([
+      "cameraType","cameraId","cameraRig","lens","lensManufacturer","lensModel",
+      "tStop","iso","shutter","fps","colorTemp","filter","card","clip","clipEnd",
+      "codec","cardClipRange","cameraTcStart","cameraTcEnd"
+    ]);
+
+    const secondary = [];
+    [...grid.children].forEach(field => {
+      const input = field.querySelector("[name]");
+      if(input && !essentialNames.has(input.name)) secondary.push(field);
+    });
+
+    if(secondary.length){
+      const details = document.createElement("details");
+      details.className = "more-fields";
+      details.innerHTML = "<summary>＋ Paramètres caméra avancés et métadonnées VES</summary><div class=\"grid\"></div>";
+      const inner = details.querySelector(".grid");
+      secondary.forEach(el => inner.appendChild(el));
+      grid.appendChild(details);
+    }
+  }
+
+  function condenseReferencesUI(){
+    const section = document.getElementById("references");
+    if(!section || section.dataset.condensed) return;
+    section.dataset.condensed = "1";
+    const divider = section.querySelector(".divider");
+    const detailedGrid = divider?.nextElementSibling;
+    if(divider && detailedGrid){
+      const details = document.createElement("details");
+      details.className = "more-fields";
+      details.innerHTML = "<summary>＋ Noms de fichiers et gestion des acquisitions</summary>";
+      details.appendChild(detailedGrid);
+      divider.replaceWith(details);
+    }
+  }
+
+  function updateRanges(){
+    const card = (form.elements.card?.value || "").trim();
+    const clipStart = (form.elements.clip?.value || "").trim();
+    const clipEnd = (form.elements.clipEnd?.value || "").trim();
+
+    let range = "";
+    if(card && clipStart) range = `${card}${clipStart}`;
+    else range = card || clipStart;
+
+    if(clipEnd && clipEnd !== clipStart){
+      range += range ? ` – ${clipEnd}` : clipEnd;
+    }
+
+    if(form.elements.cardClipRange){
+      form.elements.cardClipRange.value = range;
+    }
+  }
+
+  function orderedReports(){
+    return Object.values(getReports()).sort((a,b) => {
+      const aOrder = Number.isFinite(Number(a.pageOrder)) ? Number(a.pageOrder) : 0;
+      const bOrder = Number.isFinite(Number(b.pageOrder)) ? Number(b.pageOrder) : 0;
+      if(aOrder !== bOrder) return aOrder - bOrder;
+
+      const aCreated = a.createdAt || a.updatedAt || "";
+      const bCreated = b.createdAt || b.updatedAt || "";
+      return aCreated.localeCompare(bCreated);
+    });
+  }
+
+  function renderReportList(){
+    const reports = orderedReports();
+    const q = (document.getElementById("searchReports").value || "").trim().toLowerCase();
+    const filtered = reports.filter(r => JSON.stringify(r).toLowerCase().includes(q));
+
+    reportList.innerHTML = "";
+    if(!filtered.length){
+      reportList.innerHTML = '<div class="hint">Aucune page sauvegardée.</div>';
+      updateActivePageBar();
+      return;
+    }
+
+    filtered.forEach(r => {
+      const absoluteIndex = reports.findIndex(x => x.id === r.id) + 1;
+      const item = document.createElement("div");
+      item.className = "report-item" + (r.id === activeId ? " active-page" : "");
+      item.dataset.activatePage = r.id;
+      item.setAttribute("role", "button");
+      item.setAttribute("tabindex", "0");
+      item.setAttribute("aria-label", `Ouvrir la page ${absoluteIndex}`);
+
+      const date = r.updatedAt ? new Date(r.updatedAt).toLocaleString("fr-FR") : "";
+      const photosCount = Array.isArray(r.photos) ? r.photos.length : 0;
+      const cameraInfo = [r.cameraType, r.cameraRig, r.lens].filter(Boolean).join(" · ");
+      const takeRange = `${r.take || "—"}${r.takeEnd && r.takeEnd !== r.take ? "–" + r.takeEnd : ""}`;
+
+      item.innerHTML = `
+        <label class="page-select no-print" title="Inclure cette page dans le PDF">
+          <input type="checkbox" data-select-page="${r.id}" ${r.selectedForExport !== false ? "checked" : ""}>
+          PDF
+        </label>
+        <div class="report-card-main">
+          <strong><span class="page-number">${absoluteIndex}</span>${escapeHtml(r.scene || "SC —")} / ${escapeHtml(r.shot || "SHOT —")} / Take ${escapeHtml(takeRange)}</strong>
+          <small>${escapeHtml(r.cardClipRange || ((r.card || "") + (r.clip || "")) || "Aucun clip")} ${cameraInfo ? " · " + escapeHtml(cameraInfo) : ""} · 📷 ${photosCount}</small>
+          <small>${escapeHtml(r.project || "")}${date ? " · Modifiée " + date : ""}</small>
+        </div>
+        <div class="report-card-actions no-print">
+          <button type="button" data-duplicate-page="${r.id}" title="Dupliquer cette page">⧉</button>
+          <button type="button" class="danger" data-delete="${r.id}" title="Supprimer cette page">🗑</button>
+        </div>`;
+      reportList.appendChild(item);
+    });
+
+    updateActivePageBar();
+  }
+
+  function setAllPageSelection(value){
+    const reports = getReports();
+    Object.values(reports).forEach(r => r.selectedForExport = value);
+    setReports(reports);
+    renderReportList();
+  }
+
+  function fillCloneWithReport(root, report){
+    root.querySelectorAll("[name]").forEach(el => {
+      const value = report[el.name];
+      if(el.type === "checkbox") el.checked = !!value;
+      else el.value = value ?? "";
+    });
+
+    const grid = root.querySelector("#photosGrid");
+    if(grid){
+      grid.innerHTML = "";
+      (report.photos || []).forEach((p, index) => {
+        const card = document.createElement("div");
+        card.className = "photo-card";
+        card.innerHTML = `
+          <img src="${p.data}" alt="Photo VFX ${index+1}">
+          <div class="photo-meta">
+            <label>Légende</label>
+            <textarea>${escapeHtml(p.caption || "")}</textarea>
+          </div>`;
+        grid.appendChild(card);
+      });
+      grid.removeAttribute("id");
+    }
+
+    root.querySelectorAll(".field").forEach(field => {
+      const controls = [...field.querySelectorAll("[name]")];
+      if(!controls.length) return;
+      const hasValue = controls.some(el => {
+        if(el.type === "checkbox") return el.checked;
+        return String(el.value || "").trim() !== "";
+      });
+      if(!hasValue) field.remove();
+    });
+
+    root.querySelectorAll("details").forEach(details => {
+      details.open = true;
+      if(!details.querySelector(".field, .check input:checked")) details.remove();
+    });
+
+    root.querySelectorAll("[id]").forEach(el => el.removeAttribute("id"));
+    root.querySelectorAll("section").forEach(s => s.classList.add("active"));
+  }
+
+  function sectionHasContent(report, sectionId){
+    if(sectionId === "photos") return Array.isArray(report.photos) && report.photos.length > 0;
+
+    const source = document.getElementById(sectionId);
+    if(!source) return false;
+    const names = [...source.querySelectorAll("[name]")]
+      .map(el => el.name)
+      .filter(name => name !== "cardClipRange");
+
+    return names.some(name => {
+      const value = report[name];
+      if(typeof value === "boolean") return value;
+      return value !== undefined && value !== null && String(value).trim() !== "";
+    });
+  }
+
+  function buildPrintBook(){
+    saveReport(true);
+    const all = orderedReports();
+    const selected = all.filter(r => r.selectedForExport !== false);
+    if(!selected.length){
+      setStatus("Sélectionne au moins une page à exporter.");
+      return false;
+    }
+
+    const printBook = document.getElementById("printBook");
+    printBook.innerHTML = "";
+
+    let previousScene = null;
+
+    selected.forEach((r, index) => {
+      const currentScene = String(r.scene || "—").trim() || "—";
+
+      // Insert a full visual divider only when the scene changes.
+      if(previousScene !== null && currentScene !== previousScene){
+        const divider = document.createElement("article");
+        divider.className = "print-scene-divider";
+        divider.innerHTML = `
+          <div class="scene-kicker">CHANGEMENT DE SCÈNE</div>
+          <div class="scene-number">${escapeHtml(currentScene)}</div>
+          <div class="scene-project">${escapeHtml(r.project || "VFX SET REPORT")}</div>`;
+        printBook.appendChild(divider);
+      }
+      previousScene = currentScene;
+
+      const page = document.createElement("article");
+      page.className = "print-report";
+
+      const takeRange = `${r.take || "—"}${r.takeEnd && r.takeEnd !== r.take ? "–" + r.takeEnd : ""}`;
+      const clipRange = r.cardClipRange || ((r.card || "") + (r.clip || "")) || "Aucun clip";
+      const shotIdentity = `SCÈNE ${currentScene}  ·  SHOT ${r.shot || "—"}  ·  TAKE ${takeRange}  ·  ${clipRange}`;
+
+      const banner = document.createElement("div");
+      banner.className = "print-shot-banner";
+      banner.innerHTML = `
+        <div>
+          <span>Scène / Shot</span>
+          <strong>SC ${escapeHtml(currentScene)} · SH ${escapeHtml(r.shot || "—")}</strong>
+          <small>${escapeHtml(r.project || "")} · ${escapeHtml(r.date || "")}</small>
+        </div>
+        <div>
+          <span>Take(s)</span>
+          <strong>${escapeHtml(takeRange)}</strong>
+          <small>Page ${index + 1} / ${selected.length}</small>
+        </div>
+        <div>
+          <span>Card / Clip(s)</span>
+          <strong>${escapeHtml(clipRange)}</strong>
+          <small>${escapeHtml([r.cameraType, r.cameraRig, r.lens].filter(Boolean).join(" · ") || "Caméra non renseignée")}</small>
+        </div>`;
+      page.appendChild(banner);
+
+      const alwaysPrint = new Set(["shot"]);
+      const exportOrder = ["shot","camera","references","notes","tracking","photos","lighting","capture","vpdata"];
+
+      exportOrder.forEach(id => {
+        if(!alwaysPrint.has(id) && !sectionHasContent(r, id)) return;
+        const source = document.getElementById(id);
+        const clone = source.cloneNode(true);
+        clone.dataset.printShot = shotIdentity;
+        page.appendChild(clone);
+      });
+
+      fillCloneWithReport(page, r);
+      printBook.appendChild(page);
+    });
+    return true;
+  }
+
+  function exportSelectedPages(){
+    if(buildPrintBook()){
+      setTimeout(() => window.print(), 80);
+    }
+  }
+
+  function escapeHtml(s){
+    return String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  }
+
+  function renderPhotos(){
+    photosGrid.innerHTML = "";
+    photos.forEach((p, index) => {
+      const card = document.createElement("div");
+      card.className = "photo-card";
+      card.innerHTML = `
+        <img src="${p.data}" alt="Photo VFX ${index+1}" />
+        <div class="photo-meta">
+          <label>Légende</label>
+          <textarea data-caption="${index}" placeholder="Combo, caméra, HDRI, markers…">${escapeHtml(p.caption || "")}</textarea>
+          <div class="photo-buttons no-print">
+            <button type="button" data-up="${index}">↑</button>
+            <button type="button" data-down="${index}">↓</button>
+            <button type="button" class="danger" data-remove="${index}">Supprimer</button>
+          </div>
+        </div>`;
+      photosGrid.appendChild(card);
+    });
+  }
+
+  async function fileToCompressedDataURL(file){
+    const raw = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    const img = await new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = reject;
+      image.src = raw;
+    });
+    const max = 1800;
+    let w = img.width, h = img.height;
+    if(Math.max(w,h) > max){
+      const scale = max / Math.max(w,h);
+      w = Math.round(w*scale); h = Math.round(h*scale);
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = w; canvas.height = h;
+    canvas.getContext("2d").drawImage(img,0,0,w,h);
+    return canvas.toDataURL("image/jpeg", .82);
+  }
+
+  const TAB_GROUPS = {
+    essential: ["shot","camera","references","notes"],
+    tracking: ["tracking"],
+    photos: ["photos"],
+    advanced: ["lighting","capture","vpdata"],
+    reports: ["reports"]
+  };
+
+  function switchTab(id){
+    const visible = TAB_GROUPS[id] || [id];
+    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.target === id));
+    document.querySelectorAll("section").forEach(s => s.classList.toggle("active", visible.includes(s.id)));
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  document.getElementById("tabs").addEventListener("click", e => {
+    const t = e.target.closest(".tab");
+    if(t) switchTab(t.dataset.target);
+  });
+
+
+  const SECTION_IDS = ["shot","camera","tracking","lighting","references","capture","vpdata","photos","notes"];
+
+  function clearControlsInside(root){
+    if(!root) return;
+
+    root.querySelectorAll("[name]").forEach(el => {
+      if(el.type === "checkbox" || el.type === "radio"){
+        el.checked = false;
+      }else if(el.tagName === "SELECT"){
+        el.selectedIndex = 0;
+      }else if(!el.readOnly){
+        el.value = "";
+      }
+    });
+
+    if(root.id === "photos"){
+      photos = [];
+      renderPhotos();
+    }
+
+    updateRanges();
+    updateBadge();
+    updateEssentialSummary();
+    saveReport(true);
+  }
+
+  function resetSection(sectionId){
+    const section = document.getElementById(sectionId);
+    if(!section) return;
+
+    const labels = {
+      shot:"le plan, les takes et les clips",
+      camera:"les données caméra, rig et optique",
+      tracking:"le tracking",
+      lighting:"la lumière",
+      references:"les références",
+      capture:"les scans et assets",
+      vpdata:"les données VP et livrables",
+      photos:"toutes les photos",
+      notes:"les notes"
+    };
+
+    if(!confirm(`Vider ${labels[sectionId] || "cet onglet"} ?`)) return;
+    clearControlsInside(section);
+    setStatus(`${labels[sectionId] || "Onglet"} vidé. Il ne sera plus exporté s’il est entièrement vide.`);
+  }
+
+  function resetWholeCurrentPage(){
+    if(!confirm("Vider entièrement la page actuelle ? Cette action conserve seulement l’existence de la page dans la liste.")) return;
+
+    form.reset();
+    photos = [];
+    renderPhotos();
+
+    if(form.elements.date) form.elements.date.value = localDate;
+    updateRanges();
+    updateBadge();
+    updateEssentialSummary();
+    saveReport(true);
+    setStatus("Page actuelle entièrement vidée.");
+    switchTab("essential");
+  }
+
+  function createNewSetupFromCurrent(){
+    saveReport(true);
+    const current = formToObject();
+
+    // Conserver seulement les informations de production et de journée.
+    const preserve = [
+      "project","showId","production","vfxSup","date","dayNumber","unit",
+      "sequenceEpisode","location","intExt","dayNight","weather",
+      "dataWrangler","dataWranglerFull","ditName"
+    ];
+
+    const next = {date:localDate, photos:[]};
+    preserve.forEach(name => {
+      if(current[name] !== undefined) next[name] = current[name];
+    });
+
+    newReport(next);
+    form.elements.setupId?.focus();
+    setStatus("Nouveau setup créé : production et journée conservées, caméra/optique/tracking/références réinitialisés.");
+  }
+
+  function createNewShotFromCurrent(){
+    saveReport(true);
+    const current = formToObject();
+
+    const preserve = [
+      "project","showId","production","vfxSup","date","dayNumber","unit","sequenceEpisode",
+      "location","intExt","dayNight","weather",
+      "cameraType","cameraId","cameraSerial","cameraRig","sensorMode","resolution","aspectRatio",
+      "frameGuide","colorSpace","lutCdl","nativeIso","standardPad",
+      "lensManufacturer","lensModel","lensSerial","lensType","lens","tStop","iso","shutter","fps",
+      "colorTemp","filter","lensEncoder","lensMetadataFile","lensCalibrationId","lensCharacteristics",
+      "codec","cameraTcSource","dropFrame",
+      "trackingSystem","trackingRig","trackingOperator","trackingFps","trackingUnit",
+      "syncSource","genlock","dataWrangler","dataWranglerFull","ditName"
+    ];
+
+    const next = {date:localDate, photos:[]};
+    preserve.forEach(name => {
+      if(current[name] !== undefined) next[name] = current[name];
+    });
+
+    // Keep recurring VFX/reference requirements, but reset what was actually captured.
+    ["vfx_matchmove","vfx_cleanup","vfx_roto","vfx_paint","vfx_setext","vfx_dmp","vfx_cg","vfx_fx"]
+      .forEach(name => next[name] = !!current[name]);
+
+    newReport(next);
+    form.elements.shot?.focus();
+    setStatus("Nouveau shot créé : caméra et réglages conservés, takes/clips/photos réinitialisés.");
+  }
+
+  document.getElementById("saveBtn").addEventListener("click", () => saveReport());
+  document.getElementById("newShotBtn").addEventListener("click", createNewShotFromCurrent);
+  document.getElementById("newSetupBtn").addEventListener("click", createNewSetupFromCurrent);
+  document.getElementById("resetWholePageBtn").addEventListener("click", resetWholeCurrentPage);
+  document.getElementById("goToPagesBtn").addEventListener("click", () => switchTab("reports"));
+
+  document.addEventListener("click", e => {
+    const button = e.target.closest("[data-reset-section]");
+    if(button) resetSection(button.dataset.resetSection);
+  });
+  document.getElementById("newBtn").addEventListener("click", () => {
+    if(confirm("Créer une nouvelle page entièrement vide ? La page actuelle sera sauvegardée.")){ saveReport(true); newReport(); }
+  });
+  document.getElementById("duplicateBtn").addEventListener("click", () => {
+    saveReport(true); newReport(formToObject());
+  });
+
+  document.getElementById("printBtn").addEventListener("click", exportSelectedPages);
+  document.getElementById("exportSelectedBtn").addEventListener("click", exportSelectedPages);
+  document.getElementById("selectAllBtn").addEventListener("click", () => setAllPageSelection(true));
+  document.getElementById("selectNoneBtn").addEventListener("click", () => setAllPageSelection(false));
+
+  document.getElementById("nowBtn").addEventListener("click", () => {
+    const d = new Date();
+    form.elements.date.value = new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    form.elements.timeOfDay.value = d.toTimeString().slice(0,5);
+    saveReport(true);
+    setStatus("Date et heure renseignées.");
+  });
+
+  document.getElementById("gpsBtn").addEventListener("click", () => {
+    if(!navigator.geolocation){
+      setStatus("La géolocalisation n’est pas disponible.");
+      return;
+    }
+    setStatus("Recherche de la position…",0);
+    navigator.geolocation.getCurrentPosition(pos => {
+      form.elements.gpsLat.value = pos.coords.latitude.toFixed(6);
+      form.elements.gpsLong.value = pos.coords.longitude.toFixed(6);
+      const alt = pos.coords.altitude != null ? `${pos.coords.altitude.toFixed(1)} m` : "Altitude inconnue";
+      form.elements.gpsExtra.value = `${alt} · précision ±${Math.round(pos.coords.accuracy)} m`;
+      saveReport(true);
+      setStatus("Position GPS ajoutée.");
+    }, err => setStatus("GPS refusé ou indisponible : " + err.message), {enableHighAccuracy:true,timeout:12000});
+  });
+
+  photoInput.addEventListener("change", async e => {
+    const files = [...e.target.files];
+    if(!files.length) return;
+    setStatus(`Traitement de ${files.length} photo(s)…`,0);
+    for(const file of files){
+      try{
+        const data = await fileToCompressedDataURL(file);
+        photos.push({data,caption:""});
+      }catch(err){
+        console.error(err);
+      }
+    }
+    photoInput.value = "";
+    renderPhotos();
+    saveReport(true);
+    setStatus("Photo(s) ajoutée(s).");
+  });
+
+  photosGrid.addEventListener("input", e => {
+    if(e.target.dataset.caption !== undefined){
+      photos[Number(e.target.dataset.caption)].caption = e.target.value;
+      saveReport(true);
+    }
+  });
+
+  photosGrid.addEventListener("click", e => {
+    const remove = e.target.dataset.remove;
+    const up = e.target.dataset.up;
+    const down = e.target.dataset.down;
+    if(remove !== undefined){
+      photos.splice(Number(remove),1);
+      renderPhotos(); saveReport(true);
+    }
+    if(up !== undefined){
+      const i = Number(up);
+      if(i>0){ [photos[i-1],photos[i]]=[photos[i],photos[i-1]]; renderPhotos(); saveReport(true); }
+    }
+    if(down !== undefined){
+      const i = Number(down);
+      if(i<photos.length-1){ [photos[i+1],photos[i]]=[photos[i],photos[i+1]]; renderPhotos(); saveReport(true); }
+    }
+  });
+
+  document.getElementById("clearPhotosBtn").addEventListener("click", () => {
+    if(confirm("Supprimer toutes les photos de ce rapport ?")){
+      photos=[]; renderPhotos(); saveReport(true);
+    }
+  });
+
+  function handleReportCardAction(e){
+    const deleteButton = e.target.closest("[data-delete]");
+    const duplicateButton = e.target.closest("[data-duplicate-page]");
+    const checkbox = e.target.closest("[data-select-page]");
+    const card = e.target.closest("[data-activate-page]");
+
+    if(deleteButton){
+      e.preventDefault();
+      e.stopPropagation();
+      deleteReport(deleteButton.dataset.delete);
+      return;
+    }
+
+    if(duplicateButton){
+      e.preventDefault();
+      e.stopPropagation();
+      duplicateSpecificReport(duplicateButton.dataset.duplicatePage);
+      return;
+    }
+
+    if(checkbox){
+      e.stopPropagation();
+      return;
+    }
+
+    if(card){
+      loadReport(card.dataset.activatePage, true);
+    }
+  }
+
+  // Capture phase prevents the parent card from becoming active before
+  // the delete/duplicate action is processed, especially on iPad Safari.
+  reportList.addEventListener("click", handleReportCardAction, true);
+
+  reportList.addEventListener("keydown", e => {
+    if((e.key === "Enter" || e.key === " ") && e.target.matches("[data-activate-page]")){
+      e.preventDefault();
+      loadReport(e.target.dataset.activatePage, true);
+    }
+  });
+
+  reportList.addEventListener("change", e => {
+    const id = e.target.dataset.selectPage;
+    if(!id) return;
+    const reports = getReports();
+    if(reports[id]){
+      reports[id].selectedForExport = e.target.checked;
+      setReports(reports);
+    }
+  });
+
+  document.getElementById("searchReports").addEventListener("input", renderReportList);
+
+  document.getElementById("exportJsonBtn").addEventListener("click", () => {
+    saveReport(true);
+    const blob = new Blob([JSON.stringify(getReports(), null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `vfx_reports_${localDate}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+
+  document.getElementById("importJsonInput").addEventListener("change", async e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    try{
+      const imported = JSON.parse(await file.text());
+      const merged = {...getReports(), ...imported};
+      setReports(merged);
+      renderReportList();
+      setStatus("Rapports importés.");
+    }catch{
+      setStatus("Fichier JSON invalide.");
+    }
+    e.target.value="";
+  });
+
+  form.addEventListener("input", () => {
+    updateRanges();
+    updateBadge();
+    updateEssentialSummary();
+    clearTimeout(window.__autoSaveTimer);
+    window.__autoSaveTimer = setTimeout(() => saveReport(true), 500);
+  });
+
+  window.addEventListener("beforeunload", () => saveReport(true));
+
+  function normalizePageOrder(){
+    const reports = getReports();
+    const list = Object.values(reports);
+
+    list.sort((a,b) => {
+      const aCreated = a.createdAt || a.updatedAt || "";
+      const bCreated = b.createdAt || b.updatedAt || "";
+      return aCreated.localeCompare(bCreated);
+    });
+
+    let changed = false;
+    list.forEach((r, index) => {
+      const wanted = index + 1;
+      if(Number(r.pageOrder) !== wanted){
+        r.pageOrder = wanted;
+        changed = true;
+      }
+    });
+
+    if(changed) setReports(reports);
+  }
+
+  condenseCameraUI();
+  condenseReferencesUI();
+  normalizePageOrder();
+  const reports = getReports();
+  if(reports[activeId]) objectToForm(reports[activeId]);
+  else newReport();
+  renderReportList();
+  switchTab("essential");
+  updateEssentialSummary();
+})();
+</script>
+</body>
+</html>
