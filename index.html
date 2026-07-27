@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V15</title>
+  <title>VFX Set Report V21</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -89,6 +89,62 @@
     body.dark-theme .empty-export-note{
       background:#3a3215;
       color:#f5df80;
+    }
+
+
+    /* Modern UI refresh */
+    body{
+      background:
+        radial-gradient(circle at top left, rgba(31,111,235,.08), transparent 28rem),
+        var(--bg);
+    }
+    .app{
+      max-width:1180px;
+    }
+    .brand h1{
+      letter-spacing:-.03em;
+    }
+    .toolbar{
+      gap:10px;
+    }
+    button{
+      border-radius:12px;
+      transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+    }
+    button:hover{
+      transform:translateY(-1px);
+      box-shadow:0 5px 14px rgba(15,23,42,.12);
+    }
+    button:active{
+      transform:translateY(0);
+    }
+    section{
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.55);
+      box-shadow:0 10px 30px rgba(15,23,42,.07);
+    }
+    .topbar{
+      border-radius:0 0 20px 20px;
+    }
+    .active-page-bar{
+      border-radius:16px;
+      box-shadow:0 5px 18px rgba(31,111,235,.09);
+    }
+    .summary-cell{
+      border-radius:16px;
+    }
+    .tab{
+      border-radius:12px;
+    }
+    input, select, textarea{
+      border-radius:11px;
+    }
+    .photo-card{
+      border-radius:16px;
+      box-shadow:0 6px 18px rgba(15,23,42,.08);
+    }
+    .report-item{
+      border-radius:16px;
     }
 
     *{box-sizing:border-box}
@@ -672,16 +728,16 @@
       .tc-pair{grid-template-columns:1fr}
     }
     @media print{
-      @page{size:A4 portrait;margin:6mm}
+      @page{size:A4 portrait;margin:7mm}
 
       body,
       body.dark-theme{
         background:#fff!important;
-        color:#000!important;
-        font-size:7.7pt;
+        color:#111!important;
+        font-size:8.4pt;
         --bg:#fff;
         --panel:#fff;
-        --ink:#000;
+        --ink:#111;
         --muted:#555;
         --line:#999;
         --soft:#fff;
@@ -689,14 +745,14 @@
 
       body.print-dark,
       body.print-dark.dark-theme{
-        background:#111!important;
-        color:#f5f5f5!important;
-        --bg:#111;
-        --panel:#1b1b1b;
-        --ink:#f5f5f5;
-        --muted:#bbb;
-        --line:#666;
-        --soft:#1b1b1b;
+        background:#b7bcc3!important;
+        color:#111!important;
+        --bg:#b7bcc3;
+        --panel:#e7e9ec;
+        --ink:#111;
+        --muted:#4f545a;
+        --line:#777d84;
+        --soft:#dfe2e6;
       }
 
       html, body, #printBook, .print-report, .print-report *{
@@ -711,26 +767,124 @@
         position:relative;
         display:grid;
         grid-template-columns:1fr 1fr;
-        gap:2mm;
+        gap:1.6mm;
         align-items:start;
         break-after:page;
         page-break-after:always;
-        border-left:3px solid #111;
-        padding-left:2.5mm;
+        border-left:5px solid var(--page-accent, #2563eb);
+        padding-left:2.2mm;
       }
+      .print-report.accent-blue{--page-accent:#2563eb}
+      .print-report.accent-red{--page-accent:#dc2626}
+      .print-report.accent-green{--page-accent:#059669}
+      .print-report.accent-violet{--page-accent:#7c3aed}
       .print-report:last-child{
         break-after:auto;
         page-break-after:auto;
       }
 
+      .print-production-header{
+        grid-column:1/-1;
+        order:-2;
+        display:grid;
+        grid-template-columns:1.4fr 1fr 1fr 1fr;
+        gap:0;
+        border:2px solid #111;
+        background:#fff;
+        margin-bottom:1.2mm;
+      }
+      .print-production-header .prod-title{
+        grid-column:1/-1;
+        padding:2mm 2.5mm;
+        background:#111;
+        color:#fff;
+        font-size:12pt;
+        font-weight:950;
+        letter-spacing:.06em;
+      }
+      .print-production-header .prod-cell{
+        padding:1.6mm 2mm;
+        border-right:1px solid #777;
+        border-top:1px solid #777;
+        min-width:0;
+      }
+      .print-production-header .prod-cell:nth-child(5n){
+        border-right:0;
+      }
+      .print-production-header span{
+        display:block;
+        font-size:5.8pt;
+        font-weight:900;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+        color:#555;
+      }
+      .print-production-header strong{
+        display:block;
+        margin-top:.5mm;
+        font-size:9pt;
+        line-height:1.1;
+        overflow-wrap:anywhere;
+      }
+
+      .print-context-header{
+        grid-column:1/-1;
+        order:-1;
+        display:grid;
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:0;
+        margin:0 0 1.5mm;
+        border:1.5px solid var(--page-accent);
+        border-left:6px solid var(--page-accent);
+        border-radius:2mm;
+        overflow:hidden;
+        background:#f4f5f7;
+      }
+      .print-context-header .context-title{
+        grid-column:1/-1;
+        padding:1.5mm 2.2mm;
+        background:color-mix(in srgb, var(--page-accent) 13%, white);
+        border-bottom:1px solid color-mix(in srgb, var(--page-accent) 38%, #aaa);
+        font-size:7pt;
+        font-weight:950;
+        letter-spacing:.09em;
+        text-transform:uppercase;
+        color:#222;
+      }
+      .print-context-header .context-cell{
+        padding:1.4mm 2mm;
+        border-right:1px solid #c8cbd0;
+        border-top:1px solid #d6d8dc;
+        min-width:0;
+      }
+      .print-context-header .context-cell:nth-child(3n+1){
+        border-right:0;
+      }
+      .print-context-header span{
+        display:block;
+        font-size:5.4pt;
+        font-weight:900;
+        letter-spacing:.07em;
+        text-transform:uppercase;
+        color:#666;
+      }
+      .print-context-header strong{
+        display:block;
+        margin-top:.35mm;
+        font-size:8.5pt;
+        line-height:1.08;
+        color:#111;
+        overflow-wrap:anywhere;
+      }
+
       .print-scene-ribbon{
         grid-column:1/-1;
         order:0;
-        padding:1.4mm 2.5mm;
+        padding:1.6mm 2.5mm;
         background:#111;
         color:#fff;
         font-size:9pt;
-        font-weight:950;
+        font-weight:900;
         letter-spacing:.08em;
         text-transform:uppercase;
       }
@@ -738,34 +892,35 @@
       .print-shot-banner{
         grid-column:1/-1;
         order:1;
+        box-shadow:inset 0 3px 0 var(--page-accent, #2563eb);
         display:grid;
-        grid-template-columns:1.2fr .75fr 1fr;
+        grid-template-columns:1.2fr .8fr 1fr;
         border:2px solid #111;
-        margin:0 0 1mm;
+        margin:0;
         background:#fff;
       }
       .print-shot-banner > div{
-        padding:1.8mm 2.2mm;
+        padding:1.5mm 2mm;
         border-right:1.5px solid #111;
       }
       .print-shot-banner > div:last-child{border-right:0}
       .print-shot-banner span{
         display:block;
-        font-size:5.8pt;
+        font-size:6.1pt;
         font-weight:900;
         letter-spacing:.1em;
         text-transform:uppercase;
       }
       .print-shot-banner strong{
         display:block;
-        margin-top:.5mm;
-        font-size:13.5pt;
-        line-height:1;
+        margin-top:.6mm;
+        font-size:14.5pt;
+        line-height:1.05;
       }
       .print-shot-banner small{
         display:block;
-        margin-top:.6mm;
-        font-size:6.5pt;
+        margin-top:.8mm;
+        font-size:6.9pt;
       }
 
       .print-report section{
@@ -775,20 +930,42 @@
         box-shadow:none;
         border:1px solid #777;
         border-radius:0;
-        padding:1.8mm;
+        padding:1.6mm;
         margin:0;
         break-inside:avoid;
         page-break-inside:avoid;
         background:#fff;
-        color:#000;
+        color:#111;
       }
 
+      /* Essential is always the main full-width report body. */
       .print-report section#shot,
-      .print-report section#tracking{
-        grid-column:1/-1;
+      .print-report .print-essential{
+        grid-column:1/-1!important;
+        width:100%!important;
+        order:2;
+        border:2px solid #111;
+        padding:2mm;
       }
 
-      /* Photos always come last, below every information block. */
+      .print-extras-grid{
+        grid-column:1/-1;
+        order:10;
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:1.6mm;
+        align-items:start;
+      }
+      .print-extras-grid section{
+        width:100%!important;
+        grid-column:auto!important;
+      }
+      .print-extras-grid section#tracking{
+        grid-column:1/-1!important;
+      }
+
+      /* Optional sections only appear when filled. */
+
       .print-report section#photos{
         grid-column:1/-1;
         order:99;
@@ -803,43 +980,46 @@
         min-height:auto!important;
         background:transparent!important;
         color:inherit!important;
-        font-size:7.4pt!important;
-        line-height:1.12!important;
+        font-size:8.1pt!important;
+        line-height:1.18!important;
       }
       textarea{
-        min-height:12px!important;
+        min-height:14px!important;
         height:auto!important;
         overflow:visible!important;
       }
 
       .grid{
-        gap:1mm 2mm!important;
-        grid-template-columns:repeat(4,minmax(0,1fr))!important;
+        gap:.8mm 1.6mm!important;
+        grid-template-columns:repeat(5,minmax(0,1fr))!important;
+      }
+      #shot .grid{
+        grid-template-columns:repeat(6,minmax(0,1fr))!important;
       }
       .field{
         border-bottom:1px solid #aaa;
-        padding:0 0 .7mm!important;
+        padding:0 0 .5mm!important;
         min-width:0;
       }
       .field label{
-        font-size:5.5pt!important;
-        line-height:1!important;
-        margin-bottom:.4mm!important;
+        font-size:5.8pt!important;
+        line-height:1.05!important;
+        margin-bottom:.5mm!important;
       }
       .span-2{grid-column:span 2}
       .span-3{grid-column:span 3}
       .span-4{grid-column:1/-1}
 
       .checkgrid{
-        grid-template-columns:repeat(6,1fr)!important;
-        gap:.5mm 1.5mm!important;
+        grid-template-columns:repeat(5,1fr)!important;
+        gap:.8mm 2mm!important;
       }
       .check{
         background:transparent!important;
         padding:0!important;
         border:0!important;
         min-height:auto!important;
-        font-size:6.8pt!important;
+        font-size:7pt!important;
       }
 
       .photos{
@@ -865,15 +1045,18 @@
       }
 
       h2{
-        font-size:9pt!important;
-        margin:0 0 1.2mm!important;
-        padding:0 0 .8mm!important;
+        font-size:9.4pt!important;
+        margin:0 0 .8mm!important;
+        padding:0 0 .5mm!important;
+      }
+      #shot h2{
+        font-size:10.4pt!important;
       }
       h3{
-        font-size:7.2pt!important;
-        margin:1mm 0!important;
+        font-size:7.5pt!important;
+        margin:.7mm 0!important;
       }
-      .divider{margin:1mm 0!important}
+      .divider{margin:1.2mm 0!important}
       details.more-fields{
         padding:1mm!important;
         margin:0!important;
@@ -881,33 +1064,59 @@
       }
       details.more-fields summary{display:none!important}
       .section-heading{
-        margin-bottom:1.2mm!important;
-        padding-bottom:.8mm!important;
+        margin-bottom:.8mm!important;
+        padding-bottom:.5mm!important;
       }
 
-      /* Dark PDF mode */
+      /* Softer print-dark theme: light grey page, readable dark text. */
       body.print-dark .print-report{
-        border-left-color:#eee;
+        border-left-color:#2f3338;
       }
       body.print-dark .print-scene-ribbon{
-        background:#eee;
-        color:#111;
+        background:#3a3f45;
+        color:#fff;
       }
+      body.print-dark .print-production-header{
+        background:#e7e9ec!important;
+        color:#111!important;
+        border-color:#6f747a!important;
+      }
+      body.print-dark .print-production-header .prod-title{
+        background:#3a3f45!important;
+        color:#fff!important;
+      }
+      body.print-dark .print-production-header .prod-cell{
+        border-color:#8b9198!important;
+      }
+      body.print-dark .print-context-header{
+        background:#dfe2e6!important;
+        color:#111!important;
+        border-color:var(--page-accent)!important;
+      }
+      body.print-dark .print-context-header .context-title{
+        background:#cfd3d8!important;
+        color:#111!important;
+        border-color:#9ca2a9!important;
+      }
+      body.print-dark .print-context-header .context-cell{
+        border-color:#adb2b8!important;
+      }
+
       body.print-dark .print-shot-banner,
       body.print-dark .print-report section,
       body.print-dark .photo-card{
-        background:#1b1b1b!important;
-        color:#f5f5f5!important;
-        border-color:#777!important;
+        background:#e7e9ec!important;
+        color:#111!important;
+        border-color:#6f747a!important;
       }
       body.print-dark .print-shot-banner > div{
-        border-color:#777!important;
+        border-color:#767b81!important;
       }
       body.print-dark .field{
-        border-color:#666!important;
+        border-color:#9aa0a6!important;
       }
       body.print-dark .print-photo-caption{
-        border-color:#777!important;
+        border-color:#8b9198!important;
       }
     }
   </style>
@@ -918,7 +1127,7 @@
     <div class="brand">
       <div>
         <h1>VFX Set Report</h1>
-        <small>Rapport plateau hors ligne — iPad / Safari · thème unifié application / PDF · photos toujours en bas à gauche</small>
+        <small>Rapport plateau hors ligne — iPad / Safari · contexte intelligent hérité · changements signalés · export PDF réparé</small>
       </div>
       <div id="reportBadge"><strong>Nouveau rapport</strong></div>
     </div>
@@ -1750,6 +1959,108 @@
     });
   }
 
+  function addProductionHeader(page, report){
+    const header = document.createElement("div");
+    header.className = "print-production-header";
+
+    const cells = [
+      ["Projet", report.project],
+      ["Production", report.production],
+      ["VFX Supervisor", report.vfxSup],
+      ["Show ID", report.showId]
+    ].filter(([, value]) => String(value || "").trim() !== "");
+
+    if(!cells.length) return;
+
+    header.innerHTML = `
+      <div class="prod-title">VFX SET REPORT · PRODUCTION</div>
+      ${cells.map(([label, value]) => `
+        <div class="prod-cell">
+          <span>${escapeHtml(label)}</span>
+          <strong>${escapeHtml(value)}</strong>
+        </div>`).join("")}
+    `;
+    page.appendChild(header);
+  }
+
+  function removeRepeatedProductionFields(section){
+    const repeatedNames = new Set([
+      "project",
+      "showId",
+      "production",
+      "vfxSup",
+      "date",
+      "dayNumber",
+      "unit",
+      "sequenceEpisode",
+      "setupId",
+      "location"
+    ]);
+
+    section.querySelectorAll(".field").forEach(field => {
+      const control = field.querySelector("[name]");
+      if(control && repeatedNames.has(control.name)){
+        field.remove();
+      }
+    });
+  }
+
+
+  function contextValue(report, key, previousContext){
+    const explicitValue = String(report?.[key] ?? "").trim();
+    return explicitValue !== "" ? explicitValue : String(previousContext?.[key] ?? "").trim();
+  }
+
+  function buildContext(report, previousContext = {}){
+    return {
+      date: contextValue(report, "date", previousContext),
+      dayNumber: contextValue(report, "dayNumber", previousContext),
+      unit: contextValue(report, "unit", previousContext),
+      location: contextValue(report, "location", previousContext),
+      setupId: contextValue(report, "setupId", previousContext),
+      sequenceEpisode: contextValue(report, "sequenceEpisode", previousContext)
+    };
+  }
+
+  function contextChanged(currentContext, previousContext){
+    return ["date","dayNumber","unit","location","setupId","sequenceEpisode"]
+      .some(key => String(currentContext[key] || "") !== String(previousContext[key] || ""));
+  }
+
+  function addContextHeader(page, context, changedKeys = []){
+    const labels = {
+      date:"Date",
+      dayNumber:"Jour",
+      unit:"Unité",
+      location:"Lieu / Décor",
+      setupId:"Setup",
+      sequenceEpisode:"Séquence / Épisode"
+    };
+
+    const orderedKeys = ["date","dayNumber","unit","location","setupId","sequenceEpisode"];
+    const items = orderedKeys
+      .filter(key => String(context[key] || "").trim() !== "")
+      .map(key => [labels[key], context[key], changedKeys.includes(key)]);
+
+    if(!items.length) return;
+
+    const header = document.createElement("div");
+    header.className = "print-context-header";
+    const title = changedKeys.length
+      ? `CHANGEMENT DE CONTEXTE · ${changedKeys.map(key => labels[key]).join(" · ")}`
+      : "CONTEXTE DE TOURNAGE";
+
+    header.innerHTML = `
+      <div class="context-title">${escapeHtml(title)}</div>
+      ${items.map(([label, value, changed]) => `
+        <div class="context-cell">
+          <span>${escapeHtml(label)}${changed ? " · MODIFIÉ" : ""}</span>
+          <strong>${escapeHtml(value)}</strong>
+        </div>`).join("")}
+    `;
+    page.appendChild(header);
+  }
+
   function buildPrintBook(){
     saveReport(true);
     const all = orderedReports();
@@ -1763,11 +2074,26 @@
     printBook.innerHTML = "";
 
     let previousScene = null;
+    let lastContext = {};
 
     selected.forEach((r, index) => {
       const currentScene = String(r.scene || "—").trim() || "—";
       const page = document.createElement("article");
-      page.className = "print-report";
+      const accentClasses = ["accent-blue","accent-red","accent-green","accent-violet"];
+      page.className = `print-report ${accentClasses[index % accentClasses.length]}`;
+
+      if(index === 0){
+        addProductionHeader(page, selected[0]);
+      }
+
+      const currentContext = buildContext(r, lastContext);
+      const changedKeys = ["date","dayNumber","unit","location","setupId","sequenceEpisode"]
+        .filter(key => String(currentContext[key] || "") !== String(lastContext[key] || ""));
+
+      if(index === 0 || contextChanged(currentContext, lastContext)){
+        addContextHeader(page, currentContext, index === 0 ? [] : changedKeys);
+      }
+      lastContext = currentContext;
 
       if(previousScene !== null && currentScene !== previousScene){
         const ribbon = document.createElement("div");
@@ -1786,7 +2112,7 @@
         <div>
           <span>Scène / Shot</span>
           <strong>SC ${escapeHtml(currentScene)} · SH ${escapeHtml(r.shot || "—")}</strong>
-          <small>${escapeHtml(r.project || "")} · ${escapeHtml(r.date || "")}</small>
+          <small>${escapeHtml(r.project || "")}${currentContext.date ? " · " + escapeHtml(currentContext.date) : ""}</small>
         </div>
         <div>
           <span>Take(s)</span>
@@ -1800,15 +2126,31 @@
         </div>`;
       page.appendChild(banner);
 
-      const alwaysPrint = new Set(["shot"]);
-      const exportOrder = ["shot","camera","references","notes","tracking","lighting","capture","vpdata","photos"];
+      // Essential: always first and always full width.
+      const shotSource = document.getElementById("shot");
+      const shotClone = shotSource.cloneNode(true);
+      shotClone.classList.add("print-essential");
+      removeRepeatedProductionFields(shotClone);
+      page.appendChild(shotClone);
 
-      exportOrder.forEach(id => {
-        if(!alwaysPrint.has(id) && !sectionHasContent(r, id)) return;
+      // Optional information: only filled sections, arranged below Essential.
+      const extrasGrid = document.createElement("div");
+      extrasGrid.className = "print-extras-grid";
+      const extrasOrder = ["camera","references","notes","tracking","lighting","capture","vpdata"];
+
+      extrasOrder.forEach(id => {
+        if(!sectionHasContent(r, id)) return;
         const source = document.getElementById(id);
-        const clone = source.cloneNode(true);
-        page.appendChild(clone);
+        extrasGrid.appendChild(source.cloneNode(true));
       });
+
+      if(extrasGrid.children.length) page.appendChild(extrasGrid);
+
+      // Photos always last and full width.
+      if(sectionHasContent(r, "photos")){
+        const photosSource = document.getElementById("photos");
+        page.appendChild(photosSource.cloneNode(true));
+      }
 
       fillCloneWithReport(page, r);
 
