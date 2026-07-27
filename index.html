@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V25</title>
+  <title>VFX Set Report V27</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -923,6 +923,142 @@
         font-size:6.9pt;
       }
 
+      .print-shot-summary{
+        grid-column:1/-1!important;
+        order:2;
+        border:2px solid #111;
+        padding:2mm;
+        background:#fff;
+        color:#111;
+        break-inside:avoid;
+      }
+      .print-shot-summary h2{
+        margin:0 0 1.2mm;
+        padding:0 0 1mm;
+        border-bottom:2px solid #111;
+        font-size:8.4pt;
+        line-height:1;
+      }
+      .print-shot-table{
+        width:auto!important;
+        border-collapse:collapse;
+        table-layout:fixed;
+        margin:0 0 1mm;
+      }
+      .print-shot-table td{
+        vertical-align:bottom;
+        padding:0 1mm .8mm 0;
+        border:0;
+      }
+      .print-shot-table td:last-child{
+        padding-right:0;
+      }
+      .print-shot-table .pfield{
+        border-bottom:1px solid #aaa;
+        min-height:7mm;
+      }
+      .print-shot-table .plabel{
+        display:block;
+        font-size:5.6pt;
+        font-weight:900;
+        line-height:1;
+        letter-spacing:.04em;
+        text-transform:uppercase;
+        margin-bottom:.7mm;
+      }
+      .print-shot-table .pvalue{
+        display:block;
+        font-size:8.1pt;
+        line-height:1.15;
+        min-height:2.8mm;
+        overflow-wrap:anywhere;
+      }
+      .print-shot-description-box{
+        margin:0 0 1mm;
+        border-bottom:1px solid #aaa;
+        min-height:12mm;
+      }
+      .print-shot-description-box .plabel{
+        display:block;
+        font-size:5.6pt;
+        font-weight:900;
+        text-transform:uppercase;
+        margin-bottom:.7mm;
+      }
+      .print-shot-description-box .pvalue{
+        font-size:8.1pt;
+        line-height:1.2;
+        white-space:pre-wrap;
+      }
+      .print-vfx-types{
+        margin-top:1.2mm;
+      }
+      .print-vfx-types-title{
+        font-size:6.3pt;
+        font-weight:900;
+        margin-bottom:.8mm;
+      }
+      .print-vfx-types-list{
+        display:flex;
+        flex-wrap:wrap;
+        gap:1mm 2mm;
+        font-size:7pt;
+        font-weight:800;
+      }
+
+      .print-static-section{
+        break-inside:avoid;
+      }
+      .print-static-section .print-data-row{
+        display:flex;
+        flex-flow:row nowrap;
+        justify-content:flex-start;
+        align-items:flex-end;
+        gap:1mm;
+        margin-bottom:.8mm;
+      }
+      .print-static-section .print-data-cell{
+        flex:0 0 auto;
+        min-width:0;
+        border-bottom:1px solid #aaa;
+        padding-bottom:.7mm;
+      }
+      .print-static-section .print-data-cell .plabel{
+        display:block;
+        font-size:5.4pt;
+        line-height:1;
+        font-weight:900;
+        letter-spacing:.04em;
+        text-transform:uppercase;
+        margin-bottom:.55mm;
+      }
+      .print-static-section .print-data-cell .pvalue{
+        display:block;
+        font-size:7.8pt;
+        line-height:1.12;
+        overflow-wrap:anywhere;
+      }
+      .print-static-section .print-data-notes{
+        border-bottom:1px solid #aaa;
+        padding-bottom:.8mm;
+        margin-bottom:.8mm;
+      }
+      .print-static-section .print-data-notes .plabel{
+        display:block;
+        font-size:5.4pt;
+        font-weight:900;
+        text-transform:uppercase;
+        margin-bottom:.55mm;
+      }
+      .print-static-section .print-data-notes .pvalue{
+        font-size:7.8pt;
+        line-height:1.2;
+        white-space:pre-wrap;
+      }
+      .print-vfx-type{
+        white-space:nowrap;
+      }
+
       .print-report section{
         display:block!important;
         position:relative;
@@ -1156,6 +1292,29 @@
         border-color:#adb2b8!important;
       }
 
+      body.print-dark .print-static-section{
+        background:#e7e9ec!important;
+        color:#111!important;
+        border-color:#6f747a!important;
+      }
+      body.print-dark .print-static-section .print-data-cell,
+      body.print-dark .print-static-section .print-data-notes{
+        border-color:#8b9198!important;
+      }
+
+      body.print-dark .print-shot-summary{
+        background:#e7e9ec!important;
+        color:#111!important;
+        border-color:#6f747a!important;
+      }
+      body.print-dark .print-shot-summary h2{
+        border-color:#6f747a!important;
+      }
+      body.print-dark .print-shot-table .pfield,
+      body.print-dark .print-shot-description-box{
+        border-color:#8b9198!important;
+      }
+
       body.print-dark .print-shot-banner,
       body.print-dark .print-report section,
       body.print-dark .photo-card{
@@ -1181,7 +1340,7 @@
     <div class="brand">
       <div>
         <h1>VFX Set Report</h1>
-        <small>Rapport plateau hors ligne — iPad / Safari · champs PDF réellement horizontaux · photothèque et appareil photo séparés</small>
+        <small>Rapport plateau hors ligne — iPad / Safari · Essentiel restauré · caméra et tracking compacts · champs groupés</small>
       </div>
       <div id="reportBadge"><strong>Nouveau rapport</strong></div>
     </div>
@@ -2120,6 +2279,202 @@
     page.appendChild(header);
   }
 
+  function createCompactPrintSection(title, rows, notes = [], checks = []){
+    const section = document.createElement("section");
+    section.className = "print-static-section";
+
+    const cleanRows = rows
+      .map(row => row.filter(item => String(item.value ?? "").trim() !== ""))
+      .filter(row => row.length);
+
+    const cleanNotes = notes.filter(item => String(item.value ?? "").trim() !== "");
+    const cleanChecks = checks.filter(item => Boolean(item.checked));
+
+    if(!cleanRows.length && !cleanNotes.length && !cleanChecks.length) return null;
+
+    const renderCell = item => `
+      <div class="print-data-cell" style="width:${item.width || 24}mm">
+        <span class="plabel">${escapeHtml(item.label)}</span>
+        <span class="pvalue">${escapeHtml(String(item.value ?? "").trim())}</span>
+      </div>`;
+
+    section.innerHTML = `
+      <h2>${escapeHtml(title)}</h2>
+      ${cleanRows.map(row => `
+        <div class="print-data-row">
+          ${row.map(renderCell).join("")}
+        </div>`).join("")}
+      ${cleanNotes.map(item => `
+        <div class="print-data-notes">
+          <span class="plabel">${escapeHtml(item.label)}</span>
+          <span class="pvalue">${escapeHtml(String(item.value ?? "").trim())}</span>
+        </div>`).join("")}
+      ${cleanChecks.length ? `
+        <div class="print-vfx-types">
+          <div class="print-vfx-types-title">Données enregistrées</div>
+          <div class="print-vfx-types-list">
+            ${cleanChecks.map(item => `<span class="print-vfx-type">☑ ${escapeHtml(item.label)}</span>`).join("")}
+          </div>
+        </div>` : ""}
+    `;
+    return section;
+  }
+
+  function createPrintCameraSection(report){
+    return createCompactPrintSection(
+      "02 · Caméra, rig et optique",
+      [
+        [
+          {label:"Caméra / modèle", value:report.cameraType, width:31},
+          {label:"Camera ID", value:report.cameraId, width:15},
+          {label:"Rig", value:report.cameraRig, width:27},
+          {label:"N° série", value:report.cameraSerial, width:25}
+        ],
+        [
+          {label:"Focale", value:report.lens, width:18},
+          {label:"Fabricant", value:report.lensManufacturer, width:24},
+          {label:"Modèle optique", value:report.lensModel, width:24},
+          {label:"T-Stop", value:report.tStop, width:16},
+          {label:"ISO", value:report.iso, width:15},
+          {label:"FPS", value:report.fps, width:15}
+        ],
+        [
+          {label:"Shutter", value:report.shutter, width:20},
+          {label:"WB / C Temp", value:report.colorTemp, width:22},
+          {label:"Focus", value:report.focusDistance, width:22},
+          {label:"Hauteur caméra", value:report.cameraHeight, width:23},
+          {label:"Tilt", value:report.tilt, width:16},
+          {label:"Roll", value:report.roll, width:16}
+        ],
+        [
+          {label:"Card / média", value:report.card, width:23},
+          {label:"Clip début", value:report.clip, width:22},
+          {label:"Clip fin", value:report.clipEnd, width:22},
+          {label:"Codec / format", value:report.codec, width:28}
+        ],
+        [
+          {label:"TC Start", value:report.cameraTcStart, width:28},
+          {label:"TC End", value:report.cameraTcEnd, width:28},
+          {label:"TC Source", value:report.cameraTcSource, width:31},
+          {label:"Drop frame", value:report.dropFrame, width:22}
+        ]
+      ]
+    );
+  }
+
+  function createPrintTrackingSection(report){
+    return createCompactPrintSection(
+      "Tracking caméra 3D / Virtual Production",
+      [
+        [
+          {label:"Système", value:report.trackingSystem, width:27},
+          {label:"Rig", value:report.trackingRig, width:25},
+          {label:"Opérateur", value:report.trackingOperator, width:28}
+        ],
+        [
+          {label:"Enregistré", value:report.trackingRecorded, width:22},
+          {label:"Genlock", value:report.genlock, width:20},
+          {label:"FPS tracking", value:report.trackingFps, width:22},
+          {label:"Unité", value:report.trackingUnit, width:16}
+        ],
+        [
+          {label:"TC Start", value:report.trackingTcStart, width:27},
+          {label:"TC End", value:report.trackingTcEnd, width:27},
+          {label:"Offset TC", value:report.trackingTcOffset, width:27},
+          {label:"Sync vérifiée", value:report.syncChecked, width:24}
+        ],
+        [
+          {label:"Fichier tracking", value:report.trackingFile, width:43},
+          {label:"Format", value:report.trackingFormat, width:20},
+          {label:"Stockage / dossier", value:report.trackingPath, width:40}
+        ],
+        [
+          {label:"Événement sync", value:report.syncEvent, width:31},
+          {label:"Image frame", value:report.syncFrame, width:24},
+          {label:"Tracking frame", value:report.trackingFrame, width:27}
+        ]
+      ],
+      [
+        {label:"Notes tracking", value:report.trackingNotes}
+      ],
+      [
+        {label:"Position", checked:report.track_position},
+        {label:"Rotation", checked:report.track_rotation},
+        {label:"Focale", checked:report.track_focal},
+        {label:"Focus", checked:report.track_focus},
+        {label:"Iris", checked:report.track_iris},
+        {label:"Zoom", checked:report.track_zoom},
+        {label:"Distortion", checked:report.track_distortion},
+        {label:"Nodal offset", checked:report.track_nodal}
+      ]
+    );
+  }
+
+  function createPrintShotSummary(report){
+    const section = document.createElement("section");
+    section.className = "print-shot-summary";
+    section.id = "printShotSummary";
+
+    const safe = value => escapeHtml(String(value ?? "").trim() || "—");
+
+    const cell = (label, value, width) => `
+      <td style="width:${width}mm">
+        <div class="pfield">
+          <span class="plabel">${escapeHtml(label)}</span>
+          <span class="pvalue">${safe(value)}</span>
+        </div>
+      </td>`;
+
+    const vfxTypes = [
+      ["vfx_matchmove","MATCHMOVE"],
+      ["vfx_cleanup","CLEANUP"],
+      ["vfx_roto","ROTO"],
+      ["vfx_paint","PAINT"],
+      ["vfx_setext","SET EXTENSION"],
+      ["vfx_dmp","DMP"],
+      ["vfx_cg","CG"],
+      ["vfx_fx","FX"]
+    ].filter(([key]) => Boolean(report[key]))
+     .map(([, label]) => `<span class="print-vfx-type">☑ ${escapeHtml(label)}</span>`)
+     .join("");
+
+    section.innerHTML = `
+      <h2>01 · Plan, takes et clips</h2>
+
+      <table class="print-shot-table">
+        <tr>
+          ${cell("Heure / TOD", report.timeOfDay, 23)}
+          ${cell("Scène", report.scene, 20)}
+          ${cell("Shot", report.shot, 20)}
+          ${cell("Take début", report.take, 23)}
+          ${cell("Take fin", report.takeEnd, 23)}
+        </tr>
+      </table>
+
+      <div class="print-shot-description-box">
+        <span class="plabel">Description</span>
+        <span class="pvalue">${safe(report.description)}</span>
+      </div>
+
+      <table class="print-shot-table">
+        <tr>
+          ${cell("Int / Ext", report.intExt, 29)}
+          ${cell("Jour / Nuit", report.dayNight, 29)}
+          ${cell("Météo", report.weather, 37)}
+          ${cell("Slate", report.slate, 27)}
+        </tr>
+      </table>
+
+      ${vfxTypes ? `
+        <div class="print-vfx-types">
+          <div class="print-vfx-types-title">Type de travail VFX</div>
+          <div class="print-vfx-types-list">${vfxTypes}</div>
+        </div>` : ""}
+    `;
+
+    return section;
+  }
+
   function rebuildShotPrintLayout(section){
     const originalGrid = section.querySelector(":scope > .grid");
     if(!originalGrid) return;
@@ -2239,13 +2594,8 @@
         </div>`;
       page.appendChild(banner);
 
-      // Essential: always first and always full width.
-      const shotSource = document.getElementById("shot");
-      const shotClone = shotSource.cloneNode(true);
-      shotClone.classList.add("print-essential");
-      removeRepeatedProductionFields(shotClone);
-      rebuildShotPrintLayout(shotClone);
-      page.appendChild(shotClone);
+      // Essential: dedicated print layout, matching the compact form structure.
+      page.appendChild(createPrintShotSummary(r));
 
       // Optional information: only filled sections, arranged below Essential.
       const extrasGrid = document.createElement("div");
@@ -2254,6 +2604,19 @@
 
       extrasOrder.forEach(id => {
         if(!sectionHasContent(r, id)) return;
+
+        if(id === "camera"){
+          const cameraSection = createPrintCameraSection(r);
+          if(cameraSection) extrasGrid.appendChild(cameraSection);
+          return;
+        }
+
+        if(id === "tracking"){
+          const trackingSection = createPrintTrackingSection(r);
+          if(trackingSection) extrasGrid.appendChild(trackingSection);
+          return;
+        }
+
         const source = document.getElementById(id);
         extrasGrid.appendChild(source.cloneNode(true));
       });
@@ -2321,6 +2684,10 @@
     });
 
     page.querySelectorAll("section").forEach(section => {
+      if(section.classList.contains("print-shot-summary") ||
+         section.classList.contains("print-static-section")){
+        return;
+      }
       const meaningful = section.querySelector(".field, .check, input, select, textarea, img, .photo-card");
       if(!meaningful && section.id !== "shot") section.remove();
     });
