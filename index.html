@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V29.12</title>
+  <title>VFX Set Report V29.13</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -3684,36 +3684,18 @@
     return await new Promise((resolve, reject) => {
       const image = new Image();
       image.onload = () => resolve(image);
-      image.onerror = () => reject(new Error("Format d’image non décodable"));
+      image.onerror = () => reject(new Error("Image non lisible par le navigateur"));
       image.src = source;
     });
   }
 
-  async function fileToDrawable(file){
-    // createImageBitmap gère mieux certaines images de la photothèque iOS.
-    if("createImageBitmap" in window){
-      try{
-        return await createImageBitmap(file, {imageOrientation:"from-image"});
-      }catch(err){
-        console.warn("createImageBitmap indisponible pour ce fichier, repli FileReader.", err);
-      }
-    }
+  async function compressImageElement(img, maxSide=1280, quality=.66, targetChars=300000){
+    let w = img.naturalWidth || img.videoWidth || img.width;
+    let h = img.naturalHeight || img.videoHeight || img.height;
 
-    const objectUrl = URL.createObjectURL(file);
-    try{
-      return await loadImageSource(objectUrl);
-    }finally{
-      // Le décodage est déjà terminé quand loadImageSource se résout.
-      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
-    }
-  }
+    if(!w || !h) throw new Error("Dimensions de l’image introuvables");
 
-  async function compressImageSource(source, maxSide=1280, quality=.66, targetChars=300000){
-    const img = await loadImageSource(source);
-    let w = img.naturalWidth || img.width;
-    let h = img.naturalHeight || img.height;
     const longest = Math.max(w,h);
-
     if(longest > maxSide){
       const scale = maxSide / longest;
       w = Math.max(1, Math.round(w*scale));
@@ -3727,56 +3709,63 @@
       const canvas = document.createElement("canvas");
       canvas.width = Math.max(1, Math.round(w));
       canvas.height = Math.max(1, Math.round(h));
-      const ctx = canvas.getContext("2d", {alpha:false});
+
+      const ctx = canvas.getContext("2d");
+      if(!ctx) throw new Error("Canvas indisponible");
+
       ctx.fillStyle = "#fff";
       ctx.fillRect(0,0,canvas.width,canvas.height);
       ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
       result = canvas.toDataURL("image/jpeg", q);
 
-      if(result.length <= targetChars) break;
+      if(result && result !== "data:," && result.length <= targetChars) break;
+
       w *= .82;
       h *= .82;
       q = Math.max(.46, q-.06);
+    }
+
+    if(!result || result === "data:,"){
+      throw new Error("Conversion JPEG impossible");
     }
 
     return result;
   }
 
+  async function compressImageSource(source, maxSide=1280, quality=.66, targetChars=300000){
+    const img = await loadImageSource(source);
+    return compressImageElement(img, maxSide, quality, targetChars);
+  }
+
   async function fileToCompressedDataURL(file){
-    const img = await fileToDrawable(file);
-    let w = img.naturalWidth || img.width;
-    let h = img.naturalHeight || img.height;
-    const maxSide = 1280;
-    const longest = Math.max(w,h);
+    // Méthode principale : FileReader + Image.
+    // C’est la plus stable sur Safari/Chrome iPad pour la caméra et la photothèque.
+    const raw = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(reader.error || new Error("Lecture du fichier impossible"));
+      reader.readAsDataURL(file);
+    });
 
-    if(longest > maxSide){
-      const scale = maxSide / longest;
-      w = Math.max(1, Math.round(w*scale));
-      h = Math.max(1, Math.round(h*scale));
+    if(!raw) throw new Error("Fichier photo vide");
+
+    try{
+      return await compressImageSource(raw);
+    }catch(firstError){
+      // Repli pour certains fichiers fournis par iOS sans aperçu Data URL exploitable.
+      if("createImageBitmap" in window){
+        try{
+          const bitmap = await createImageBitmap(file);
+          const result = await compressImageElement(bitmap);
+          if(typeof bitmap.close === "function") bitmap.close();
+          return result;
+        }catch(secondError){
+          console.warn("Échec du repli createImageBitmap :", secondError);
+        }
+      }
+      throw firstError;
     }
-
-    let q = .66;
-    let result = "";
-
-    for(let pass=0; pass<5; pass++){
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.max(1, Math.round(w));
-      canvas.height = Math.max(1, Math.round(h));
-      const ctx = canvas.getContext("2d", {alpha:false});
-      ctx.fillStyle = "#fff";
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-      ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      result = canvas.toDataURL("image/jpeg", q);
-
-      if(result.length <= 300000) break;
-      w *= .82;
-      h *= .82;
-      q = Math.max(.46, q-.06);
-    }
-
-    if(typeof img.close === "function") img.close();
-    if(!result || result === "data:,") throw new Error("Conversion de l’image impossible");
-    return result;
   }
 
   async function compactCurrentPhotos(){
@@ -3796,7 +3785,7 @@
           compacted.push(photo);
         }
       }catch(err){
-        console.error("Compression d’une photo impossible :", err);
+        console.error("Compression d’une ancienne photo impossible :", err);
         compacted.push(photo);
       }
     }
@@ -4028,8 +4017,6 @@
 
     for(const file of files){
       try{
-        // Sur iPhone, une photo choisie dans la photothèque peut avoir un type MIME
-        // vide ou inhabituel (notamment HEIC). On tente donc toujours le décodage.
         const data = await fileToCompressedDataURL(file);
         photos.push({data,caption:""});
         renderPhotos();
@@ -4053,16 +4040,14 @@
     if(added && !refused){
       setStatus(`${added} image(s) ajoutée(s) et sauvegardée(s).`);
     }else if(added && refused){
-      setStatus(`${added} image(s) ajoutée(s). Une autre image n’a pas pu être convertie ou sauvegardée.`, 0);
+      setStatus(`${added} image(s) ajoutée(s). Stockage plein avant la suivante.`, 0);
     }else if(refused){
-      setStatus("La photo choisie n’a pas pu être convertie. Essayez une capture d’écran de cette photo ou téléchargez-la depuis iCloud avant de la sélectionner.", 0);
+      setStatus("La photo n’a pas pu être lue ou le stockage est plein. Essayez une autre image, une capture d’écran, ou supprimez une ancienne photo.", 0);
     }else{
       setStatus("Aucune image sélectionnée.");
     }
   }
 
-  photoLibraryInput.addEventListener("click", () => { photoLibraryInput.value = ""; });
-  photoCameraInput.addEventListener("click", () => { photoCameraInput.value = ""; });
   photoLibraryInput.addEventListener("change", () => importPhotoFiles(photoLibraryInput));
   photoCameraInput.addEventListener("change", () => importPhotoFiles(photoCameraInput));
 
