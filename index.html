@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V29.10</title>
+  <title>VFX Set Report V29.11</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -2532,7 +2532,13 @@
   }
 
   function setReports(data){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      return true;
+    }catch(err){
+      console.error("Sauvegarde impossible :", err);
+      return false;
+    }
   }
 
   function formToObject(){
@@ -2577,12 +2583,18 @@
   function saveReport(silent=false){
     const reports = getReports();
     reports[activeId] = formToObject();
-    setReports(reports);
-    localStorage.setItem(ACTIVE_KEY, activeId);
+
+    if(!setReports(reports)){
+      setStatus("Stockage plein : les photos ont été conservées à l’écran mais pas sauvegardées. Supprimez une photo ou exportez le JSON.", 0);
+      return false;
+    }
+
+    try{ localStorage.setItem(ACTIVE_KEY, activeId); }catch(err){ console.error(err); }
     updateBadge();
     renderReportList();
     updateActivePageBar();
     if(!silent) setStatus("Page sauvegardée sur l’iPad.");
+    return true;
   }
 
   function newReport(copyFrom=null){
@@ -2598,8 +2610,22 @@
       ? {...copyFrom, id:activeId, createdAt:new Date().toISOString(), pageOrder:nextOrder, selectedForExport:true, photos:[...(copyFrom.photos||[])]}
       : {date:localDate, createdAt:new Date().toISOString(), pageOrder:nextOrder, selectedForExport:true, photos:[]};
     objectToForm(base);
-    saveReport(true);
-    setStatus(copyFrom ? "Page dupliquée." : "Nouvelle page vide créée.");
+    let saved = saveReport(true);
+
+    // En cas de quota saturé, on garde la duplication mais sans recopier
+    // les lourdes données photo. Les autres informations du plan sont conservées.
+    if(!saved && copyFrom && photos.length){
+      photos = [];
+      renderPhotos();
+      saved = saveReport(true);
+      if(saved) setStatus("Page dupliquée sans les photos afin d’éviter de saturer le stockage.");
+    }
+
+    if(saved && !(copyFrom && !photos.length)){
+      setStatus(copyFrom ? "Page dupliquée." : "Nouvelle page vide créée.");
+    }else if(!saved){
+      setStatus("Impossible de créer la page : stockage local plein. Exportez le JSON puis supprimez quelques photos.", 0);
+    }
     switchTab("essential");
   }
 
@@ -3654,6 +3680,49 @@
     });
   }
 
+  async function loadImageSource(source){
+    return await new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = reject;
+      image.src = source;
+    });
+  }
+
+  async function compressImageSource(source, maxSide=1280, quality=.66, targetChars=300000){
+    const img = await loadImageSource(source);
+    let w = img.naturalWidth || img.width;
+    let h = img.naturalHeight || img.height;
+    const longest = Math.max(w,h);
+
+    if(longest > maxSide){
+      const scale = maxSide / longest;
+      w = Math.max(1, Math.round(w*scale));
+      h = Math.max(1, Math.round(h*scale));
+    }
+
+    let q = quality;
+    let result = "";
+
+    for(let pass=0; pass<5; pass++){
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(w));
+      canvas.height = Math.max(1, Math.round(h));
+      const ctx = canvas.getContext("2d", {alpha:false});
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      result = canvas.toDataURL("image/jpeg", q);
+
+      if(result.length <= targetChars) break;
+      w *= .82;
+      h *= .82;
+      q = Math.max(.46, q-.06);
+    }
+
+    return result;
+  }
+
   async function fileToCompressedDataURL(file){
     const raw = await new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -3661,22 +3730,36 @@
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
-    const img = await new Promise((resolve, reject) => {
-      const image = new Image();
-      image.onload = () => resolve(image);
-      image.onerror = reject;
-      image.src = raw;
-    });
-    const max = 1800;
-    let w = img.width, h = img.height;
-    if(Math.max(w,h) > max){
-      const scale = max / Math.max(w,h);
-      w = Math.round(w*scale); h = Math.round(h*scale);
+    return compressImageSource(raw);
+  }
+
+  async function compactCurrentPhotos(){
+    if(!photos.length) return false;
+    let changed = false;
+    const compacted = [];
+
+    for(const photo of photos){
+      try{
+        if(photo?.data && photo.data.length > 320000){
+          compacted.push({
+            ...photo,
+            data: await compressImageSource(photo.data, 1100, .60, 230000)
+          });
+          changed = true;
+        }else{
+          compacted.push(photo);
+        }
+      }catch(err){
+        console.error("Compression d’une photo impossible :", err);
+        compacted.push(photo);
+      }
     }
-    const canvas = document.createElement("canvas");
-    canvas.width = w; canvas.height = h;
-    canvas.getContext("2d").drawImage(img,0,0,w,h);
-    return canvas.toDataURL("image/jpeg", .82);
+
+    if(changed){
+      photos = compacted;
+      renderPhotos();
+    }
+    return changed;
   }
 
   const TAB_GROUPS = {
@@ -3887,24 +3970,48 @@
     const files = [...(input.files || [])];
     if(!files.length) return;
 
-    setStatus(`Traitement de ${files.length} image(s)…`,0);
+    setStatus(`Optimisation et traitement de ${files.length} image(s)…`,0);
+
+    // Les anciennes versions stockaient des photos beaucoup plus lourdes.
+    // On les recompresse avant tout nouvel ajout afin de libérer de la place.
+    await compactCurrentPhotos();
+    saveReport(true);
+
     let added = 0;
+    let refused = 0;
 
     for(const file of files){
       if(!file.type.startsWith("image/")) continue;
       try{
         const data = await fileToCompressedDataURL(file);
         photos.push({data,caption:""});
-        added++;
+        renderPhotos();
+
+        if(saveReport(true)){
+          added++;
+        }else{
+          photos.pop();
+          renderPhotos();
+          refused++;
+          break;
+        }
       }catch(err){
         console.error(err);
+        refused++;
       }
     }
 
     input.value = "";
-    renderPhotos();
-    saveReport(true);
-    setStatus(added ? `${added} image(s) ajoutée(s).` : "Aucune image valide ajoutée.");
+
+    if(added && !refused){
+      setStatus(`${added} image(s) ajoutée(s) et sauvegardée(s).`);
+    }else if(added && refused){
+      setStatus(`${added} image(s) ajoutée(s). Stockage plein avant la suivante.`, 0);
+    }else if(refused){
+      setStatus("Impossible d’ajouter l’image : stockage local plein. Exportez le JSON ou supprimez une ancienne photo.", 0);
+    }else{
+      setStatus("Aucune image valide ajoutée.");
+    }
   }
 
   photoLibraryInput.addEventListener("change", () => importPhotoFiles(photoLibraryInput));
