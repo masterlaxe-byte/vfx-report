@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V29.13</title>
+  <title>VFX Set Report V29.14</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -2505,7 +2505,7 @@
 <div id="printBook"></div>
 
 <script>
-(() => {
+(async () => {
   const STORAGE_KEY = "vfx_set_reports_v1";
   const ACTIVE_KEY = "vfx_set_active_report_v1";
   const form = document.getElementById("reportForm");
@@ -2585,7 +2585,7 @@
     reports[activeId] = formToObject();
 
     if(!setReports(reports)){
-      setStatus("Stockage plein : les photos ont été conservées à l’écran mais pas sauvegardées. Supprimez une photo ou exportez le JSON.", 0);
+      setStatus("Stockage plein : les photos des autres pages comptent aussi. Exportez le JSON puis supprimez quelques anciennes photos.", 0);
       return false;
     }
 
@@ -3689,7 +3689,7 @@
     });
   }
 
-  async function compressImageElement(img, maxSide=1280, quality=.66, targetChars=300000){
+  async function compressImageElement(img, maxSide=1100, quality=.60, targetChars=140000){
     let w = img.naturalWidth || img.videoWidth || img.width;
     let h = img.naturalHeight || img.videoHeight || img.height;
 
@@ -3775,10 +3775,10 @@
 
     for(const photo of photos){
       try{
-        if(photo?.data && photo.data.length > 320000){
+        if(photo?.data && photo.data.length > 145000){
           compacted.push({
             ...photo,
-            data: await compressImageSource(photo.data, 1100, .60, 230000)
+            data: await compressImageSource(photo.data, 900, .56, 105000)
           });
           changed = true;
         }else{
@@ -3795,6 +3795,54 @@
       renderPhotos();
     }
     return changed;
+  }
+
+
+  const PHOTO_MIGRATION_KEY = "vfxSetReportPhotoMigration_v2914";
+
+  async function compactAllStoredPhotos(){
+    const alreadyDone = localStorage.getItem(PHOTO_MIGRATION_KEY) === "done";
+    const reports = getReports();
+    const entries = Object.entries(reports);
+    if(!entries.length) return {changed:false, photos:0};
+
+    let changed = false;
+    let compactedCount = 0;
+
+    // Même si la migration a déjà été faite, on vérifie encore les très grosses
+    // anciennes images : le fichier HTML peut partager le même localStorage.
+    for(const [reportId, report] of entries){
+      if(!Array.isArray(report?.photos) || !report.photos.length) continue;
+
+      const nextPhotos = [];
+      for(const photo of report.photos){
+        try{
+          if(photo?.data && photo.data.length > 145000){
+            const compacted = await compressImageSource(photo.data, 900, .56, 105000);
+            nextPhotos.push({...photo, data:compacted});
+            changed = true;
+            compactedCount++;
+          }else{
+            nextPhotos.push(photo);
+          }
+        }catch(err){
+          console.warn("Ancienne photo conservée sans recompression :", err);
+          nextPhotos.push(photo);
+        }
+      }
+      report.photos = nextPhotos;
+      reports[reportId] = report;
+    }
+
+    if(changed){
+      if(!setReports(reports)){
+        console.error("La migration globale des photos n’a pas pu être sauvegardée.");
+        return {changed:false, photos:0, failed:true};
+      }
+    }
+
+    try{ localStorage.setItem(PHOTO_MIGRATION_KEY, "done"); }catch(err){ console.warn(err); }
+    return {changed, photos:compactedCount, alreadyDone};
   }
 
   const TAB_GROUPS = {
@@ -4266,6 +4314,16 @@
   condenseCameraUI();
   condenseReferencesUI();
   normalizePageOrder();
+  setStatus("Vérification du stockage des photos…", 0);
+  const migration = await compactAllStoredPhotos();
+  if(migration.failed){
+    setStatus("Le stockage contient encore d’anciennes photos trop lourdes. Exportez le JSON avant de supprimer quelques photos.", 0);
+  }else if(migration.photos){
+    setStatus(`${migration.photos} ancienne(s) photo(s) optimisée(s). Vous pouvez maintenant en ajouter d’autres.`);
+  }else{
+    setStatus("");
+  }
+
   const reports = getReports();
   if(reports[activeId]) objectToForm(reports[activeId]);
   else newReport();
