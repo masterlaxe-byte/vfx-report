@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V29.15</title>
+  <title>VFX Set Report V32.5a</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -1113,7 +1113,8 @@
       background:linear-gradient(145deg,#dbe4f0,#f3f6fa);
       border:1px solid var(--line);
     }
-    .report-thumb img{width:100%;height:100%;display:block;object-fit:cover}
+    .report-thumb-image{width:100%;height:100%}
+    .report-thumb-image img{width:100%;height:100%;display:block;object-fit:cover}
     .report-thumb-placeholder{
       height:100%;
       display:flex;
@@ -1191,6 +1192,25 @@
       font-size:9px;
     }
     .page-select input{width:16px;height:16px;min-height:16px}
+    .report-card-open{
+      position:absolute;
+      left:6px;
+      bottom:6px;
+      z-index:5;
+    }
+    .report-card-open button{
+      position:relative;
+      z-index:6;
+      min-width:31px;
+      width:31px;
+      min-height:31px;
+      height:31px;
+      padding:0;
+      border-radius:9px;
+      font-size:14px;
+      touch-action:manipulation;
+      -webkit-tap-highlight-color:rgba(0,0,0,.08);
+    }
     .report-card-actions{
       position:absolute;
       right:6px;
@@ -1357,7 +1377,7 @@
     }
 
     @media print{
-      @page{size:A4 portrait;margin:7mm}
+      @page{size:A4 portrait;margin:3.5mm}
 
       body,
       body.dark-theme{
@@ -1392,25 +1412,169 @@
       .app{display:none!important}
       #printBook{display:block!important}
 
-      .print-report{
+      .print-sheet{
         position:relative;
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:1.6mm;
-        align-items:start;
+        min-height:289mm;
+        width:100%;
+        display:flex;
+        flex-direction:column;
+        gap:0;
+        margin:0;
+        padding:0;
+        background:#fff;
+        border:0;
+        border-radius:0;
+        box-shadow:none;
         break-after:page;
         page-break-after:always;
-        border-left:5px solid var(--page-accent, #2563eb);
-        padding-left:2.2mm;
+      }
+      .print-sheet:last-child{
+        break-after:auto;
+        page-break-after:auto;
+      }
+
+      .print-report{
+        position:relative;
+        width:100%;
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:1.25mm;
+        align-items:start;
+        margin:0;
+        break-after:auto;
+        page-break-after:auto;
+        border-left:3.5px solid var(--page-accent, #2563eb);
+        padding-left:1.2mm;
+      }
+
+      .print-sheet-paired{
+        justify-content:flex-start;
+        gap:2.4mm;
+      }
+      .print-sheet-paired .print-report{
+        flex:0 0 calc(50% - 1.2mm);
+        min-height:0;
+        max-height:calc(50% - 1.2mm);
+        overflow:hidden;
+        padding-bottom:1.2mm;
+        border-bottom:1px dashed #aaa;
+        break-inside:avoid!important;
+        page-break-inside:avoid!important;
+      }
+      .print-sheet-paired .print-report:last-child{
+        border-bottom:0;
+      }
+      .print-sheet-paired .print-report-compact{
+        font-size:6.45pt;
+        gap:.6mm;
+        transform-origin:top left;
+      }
+      .print-sheet-paired .print-report-compact .print-shot-banner{
+        border-width:1.3px;
+      }
+      .print-sheet-paired .print-report-compact .print-shot-banner > div{
+        padding:.75mm 1.05mm;
+      }
+      .print-sheet-paired .print-report-compact .print-shot-banner span{
+        font-size:5.2pt;
+      }
+      .print-sheet-paired .print-report-compact .print-shot-banner strong{
+        font-size:9.6pt;
+        margin-top:.2mm;
+      }
+      .print-sheet-paired .print-report-compact .print-shot-banner small{
+        font-size:5.3pt;
+      }
+      .print-sheet-paired .print-report-compact .print-shot-summary,
+      .print-sheet-paired .print-report-compact .print-extras-grid,
+      .print-sheet-paired .print-report-compact #photos{
+        margin-top:0;
+        margin-bottom:0;
+      }
+      .print-sheet-paired .print-report-compact .photo-card img{
+        max-height:19mm;
+        object-fit:cover;
+      }
+      .print-sheet-paired .print-report-compact #photos{
+        padding:.55mm!important;
+      }
+      .print-sheet-paired .print-report-compact #photos h2,
+      .print-sheet-paired .print-report-compact .section-heading{
+        margin-bottom:.7mm!important;
+        padding-bottom:.5mm!important;
+      }
+      .print-sheet-paired .print-report-compact .print-shot-summary,
+      .print-sheet-paired .print-report-compact .print-extras-grid > *{
+        padding:.75mm!important;
+      }
+      .print-sheet-paired .print-report-compact textarea{
+        min-height:5mm!important;
+      }
+
+
+      .print-sheet-paired .print-report-compact .print-shot-banner,
+      .print-sheet-paired .print-report-compact .print-shot-summary,
+      .print-sheet-paired .print-report-compact .print-extras-grid,
+      .print-sheet-paired .print-report-compact #photos{
+        width:100%;
+        max-width:none;
+      }
+
+      .print-sheet-paired .print-report-compact .print-shot-banner,
+      .print-sheet-paired .print-report-compact .print-shot-summary,
+      .print-sheet-paired .print-report-compact .print-extras-grid > *,
+      .print-sheet-paired .print-report-compact #photos{
+        border-radius:0!important;
+        box-shadow:none!important;
+      }
+
+      .print-sheet-paired .print-report-compact .print-shot-summary,
+      .print-sheet-paired .print-report-compact .print-extras-grid > *,
+      .print-sheet-paired .print-report-compact #photos{
+        margin-left:0!important;
+        margin-right:0!important;
+      }
+
+      .print-report,
+      .print-shot-banner,
+      .print-shot-summary,
+      .print-extras-grid,
+      .print-extras-grid > *,
+      .print-report #photos,
+      .print-report .photos,
+      .print-report .photo-card,
+      .print-shot-banner small{
+        color:#111;
+        opacity:1;
+      }
+      .print-date-reminder{
+        display:block;
+        margin-top:.35mm;
+        font-size:5.8pt;
+        font-weight:600;
+        color:#666!important;
+        line-height:1.1;
+        letter-spacing:.01em;
+        opacity:1;
+      }
+      .print-sheet-paired .print-date-reminder{
+        font-size:5.1pt;
+        margin-top:.2mm;
+        color:#666!important;
+      }
+
+      .print-page-footer{
+        break-inside:avoid!important;
+        page-break-inside:avoid!important;
+      }
+
+      .print-sheet-paired .print-report #photos{
+        grid-column:1/-1;
       }
       .print-report.accent-blue{--page-accent:#2563eb}
       .print-report.accent-red{--page-accent:#dc2626}
       .print-report.accent-green{--page-accent:#059669}
       .print-report.accent-violet{--page-accent:#7c3aed}
-      .print-report:last-child{
-        break-after:auto;
-        page-break-after:auto;
-      }
 
       .print-production-header{
         grid-column:1/-1;
@@ -1908,6 +2072,12 @@
         position:static!important;
         inset:auto!important;
       }
+      .print-sheet-paired .print-page-footer{
+        position:static!important;
+        grid-column:1/-1;
+        margin-top:1mm;
+        justify-self:end;
+      }
       .print-page-footer .footer-number{
         flex:0 0 auto;
         padding:1mm 1.9mm;
@@ -2003,7 +2173,255 @@
         border-color:#8b9198!important;
       }
     }
-  </style>
+  
+  /* V31 — navigateur latéral compact */
+  .page-drawer-toggle{
+    position:fixed;
+    left:0;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:120;
+    width:28px;
+    height:58px;
+    padding:0;
+    border-radius:0 10px 10px 0;
+    border-left:0;
+    border-color:var(--line);
+    background:color-mix(in srgb, var(--panel) 92%, transparent);
+    color:var(--ink);
+    box-shadow:0 3px 10px rgba(15,23,42,.10);
+    font-size:18px;
+    font-weight:800;
+    opacity:.84;
+    touch-action:manipulation;
+    -webkit-backdrop-filter:blur(10px);
+    backdrop-filter:blur(10px);
+  }
+  .page-drawer-toggle:hover{
+    opacity:1;
+    transform:translateY(-50%);
+    box-shadow:0 4px 12px rgba(15,23,42,.14);
+  }
+  .page-drawer{
+    position:fixed;
+    left:10px;
+    top:12px;
+    bottom:12px;
+    z-index:119;
+    width:min(286px,calc(100vw - 34px));
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    background:var(--panel);
+    color:var(--ink);
+    border:1px solid var(--line);
+    border-radius:22px;
+    box-shadow:0 18px 48px rgba(15,23,42,.20);
+    transform:translateX(calc(-100% - 24px));
+    transition:transform .22s cubic-bezier(.2,.75,.25,1);
+    overscroll-behavior:contain;
+  }
+  .page-drawer.open{transform:translateX(0)}
+  .page-drawer.open + .page-drawer-toggle{
+    left:min(302px,calc(100vw - 32px));
+  }
+  .page-drawer-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:12px;
+    border-bottom:1px solid var(--line);
+    background:var(--panel);
+    color:var(--ink);
+  }
+  .page-drawer-header strong{
+    font-size:15px;
+    color:var(--ink);
+  }
+  .page-drawer-close{
+    min-width:36px;
+    min-height:36px;
+    padding:0;
+    font-size:19px;
+    line-height:1;
+  }
+  .page-drawer-search{
+    padding:9px 10px;
+    border-bottom:1px solid var(--line);
+    background:var(--panel);
+  }
+  .page-drawer-search input{
+    width:100%;
+    min-height:40px;
+    background:var(--soft);
+    color:var(--ink);
+    border-color:var(--line);
+  }
+  .page-drawer-list{
+    flex:1 1 auto;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:10px;
+    background:var(--bg);
+    color:var(--ink);
+    -webkit-overflow-scrolling:touch;
+  }
+  .drawer-group{margin:0 0 10px}
+  .drawer-group-title{
+    position:sticky;
+    top:-8px;
+    z-index:2;
+    margin:0 0 6px;
+    padding:7px 8px;
+    background:color-mix(in srgb, var(--bg) 94%, transparent);
+    color:var(--muted);
+    font-size:11px;
+    font-weight:800;
+    border-bottom:1px solid var(--line);
+    -webkit-backdrop-filter:blur(10px);
+    backdrop-filter:blur(10px);
+  }
+  .drawer-page{
+    width:100%;
+    display:grid;
+    grid-template-columns:46px minmax(0,1fr);
+    gap:9px;
+    align-items:center;
+    text-align:left;
+    margin:0 0 7px;
+    padding:7px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--panel);
+    color:var(--ink);
+    box-shadow:0 2px 7px rgba(15,23,42,.05);
+  }
+  .drawer-page:hover{
+    transform:none;
+    box-shadow:0 3px 10px rgba(15,23,42,.08);
+  }
+  .drawer-page.active{
+    border-color:var(--accent);
+    background:color-mix(in srgb, var(--accent) 10%, var(--panel));
+    box-shadow:inset 3px 0 0 var(--accent);
+  }
+  .drawer-thumb{
+    position:relative;
+    width:46px;
+    height:46px;
+    overflow:hidden;
+    border-radius:10px;
+    background:var(--soft);
+    border:1px solid var(--line);
+  }
+  .drawer-thumb img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+  }
+  .drawer-thumb-placeholder{
+    width:100%;
+    height:100%;
+    display:grid;
+    place-items:center;
+    color:var(--muted);
+    font-size:17px;
+  }
+  .drawer-page-index{
+    position:absolute;
+    left:3px;
+    bottom:3px;
+    display:grid;
+    place-items:center;
+    min-width:20px;
+    height:20px;
+    padding:0 5px;
+    border-radius:7px;
+    background:rgba(15,23,42,.78);
+    color:#fff;
+    font-weight:800;
+    font-size:10px;
+    line-height:1;
+  }
+  .drawer-page-text{min-width:0}
+  .drawer-page-text strong,
+  .drawer-page-text small{
+    display:block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .drawer-page-text strong{
+    color:var(--ink);
+    font-size:13px;
+  }
+  .drawer-page-text small{
+    color:var(--muted);
+    font-size:11px;
+    margin-top:2px;
+  }
+  .drawer-page-meta{
+    display:flex;
+    gap:6px;
+    margin-top:4px;
+    color:var(--muted);
+    font-size:10px;
+  }
+  .page-drawer-backdrop{
+    position:fixed;
+    inset:0;
+    z-index:118;
+    background:rgba(15,23,42,.24);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  .page-drawer-backdrop.open{
+    opacity:1;
+    pointer-events:auto;
+  }
+  body.dark-theme .page-drawer,
+  body.dark-theme .page-drawer-header,
+  body.dark-theme .page-drawer-search,
+  body.dark-theme .drawer-page{
+    background:var(--panel);
+    color:var(--ink);
+  }
+  body.dark-theme .page-drawer-list{
+    background:var(--bg);
+  }
+  .drawer-day-separator{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin:12px 2px 8px;
+    padding:8px 10px;
+    border:1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
+    border-radius:11px;
+    background:color-mix(in srgb, var(--accent) 9%, var(--panel));
+    color:var(--ink);
+  }
+  .drawer-day-separator:first-child{margin-top:0}
+  .drawer-day-separator strong{
+    font-size:12px;
+  }
+  .drawer-day-separator small{
+    color:var(--muted);
+    font-size:10px;
+    white-space:nowrap;
+  }
+
+  @media (min-width:900px){
+    .page-drawer-backdrop{display:none}
+  }
+  @media print{
+    .page-drawer,.page-drawer-toggle,.page-drawer-backdrop{display:none!important}
+  }
+</style>
 </head>
 <body>
 <div class="app">
@@ -2502,6 +2920,20 @@
     </section>
   </form>
 </div>
+
+<div id="pageDrawerBackdrop" class="page-drawer-backdrop no-print"></div>
+<aside id="pageDrawer" class="page-drawer no-print" aria-hidden="true" aria-label="Navigation rapide des pages">
+  <div class="page-drawer-header">
+    <strong>Pages du rapport</strong>
+    <button id="pageDrawerClose" class="page-drawer-close" type="button" aria-label="Replier le menu">×</button>
+  </div>
+  <div class="page-drawer-search">
+    <input id="pageDrawerSearch" type="search" placeholder="Rechercher une page…" autocomplete="off">
+  </div>
+  <div id="pageDrawerList" class="page-drawer-list"></div>
+</aside>
+<button id="pageDrawerToggle" class="page-drawer-toggle no-print" type="button" aria-label="Afficher les pages" aria-expanded="false" title="Navigation rapide">☰</button>
+
 <div id="printBook"></div>
 
 <script>
@@ -2515,6 +2947,12 @@
   const photoLibraryInput = document.getElementById("photoLibraryInput");
   const photoCameraInput = document.getElementById("photoCameraInput");
   const reportList = document.getElementById("reportList");
+  const pageDrawer = document.getElementById("pageDrawer");
+  const pageDrawerList = document.getElementById("pageDrawerList");
+  const pageDrawerToggle = document.getElementById("pageDrawerToggle");
+  const pageDrawerClose = document.getElementById("pageDrawerClose");
+  const pageDrawerBackdrop = document.getElementById("pageDrawerBackdrop");
+  const pageDrawerSearch = document.getElementById("pageDrawerSearch");
   let activeId = localStorage.getItem(ACTIVE_KEY) || crypto.randomUUID();
   let photos = [];
 
@@ -2552,11 +2990,43 @@
     });
   }
 
-  async function putPhotoData(id, data){
+  async function createPhotoThumbnail(data){
+    if(!data) return "";
+    try{
+      const img = await loadImageSource(data);
+      const sourceW = img.naturalWidth || img.width;
+      const sourceH = img.naturalHeight || img.height;
+      if(!sourceW || !sourceH) return "";
+
+      const size = 160;
+      const scale = Math.max(size/sourceW, size/sourceH);
+      const drawW = sourceW * scale;
+      const drawH = sourceH * scale;
+      const offsetX = (size - drawW) / 2;
+      const offsetY = (size - drawH) / 2;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+      if(!ctx) return "";
+
+      ctx.fillStyle = "#111";
+      ctx.fillRect(0,0,size,size);
+      ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+      return canvas.toDataURL("image/jpeg", .62);
+    }catch(err){
+      console.warn("Création miniature impossible :", err);
+      return "";
+    }
+  }
+
+  async function putPhotoData(id, data, existingThumb=""){
+    const thumb = existingThumb || await createPhotoThumbnail(data);
     const db = await openPhotoDB();
     return await new Promise((resolve, reject) => {
       const tx = db.transaction(PHOTO_STORE_NAME, "readwrite");
-      tx.objectStore(PHOTO_STORE_NAME).put({id, data, updatedAt:Date.now()});
+      tx.objectStore(PHOTO_STORE_NAME).put({id, data, thumb, updatedAt:Date.now()});
       tx.oncomplete = () => { db.close(); resolve(true); };
       tx.onerror = () => { const err = tx.error; db.close(); reject(err || new Error("Sauvegarde photo impossible")); };
       tx.onabort = () => { const err = tx.error; db.close(); reject(err || new Error("Sauvegarde photo interrompue")); };
@@ -2574,6 +3044,58 @@
       tx.oncomplete = () => db.close();
       tx.onabort = () => db.close();
     });
+  }
+
+  async function getPhotoThumbnail(id){
+    if(!id) return "";
+    const db = await openPhotoDB();
+    const record = await new Promise((resolve, reject) => {
+      const tx = db.transaction(PHOTO_STORE_NAME, "readonly");
+      const request = tx.objectStore(PHOTO_STORE_NAME).get(id);
+      request.onsuccess = () => resolve(request.result || null);
+      request.onerror = () => reject(request.error || new Error("Lecture miniature impossible"));
+      tx.oncomplete = () => db.close();
+      tx.onabort = () => db.close();
+    });
+
+    if(!record) return "";
+    if(record.thumb) return record.thumb;
+    if(!record.data) return "";
+
+    const thumb = await createPhotoThumbnail(record.data);
+    if(thumb){
+      try{ await putPhotoData(id, record.data, thumb); }catch(err){ console.warn(err); }
+    }
+    return thumb;
+  }
+
+  async function loadReportListThumbnails(root){
+    if(!root) return;
+    const targets = [
+      ...(root.matches?.("[data-photo-thumb-id]") ? [root] : []),
+      ...root.querySelectorAll("[data-photo-thumb-id]")
+    ];
+    await Promise.all(targets.map(async el => {
+      const id = el.dataset.photoThumbId;
+      if(!id || el.dataset.thumbLoaded === "1") return;
+      el.dataset.thumbLoaded = "1";
+      try{
+        const thumb = await getPhotoThumbnail(id);
+        if(!thumb) return;
+        const img = document.createElement("img");
+        img.src = thumb;
+        img.alt = "";
+
+        if(el.classList.contains("drawer-thumb")){
+          el.querySelector(".drawer-thumb-placeholder")?.remove();
+          el.prepend(img);
+        }else{
+          el.replaceChildren(img);
+        }
+      }catch(err){
+        console.warn("Miniature de page indisponible :", err);
+      }
+    }));
   }
 
   async function hydratePhotoList(list=[]){
@@ -2668,6 +3190,10 @@
   }
 
   async function newReport(copyFrom=null){
+    if(photoImportBusy){
+      setStatus("Attendez la fin de l’import photo avant de créer ou dupliquer un shot.", 0);
+      return;
+    }
     activeId = crypto.randomUUID();
     localStorage.setItem(ACTIVE_KEY, activeId);
     const existingPages = orderedReports();
@@ -2784,7 +3310,24 @@
     updatePagesPosition();
   }
 
+  function updateActivePageInList(){
+    reportList.querySelectorAll(".report-item").forEach(item => {
+      const active = item.dataset.reportId === activeId;
+      item.classList.toggle("active-page", active);
+      item.setAttribute("aria-current", active ? "page" : "false");
+    });
+
+    // Ouvre uniquement le groupe contenant la nouvelle page active.
+    const activeItem = reportList.querySelector(`[data-report-id="${CSS.escape(activeId)}"]`);
+    const activeGroup = activeItem?.closest("details.report-group");
+    if(activeGroup) activeGroup.open = true;
+  }
+
   async function loadReport(id, stayOnPages=false){
+    if(photoImportBusy){
+      setStatus("Attendez la fin de l’import photo avant de changer de page.", 0);
+      return;
+    }
     const reports = getReports();
     if(!reports[id]) return;
 
@@ -2795,9 +3338,13 @@
     }
 
     activeId = id;
-    localStorage.setItem(ACTIVE_KEY, activeId);
+    try{ localStorage.setItem(ACTIVE_KEY, activeId); }catch(err){ console.warn(err); }
     await objectToForm(getReports()[id]);
-    renderReportList();
+
+    // V30.1 : ne reconstruit plus toute la liste et ne recharge plus
+    // toutes les miniatures lors d'un simple changement de page.
+    updateActivePageInList();
+    updatePageDrawerActiveState();
     updateActivePageBar();
     setStatus("Page active changée. Toutes les modifications concernent maintenant cette page.");
 
@@ -3028,6 +3575,146 @@
         .some(name => !!report[name]);
   }
 
+
+  function setPageDrawer(open){
+    pageDrawer.classList.toggle("open", open);
+    pageDrawerBackdrop.classList.toggle("open", open);
+    pageDrawer.setAttribute("aria-hidden", open ? "false" : "true");
+    pageDrawerToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    pageDrawerToggle.setAttribute("aria-label", open ? "Replier les pages" : "Afficher les pages");
+    if(open){
+      renderPageDrawer();
+      requestAnimationFrame(() => {
+        pageDrawerList.querySelector(".drawer-page.active")?.scrollIntoView({block:"center"});
+      });
+    }
+  }
+
+  function renderPageDrawer(){
+    try{
+      const reports = orderedReports();
+      const q = String(pageDrawerSearch?.value || "").trim().toLowerCase();
+      const filtered = reports.filter(r => !q || JSON.stringify(r || {}).toLowerCase().includes(q));
+
+      pageDrawerList.replaceChildren();
+
+      if(!filtered.length){
+        const empty = document.createElement("div");
+        empty.className = "pages-empty";
+        empty.textContent = q ? "Aucune page trouvée." : "Aucune page sauvegardée.";
+        pageDrawerList.appendChild(empty);
+        return;
+      }
+
+      // Contexte hérité déjà utilisé ailleurs dans l'application.
+      const contextById = new Map(
+        resolvedReportContexts(reports).map(context => [context.report.id, context])
+      );
+
+      let previousDayKey = null;
+
+      filtered.forEach(r => {
+        const context = contextById.get(r.id) || {
+          dayNumber:String(r.dayNumber || ""),
+          date:String(r.date || "")
+        };
+
+        const dayKey = `${context.dayNumber || ""}|||${context.date || ""}`;
+
+        if(dayKey !== previousDayKey){
+          previousDayKey = dayKey;
+
+          const separator = document.createElement("div");
+          separator.className = "drawer-day-separator";
+
+          const label = document.createElement("strong");
+          label.textContent = context.dayNumber
+            ? `Jour ${context.dayNumber}`
+            : "Jour non renseigné";
+
+          const date = document.createElement("small");
+          date.textContent = context.date || "Date non renseignée";
+
+          separator.append(label, date);
+          pageDrawerList.appendChild(separator);
+        }
+
+        const absoluteIndex = reports.findIndex(x => x.id === r.id) + 1;
+        const photosCount = Array.isArray(r.photos) ? r.photos.length : 0;
+        const firstPhotoId = photosCount ? String(r.photos[0]?.id || "") : "";
+        const shotName = String(r.shot || r.plan || r.showId || `Page ${absoluteIndex}`);
+        const takeStart = r.take ?? "—";
+        const takeEnd = r.takeEnd && r.takeEnd !== r.take ? `–${r.takeEnd}` : "";
+        const takeRange = `${takeStart}${takeEnd}`;
+        const cameraInfo = [r.cameraType, r.cameraRig, r.lens]
+          .filter(Boolean)
+          .map(String)
+          .join(" · ") || "Technique non renseignée";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "drawer-page" + (r.id === activeId ? " active" : "");
+        button.dataset.drawerReportId = r.id;
+        button.setAttribute("aria-current", r.id === activeId ? "page" : "false");
+        button.setAttribute("aria-label", `Ouvrir la page ${absoluteIndex} : ${shotName}`);
+
+        const thumb = document.createElement("span");
+        thumb.className = "drawer-thumb";
+        if(firstPhotoId) thumb.dataset.photoThumbId = firstPhotoId;
+
+        const placeholder = document.createElement("span");
+        placeholder.className = "drawer-thumb-placeholder";
+        placeholder.textContent = firstPhotoId ? "…" : "🎬";
+
+        const index = document.createElement("span");
+        index.className = "drawer-page-index";
+        index.textContent = String(absoluteIndex);
+
+        thumb.append(placeholder, index);
+
+        const text = document.createElement("span");
+        text.className = "drawer-page-text";
+
+        const strong = document.createElement("strong");
+        strong.textContent = shotName;
+
+        const take = document.createElement("small");
+        take.textContent = `Take ${takeRange}`;
+
+        const camera = document.createElement("small");
+        camera.textContent = cameraInfo;
+
+        const meta = document.createElement("span");
+        meta.className = "drawer-page-meta";
+        meta.textContent = `📷 ${photosCount}${context.setup ? `  ·  Setup ${String(context.setup)}` : ""}`;
+
+        text.append(strong, take, camera, meta);
+        button.append(thumb, text);
+        pageDrawerList.appendChild(button);
+      });
+
+      loadReportListThumbnails(pageDrawerList).catch(err => {
+        console.warn("Miniatures du menu indisponibles :", err);
+      });
+    }catch(err){
+      console.error("Erreur du menu de pages :", err);
+      pageDrawerList.replaceChildren();
+
+      const errorBox = document.createElement("div");
+      errorBox.className = "pages-empty";
+      errorBox.textContent = "Le menu n’a pas pu charger les pages.";
+      pageDrawerList.appendChild(errorBox);
+    }
+  }
+
+  function updatePageDrawerActiveState(){
+    pageDrawerList.querySelectorAll("[data-drawer-report-id]").forEach(button => {
+      const active = button.dataset.drawerReportId === activeId;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-current", active ? "page" : "false");
+    });
+  }
+
   function renderReportList(){
     const reports = orderedReports();
     const search = document.getElementById("searchReports");
@@ -3079,9 +3766,10 @@
         item.setAttribute("role", "button");
         item.setAttribute("tabindex", "0");
         item.setAttribute("aria-label", `Ouvrir la page ${absoluteIndex}`);
+        item.setAttribute("aria-current", r.id === activeId ? "page" : "false");
 
         const photosCount = Array.isArray(r.photos) ? r.photos.length : 0;
-        const firstPhoto = photosCount && r.photos[0]?.data ? r.photos[0].data : "";
+        const firstPhotoId = photosCount ? (r.photos[0]?.id || "") : "";
         const takeRange = `${r.take || "—"}${r.takeEnd && r.takeEnd !== r.take ? "–" + r.takeEnd : ""}`;
         const cameraInfo = [r.cameraType, r.cameraRig, r.lens].filter(Boolean).join(" · ") || "Technique non renseignée";
         const clip = r.cardClipRange || ((r.card || "") + (r.clip || "")) || "Aucun clip";
@@ -3094,7 +3782,9 @@
             PDF
           </label>
           <div class="report-thumb">
-            ${firstPhoto ? `<img src="${firstPhoto}" alt="">` : `<div class="report-thumb-placeholder">🎬</div>`}
+            <div class="report-thumb-image" ${firstPhotoId ? `data-photo-thumb-id="${firstPhotoId}"` : ""}>
+              <div class="report-thumb-placeholder">${firstPhotoId ? "⏳" : "🎬"}</div>
+            </div>
             <span class="report-page-index" title="Page ${absoluteIndex}">${absoluteIndex}</span>
           </div>
           <div class="report-card-main">
@@ -3107,6 +3797,9 @@
               ${tracking ? `<span class="page-badge good">🎯 Track</span>` : `<span class="page-badge">🎯 —</span>`}
               ${notes ? `<span class="page-badge good">📝 Notes</span>` : `<span class="page-badge">📝 —</span>`}
             </div>
+          </div>
+          <div class="report-card-open no-print">
+            <button type="button" data-open-essential="${r.id}" title="Ouvrir dans Essentiel" aria-label="Ouvrir cette page dans Essentiel">👁</button>
           </div>
           <div class="report-card-actions no-print">
             <button type="button" data-duplicate-page="${r.id}" title="Dupliquer">⧉</button>
@@ -3121,6 +3814,8 @@
 
     updateActivePageBar();
     updatePagesPosition();
+    loadReportListThumbnails(reportList);
+    renderPageDrawer();
   }
 
   function setAllPageSelection(value){
@@ -3548,6 +4243,73 @@
     originalGrid.replaceWith(rebuilt);
   }
 
+  function estimatePrintReportSize(page, report, reportIndex){
+    // La première page reste seule. Les changements de jour/date/contexte restent seuls.
+    // L'heure et le changement de scène n'empêchent pas le 2-en-1.
+    if(reportIndex === 0) return 999;
+    if(page.querySelector(".print-production-header, .print-context-header")){
+      return 999;
+    }
+
+    let score = 16;
+
+    const photoCount = Array.isArray(report.photos) ? report.photos.length : 0;
+    if(photoCount > 1) return 999;
+    if(photoCount === 1) score += 12;
+
+    const extras = page.querySelectorAll(".print-extras-grid > *").length;
+    score += extras * 5;
+
+    if(sectionHasContent(report, "tracking")) score += 11;
+    if(sectionHasContent(report, "lighting")) score += 10;
+    if(sectionHasContent(report, "references")) score += 7;
+    if(sectionHasContent(report, "capture")) score += 8;
+    if(sectionHasContent(report, "vpdata")) score += 8;
+
+    const textLength = [
+      report.description,
+      report.generalNotes,
+      report.postWarnings,
+      report.trackingNotes,
+      report.dataIssues
+    ].reduce((sum, value) => sum + String(value || "").trim().length, 0);
+
+    score += Math.min(16, Math.ceil(textLength / 150) * 3);
+
+    page.dataset.printSizeScore = String(score);
+    page.classList.add("print-report-compact");
+    return score;
+  }
+
+  function packPrintReports(printBook, pages){
+    printBook.replaceChildren();
+
+    for(let index = 0; index < pages.length; index++){
+      const current = pages[index];
+      const next = pages[index + 1];
+
+      const currentScore = Number(current.dataset.printSizeScore || 999);
+      const nextScore = Number(next?.dataset.printSizeScore || 999);
+
+      // Marge volontaire : on ne remplit jamais la feuille à ras bord.
+      const canPair = next && currentScore + nextScore <= 142;
+
+      const sheet = document.createElement("section");
+      sheet.className = "print-sheet";
+
+      if(canPair){
+        sheet.classList.add("print-sheet-paired");
+        sheet.append(current, next);
+        index++;
+      }else{
+        current.classList.remove("print-report-compact");
+        sheet.append(current);
+      }
+
+      printBook.appendChild(sheet);
+    }
+  }
+
   async function buildPrintBook(){
     saveReport(true);
     const all = orderedReports();
@@ -3563,6 +4325,8 @@
 
     let previousScene = null;
     let lastContext = {};
+
+    const builtPages = [];
 
     selected.forEach((r, index) => {
       const reportPageIndex = all.findIndex(pageReport => pageReport.id === r.id) + 1;
@@ -3601,7 +4365,7 @@
         <div>
           <span>Scène / Shot</span>
           <strong>SC ${escapeHtml(currentScene)} · SH ${escapeHtml(r.shot || "—")}</strong>
-          <small>${escapeHtml(r.project || "")}${currentContext.date ? " · " + escapeHtml(currentContext.date) : ""}</small>
+          <small class="print-date-reminder">${currentContext.date ? `${escapeHtml(currentContext.date)}` : "Date non renseignée"}</small>
         </div>
         <div>
           <span>Take(s)</span>
@@ -3677,8 +4441,11 @@
       page.appendChild(footer);
 
       compactPrintPage(page);
-      printBook.appendChild(page);
+      estimatePrintReportSize(page, r, index);
+      builtPages.push(page);
     });
+
+    packPrintReports(printBook, builtPages);
     return true;
   }
 
@@ -3760,7 +4527,7 @@
     });
   }
 
-  async function compressImageElement(img, maxSide=1100, quality=.60, targetChars=140000){
+  async function compressImageElement(img, maxSide=2400, quality=.84, targetChars=2200000){
     let w = img.naturalWidth || img.videoWidth || img.width;
     let h = img.naturalHeight || img.videoHeight || img.height;
 
@@ -3794,7 +4561,7 @@
 
       w *= .82;
       h *= .82;
-      q = Math.max(.46, q-.06);
+      q = Math.max(.72, q-.04);
     }
 
     if(!result || result === "data:,"){
@@ -3804,7 +4571,7 @@
     return result;
   }
 
-  async function compressImageSource(source, maxSide=1280, quality=.66, targetChars=300000){
+  async function compressImageSource(source, maxSide=2400, quality=.84, targetChars=2200000){
     const img = await loadImageSource(source);
     return compressImageElement(img, maxSide, quality, targetChars);
   }
@@ -3840,32 +4607,10 @@
   }
 
   async function compactCurrentPhotos(){
-    if(!photos.length) return false;
-    let changed = false;
-    const compacted = [];
-
-    for(const photo of photos){
-      try{
-        if(photo?.data && photo.data.length > 145000){
-          compacted.push({
-            ...photo,
-            data: await compressImageSource(photo.data, 900, .56, 105000)
-          });
-          changed = true;
-        }else{
-          compacted.push(photo);
-        }
-      }catch(err){
-        console.error("Compression d’une ancienne photo impossible :", err);
-        compacted.push(photo);
-      }
-    }
-
-    if(changed){
-      photos = compacted;
-      renderPhotos();
-    }
-    return changed;
+    // V30 : les photos sont stockées dans IndexedDB.
+    // On ne recompresse plus les images existantes à chaque nouvel ajout,
+    // afin de préserver leur qualité pour le PDF.
+    return false;
   }
 
 
@@ -3889,8 +4634,8 @@
           if(photo?.data){
             // Les anciennes images sont déplacées hors de localStorage.
             // On garde une compression raisonnable pour l'affichage et le PDF.
-            const storedData = photo.data.length > 850000
-              ? await compressImageSource(photo.data, 1600, .76, 650000)
+            const storedData = photo.data.length > 6000000
+              ? await compressImageSource(photo.data, 2800, .86, 2800000)
               : photo.data;
             await putPhotoData(id, storedData);
             migratedCount++;
@@ -4121,52 +4866,89 @@
     }, err => setStatus("GPS refusé ou indisponible : " + err.message), {enableHighAccuracy:true,timeout:12000});
   });
 
+  let photoImportBusy = false;
+
+  async function storageStatusText(){
+    try{
+      if(!navigator.storage?.estimate) return "";
+      const estimate = await navigator.storage.estimate();
+      if(!estimate.quota) return "";
+      const usedMb = Math.round((estimate.usage || 0) / 1048576);
+      const quotaMb = Math.round(estimate.quota / 1048576);
+      return ` · stockage ${usedMb} / ${quotaMb} Mo`;
+    }catch{
+      return "";
+    }
+  }
+
+  function setPhotoControlsDisabled(disabled){
+    [photoLibraryInput, photoCameraInput].forEach(el => {
+      if(el) el.disabled = disabled;
+    });
+    ["newReportBtn","duplicateReportBtn","pagesNewBtn","pagesDuplicateBtn"].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.disabled = disabled;
+    });
+  }
+
   async function importPhotoFiles(input){
+    if(photoImportBusy) return;
+
     const files = [...(input.files || [])];
+    input.value = "";
     if(!files.length) return;
 
-    setStatus(`Optimisation et traitement de ${files.length} image(s)…`,0);
-
-    // Les anciennes versions stockaient des photos beaucoup plus lourdes.
-    // On les recompresse avant tout nouvel ajout afin de libérer de la place.
-    await compactCurrentPhotos();
-    saveReport(true);
+    photoImportBusy = true;
+    setPhotoControlsDisabled(true);
+    setStatus(`Traitement de ${files.length} image(s) en haute qualité…`, 0);
 
     let added = 0;
     let refused = 0;
 
-    for(const file of files){
-      try{
-        const data = await fileToCompressedDataURL(file);
-        const id = crypto.randomUUID();
-        await putPhotoData(id, data);
-        photos.push({id,data,caption:""});
-        renderPhotos();
+    try{
+      for(const file of files){
+        try{
+          const data = await fileToCompressedDataURL(file);
+          const id = crypto.randomUUID();
 
-        if(saveReport(true)){
-          added++;
-        }else{
-          photos.pop();
+          // La photo complète et sa miniature sont enregistrées hors localStorage.
+          await putPhotoData(id, data);
+
+          photos.push({id, data, caption:""});
           renderPhotos();
+
+          if(!saveReport(true)){
+            photos.pop();
+            renderPhotos();
+            refused++;
+            break;
+          }
+
+          added++;
+          const storage = await storageStatusText();
+          setStatus(`${added} / ${files.length} image(s) ajoutée(s)${storage}`, 0);
+
+          // Rend la main à Safari entre deux grosses images.
+          await new Promise(resolve => setTimeout(resolve, 40));
+        }catch(err){
+          console.error("Import photo impossible :", err);
           refused++;
-          break;
         }
-      }catch(err){
-        console.error(err);
-        refused++;
       }
+    }finally{
+      photoImportBusy = false;
+      setPhotoControlsDisabled(false);
+      renderReportList();
     }
 
-    input.value = "";
+    const storage = await storageStatusText();
 
     if(added && !refused){
-      setStatus(`${added} image(s) ajoutée(s) et sauvegardée(s).`);
+      setStatus(`${added} image(s) ajoutée(s) en haute qualité${storage}.`);
     }else if(added && refused){
-      setStatus(`${added} image(s) ajoutée(s). Stockage plein avant la suivante.`, 0);
-    }else if(refused){
-      setStatus("La photo n’a pas pu être lue ou le stockage est plein. Essayez une autre image, une capture d’écran, ou supprimez une ancienne photo.", 0);
+      setStatus(`${added} image(s) ajoutée(s). Une image n’a pas pu être enregistrée${storage}.`, 0);
     }else{
-      setStatus("Aucune image sélectionnée.");
+      setStatus(`Aucune image ajoutée. Le fichier est peut-être incompatible ou le stockage de Safari est saturé${storage}.`, 0);
     }
   }
 
@@ -4204,11 +4986,21 @@
     }
   });
 
-  function handleReportCardAction(e){
+  async function handleReportCardAction(e){
+    const openEssentialButton = e.target.closest("[data-open-essential]");
     const deleteButton = e.target.closest("[data-delete]");
     const duplicateButton = e.target.closest("[data-duplicate-page]");
     const checkbox = e.target.closest("[data-select-page]");
     const card = e.target.closest("[data-activate-page]");
+
+    if(openEssentialButton){
+      e.preventDefault();
+      e.stopPropagation();
+      await loadReport(openEssentialButton.dataset.openEssential, false);
+      switchTab("essential");
+      window.scrollTo({top:0, behavior:"smooth"});
+      return;
+    }
 
     if(deleteButton){
       e.preventDefault();
@@ -4237,6 +5029,70 @@
   // Capture phase prevents the parent card from becoming active before
   // the delete/duplicate action is processed, especially on iPad Safari.
   reportList.addEventListener("click", handleReportCardAction, true);
+
+  pageDrawerToggle.addEventListener("click", () => {
+    setPageDrawer(!pageDrawer.classList.contains("open"));
+  });
+  pageDrawerClose.addEventListener("click", () => setPageDrawer(false));
+  pageDrawerBackdrop.addEventListener("click", () => setPageDrawer(false));
+  pageDrawerSearch.addEventListener("input", renderPageDrawer);
+
+  pageDrawerList.addEventListener("click", async e => {
+    const button = e.target.closest("[data-drawer-report-id]");
+    if(!button) return;
+    await loadReport(button.dataset.drawerReportId, false);
+    updatePageDrawerActiveState();
+
+    // Sur iPad/mobile, on replie après le choix pour libérer l'écran.
+    if(window.matchMedia("(max-width:899px)").matches){
+      setPageDrawer(false);
+    }
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+
+  document.addEventListener("keydown", e => {
+    if(e.key === "Escape" && pageDrawer.classList.contains("open")){
+      setPageDrawer(false);
+    }
+  });
+
+  let drawerTouchStartX = 0;
+  let drawerTouchStartY = 0;
+  let drawerTouchTracking = false;
+
+  document.addEventListener("touchstart", e => {
+    const touch = e.touches?.[0];
+    if(!touch) return;
+
+    const drawerOpen = pageDrawer.classList.contains("open");
+    const startedInsideDrawer = !!e.target.closest("#pageDrawer");
+    const startedNearLeftEdge = touch.clientX <= 24;
+
+    if((drawerOpen && startedInsideDrawer) || (!drawerOpen && startedNearLeftEdge)){
+      drawerTouchStartX = touch.clientX;
+      drawerTouchStartY = touch.clientY;
+      drawerTouchTracking = true;
+    }
+  }, {passive:true});
+
+  document.addEventListener("touchend", e => {
+    if(!drawerTouchTracking) return;
+    drawerTouchTracking = false;
+
+    const touch = e.changedTouches?.[0];
+    if(!touch) return;
+
+    const dx = touch.clientX - drawerTouchStartX;
+    const dy = touch.clientY - drawerTouchStartY;
+
+    if(Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+
+    if(pageDrawer.classList.contains("open") && dx < 0){
+      setPageDrawer(false);
+    }else if(!pageDrawer.classList.contains("open") && dx > 0){
+      setPageDrawer(true);
+    }
+  }, {passive:true});
 
   reportList.addEventListener("keydown", e => {
     if((e.key === "Enter" || e.key === " ") && e.target.matches("[data-activate-page]")){
@@ -4409,7 +5265,7 @@
   if(migration.failed){
     setStatus("Le stockage contient encore d’anciennes photos trop lourdes. Exportez le JSON avant de supprimer quelques photos.", 0);
   }else if(migration.photos){
-    setStatus(`${migration.photos} ancienne(s) photo(s) optimisée(s). Vous pouvez maintenant en ajouter d’autres.`);
+    setStatus(`${migration.photos} ancienne(s) photo(s) déplacée(s) vers le stockage V30.`);
   }else{
     setStatus("");
   }
