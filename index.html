@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V32.5c</title>
+  <title>VFX Set Report V32.5e</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -2447,7 +2447,31 @@
   @media print{
     .page-drawer,.page-drawer-toggle,.page-drawer-backdrop{display:none!important}
   }
-</style>
+
+    .clean-all-btn{
+      appearance:none;
+      border:1px solid rgba(127,127,127,.28);
+      background:rgba(127,127,127,.08);
+      color:rgba(127,127,127,.72);
+      border-radius:999px;
+      padding:.35rem .65rem;
+      font-size:.72rem;
+      font-weight:600;
+      line-height:1;
+      cursor:pointer;
+      opacity:.58;
+      transition:opacity .15s ease, background .15s ease, border-color .15s ease;
+    }
+    .clean-all-btn:hover,
+    .clean-all-btn:focus-visible{
+      opacity:1;
+      background:rgba(180,40,40,.10);
+      border-color:rgba(180,40,40,.30);
+      color:#a33;
+      outline:none;
+    }
+
+  </style>
 </head>
 <body>
 <div class="app">
@@ -2937,6 +2961,8 @@
         <button type="button" id="selectNoneBtn">Tout désélectionner</button>
         <button type="button" class="ok" id="exportSelectedBtn">↗ Exporter la sélection</button>
         <span class="pages-spacer"></span>
+
+        <button type="button" id="cleanAllBtn" class="clean-all-btn" title="Effacer toutes les données locales">Tout nettoyer</button>
         <button type="button" id="exportJsonBtn" title="Export léger sans les fichiers photo">Exporter JSON</button>
         <button type="button" class="ok" id="exportAllBtn" title="Export complet avec toutes les photos">Exporter tout + photos</button>
         <label class="button pages-import-button" for="importJsonInput">Importer JSON</label>
@@ -3580,13 +3606,13 @@
 
   function reportContextKey(context){
     const day = (context.dayNumber || context.date || "Sans jour").trim();
-    const setup = (context.setup || "Sans setup").trim();
+    const setup = (context.setup || "Sans ID setup").trim();
     return `${day}|||${setup}`;
   }
 
   function reportContextLabel(context){
     const day = context.dayNumber ? `Jour ${context.dayNumber}` : (context.date || "Sans date");
-    const setup = context.setup ? `Setup ${context.setup}` : "Sans setup";
+    const setup = context.setup ? `Setup ${context.setup}` : "Sans ID setup";
     return `${day} · ${setup}`;
   }
 
@@ -5221,24 +5247,66 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+  function namedFormFields(){
+    return [...form.elements]
+      .filter(el => el.name)
+      .map(el => el.name)
+      .filter((name, index, list) => list.indexOf(name) === index);
+  }
+
+  function auditExportData(reports){
+    const expected = namedFormFields();
+    const pages = Object.values(reports || {});
+    const missingByPage = [];
+
+    pages.forEach((report, index) => {
+      const missing = expected.filter(name => !Object.prototype.hasOwnProperty.call(report || {}, name));
+      if(missing.length) missingByPage.push({page:index + 1, missing});
+    });
+
+    return {
+      pageCount: pages.length,
+      fieldCount: expected.length,
+      missingByPage
+    };
+  }
+
   document.getElementById("exportJsonBtn").addEventListener("click", () => {
     saveReport(true);
     const reports = getReports();
+    const audit = auditExportData(reports);
+
+    if(audit.missingByPage.length){
+      console.warn("Champs manquants dans l’export :", audit.missingByPage);
+      setStatus(`Export effectué, mais ${audit.missingByPage.length} page(s) ancienne(s) ont des champs absents.`, 5000);
+    }else{
+      setStatus(`JSON complet des champs : ${audit.pageCount} page(s), ${audit.fieldCount} champs par page, sans photos.`, 4500);
+    }
+
     downloadJsonFile(reports, `vfx_reports_${localDate}.json`);
-    setStatus("JSON léger exporté sans les fichiers photo.");
   });
 
   document.getElementById("exportAllBtn").addEventListener("click", async () => {
     saveReport(true);
-    setStatus("Préparation de l’export complet avec les photos…", 0);
+    setStatus("Préparation de l’export complet avec tous les champs et les photos…", 0);
     try{
       const reports = getReports();
       const hydratedEntries = await Promise.all(
         Object.entries(reports).map(async ([id, report]) => [id, await hydrateReport(report)])
       );
       const exportReports = Object.fromEntries(hydratedEntries);
+      const audit = auditExportData(exportReports);
+      const photoCount = Object.values(exportReports)
+        .reduce((total, report) => total + (Array.isArray(report?.photos) ? report.photos.length : 0), 0);
+
       downloadJsonFile(exportReports, `vfx_reports_complet_${localDate}.json`);
-      setStatus("Export complet terminé : données et photos incluses.");
+
+      if(audit.missingByPage.length){
+        console.warn("Champs manquants dans l’export complet :", audit.missingByPage);
+        setStatus(`Export complet créé avec ${photoCount} photo(s), mais ${audit.missingByPage.length} ancienne(s) page(s) ont des champs absents.`, 6000);
+      }else{
+        setStatus(`Export complet vérifié : ${audit.pageCount} page(s), ${audit.fieldCount} champs par page et ${photoCount} photo(s).`, 6000);
+      }
     }catch(err){
       console.error(err);
       setStatus("Impossible de préparer l’export complet.");
@@ -5263,7 +5331,14 @@
       const merged = {...getReports(), ...imported};
       if(!setReports(merged)) throw new Error("Sauvegarde des rapports impossible");
       renderReportList();
-      setStatus("Rapports et photos importés.");
+      const importedPages = Object.values(imported);
+      const importedPhotoCount = importedPages.reduce(
+        (total, report) => total + (Array.isArray(report?.photos) ? report.photos.length : 0), 0
+      );
+      const importedFieldCount = importedPages.reduce(
+        (max, report) => Math.max(max, Object.keys(report || {}).length), 0
+      );
+      setStatus(`Import terminé : ${importedPages.length} page(s), jusqu’à ${importedFieldCount} propriétés et ${importedPhotoCount} photo(s).`, 6000);
     }catch{
       setStatus("Fichier JSON invalide.");
     }
@@ -5392,6 +5467,72 @@
   });
 
   updateFloatingHeader();
+
+
+  async function deleteAllIndexedDatabases(){
+    if (!("indexedDB" in window)) return;
+
+    // Modern browsers can enumerate DBs.
+    if (typeof indexedDB.databases === "function"){
+      try{
+        const dbs = await indexedDB.databases();
+        await Promise.all((dbs || []).map(db => new Promise(resolve => {
+          if (!db || !db.name) return resolve();
+          const req = indexedDB.deleteDatabase(db.name);
+          req.onsuccess = req.onerror = req.onblocked = () => resolve();
+        })));
+        return;
+      }catch(err){
+        console.warn("Impossible d’énumérer les bases IndexedDB :", err);
+      }
+    }
+
+    // Fallback for Safari/iPad: target the app's known databases if present in code.
+    const knownDbNames = [
+      "vfx-set-report",
+      "vfxSetReport",
+      "vfx_reports",
+      "VFXSetReportDB",
+      "VFX_SET_REPORT_DB"
+    ];
+    await Promise.all(knownDbNames.map(name => new Promise(resolve => {
+      const req = indexedDB.deleteDatabase(name);
+      req.onsuccess = req.onerror = req.onblocked = () => resolve();
+    })));
+  }
+
+  document.getElementById("cleanAllBtn")?.addEventListener("click", async () => {
+    const first = confirm(
+      "Tout effacer ?\n\nCela supprimera définitivement tous les rapports, réglages et photos stockés sur cet appareil."
+    );
+    if (!first) return;
+
+    const second = confirm(
+      "Dernière confirmation : as-tu bien exporté une sauvegarde complète avec les photos ?"
+    );
+    if (!second) return;
+
+    try{
+      localStorage.clear();
+      sessionStorage.clear();
+      await deleteAllIndexedDatabases();
+
+      if ("caches" in window){
+        try{
+          const keys = await caches.keys();
+          await Promise.all(keys.map(key => caches.delete(key)));
+        }catch(err){
+          console.warn("Nettoyage du cache non terminé :", err);
+        }
+      }
+
+      alert("Toutes les données locales ont été supprimées.");
+      location.reload();
+    }catch(err){
+      console.error(err);
+      alert("Le nettoyage n’a pas pu être terminé complètement.");
+    }
+  });
 
 </script>
 </body>
