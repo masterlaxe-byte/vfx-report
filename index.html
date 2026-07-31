@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#111827" />
-  <title>VFX Set Report V32.5a</title>
+  <title>VFX Set Report V32.5c</title>
   <style>
     :root{
       --bg:#eef1f4;
@@ -1448,22 +1448,48 @@
       }
 
       .print-sheet-paired{
-        justify-content:flex-start;
+        display:grid;
+        grid-template-rows:minmax(0,1fr) minmax(0,1fr);
+        justify-content:stretch;
+        align-content:stretch;
+        height:289mm;
+        min-height:0;
+        max-height:289mm;
         gap:2.4mm;
+        overflow:hidden;
+        contain:layout paint;
       }
       .print-sheet-paired .print-report{
-        flex:0 0 calc(50% - 1.2mm);
+        width:100%;
+        height:100%;
         min-height:0;
-        max-height:calc(50% - 1.2mm);
-        overflow:hidden;
+        max-height:100%;
+        overflow:hidden!important;
         padding-bottom:1.2mm;
         border-bottom:1px dashed #aaa;
         break-inside:avoid!important;
         page-break-inside:avoid!important;
+        contain:layout paint;
       }
       .print-sheet-paired .print-report:last-child{
         border-bottom:0;
       }
+      .print-sheet-paired,
+      .print-sheet-paired .print-report,
+      .print-sheet-paired .print-report > *,
+      .print-sheet-paired .print-extras-grid,
+      .print-sheet-paired .print-extras-grid > *,
+      .print-sheet-paired #photos,
+      .print-sheet-paired .photos,
+      .print-sheet-paired .photo-card{
+        box-decoration-break:clone;
+        -webkit-box-decoration-break:clone;
+      }
+
+      .print-sheet-paired .print-report > *{
+        max-width:100%;
+      }
+
       .print-sheet-paired .print-report-compact{
         font-size:6.45pt;
         gap:.6mm;
@@ -2911,7 +2937,8 @@
         <button type="button" id="selectNoneBtn">Tout désélectionner</button>
         <button type="button" class="ok" id="exportSelectedBtn">↗ Exporter la sélection</button>
         <span class="pages-spacer"></span>
-        <button type="button" id="exportJsonBtn">Exporter JSON</button>
+        <button type="button" id="exportJsonBtn" title="Export léger sans les fichiers photo">Exporter JSON</button>
+        <button type="button" class="ok" id="exportAllBtn" title="Export complet avec toutes les photos">Exporter tout + photos</button>
         <label class="button pages-import-button" for="importJsonInput">Importer JSON</label>
         <input id="importJsonInput" type="file" accept=".json,application/json" class="hidden" />
       </div>
@@ -5182,21 +5209,40 @@
     }
   }, {passive:true});
 
-  document.getElementById("exportJsonBtn").addEventListener("click", async () => {
-    saveReport(true);
-    setStatus("Préparation du JSON avec les photos…", 0);
-    const reports = getReports();
-    const hydratedEntries = await Promise.all(
-      Object.entries(reports).map(async ([id, report]) => [id, await hydrateReport(report)])
-    );
-    const exportReports = Object.fromEntries(hydratedEntries);
-    const blob = new Blob([JSON.stringify(exportReports, null, 2)], {type:"application/json"});
+  function downloadJsonFile(data, filename){
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `vfx_reports_${localDate}.json`;
+    a.download = filename;
+    document.body.appendChild(a);
     a.click();
+    a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  document.getElementById("exportJsonBtn").addEventListener("click", () => {
+    saveReport(true);
+    const reports = getReports();
+    downloadJsonFile(reports, `vfx_reports_${localDate}.json`);
+    setStatus("JSON léger exporté sans les fichiers photo.");
+  });
+
+  document.getElementById("exportAllBtn").addEventListener("click", async () => {
+    saveReport(true);
+    setStatus("Préparation de l’export complet avec les photos…", 0);
+    try{
+      const reports = getReports();
+      const hydratedEntries = await Promise.all(
+        Object.entries(reports).map(async ([id, report]) => [id, await hydrateReport(report)])
+      );
+      const exportReports = Object.fromEntries(hydratedEntries);
+      downloadJsonFile(exportReports, `vfx_reports_complet_${localDate}.json`);
+      setStatus("Export complet terminé : données et photos incluses.");
+    }catch(err){
+      console.error(err);
+      setStatus("Impossible de préparer l’export complet.");
+    }
   });
 
   document.getElementById("importJsonInput").addEventListener("change", async e => {
